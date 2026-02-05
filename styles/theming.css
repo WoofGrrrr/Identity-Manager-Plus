@@ -1,0 +1,395 @@
+:root { /* default to dark */
+  --window-inactive-opacity:                     0.8;
+
+  --page-background-color:                       rgb(  47,  47,  55 );
+  --page-color:                                  rgb( 215, 215, 215 );
+  --page-font:                                   message-box;
+  --page-font-size:                              1rem;
+  --page-text-shadow:                            rgb(  20,  20,  20 );
+
+/*--body-background-color:                       rgb(  89,  89,  91 ); */
+  --body-background-color:                       rgba(100, 100, 110, 0.8);                      
+
+  --title-background-color:                      transparent;
+  --title-border-color:                          transparent;
+  --title-border-radius:                         0px;
+  --title-color:                                 rgb( 175, 228, 228 );
+  --title-font-size:                             1.50rem;
+  --title-font-weight:                           bold;
+  --title-line-height:                           1.3em;
+  --title-shadow-color:                          rgb(   0,  80,  80 );
+
+  --subtitle-background-color:                   transparent;
+  --subtitle-border-color:                       transparent;
+  --subtitle-border-radius:                      0px;
+  --subtitle-color:                              rgb( 175, 228, 228 );
+  --subtitle-font-size:                          1.0em;
+  --subtitle-font-weight:                        bold;
+  --subtitle-line-height:                        1.0em;
+  --subtitle-shadow-color:                       rgb(   0,  80,  80 );
+
+  --heading-color:                               rgb( 175, 228, 228 );
+  --heading-font-size:                           1.0em;
+  --heading-font-weight:                         bold;
+  --heading-line-height:                         1.0em;
+
+  --instructions-background-color:               transparent;
+  --instructions-border-color:                   transparent;
+  --instructions-border-radius:                  0px;
+  --instructions-color:                          rgb( 254, 254, 255 );
+  --instructions-font-size:                      0.85rem;
+  --instructions-font-weight:                    normal;
+
+  --menu-color:                                  rgb( 250, 250, 250 );
+  --menu-text-shadow:                            rgb(  20,  20,  20 );
+  --menu-background-color:                       rgb(  47,  47,  53 );
+  --menu-font:                                   message-box;
+  --menu-font-size:                              1rem;
+
+  --panel-background-color:                      rgb(  63,  63,  70 );
+  --panel-border-color:                          rgb(  35,  35,  39 );
+
+  --error-list-background-color:                 transparent; /* <TABLE> */
+  --error-list-border:                           NONE;
+  --error-item-background-color:                 transparent; /* rgb( 250, 200, 200 ); /* <TR> */
+  --error-item-border:                           NONE;
+  --error-info-background-color:                 rgb( 250, 200, 200 );
+  --error-info-border:                           NONE;
+
+  --error-text-background-color:                 rgb( 250, 240, 240 );
+  --error-text-border:                           1px solid var(--error-text-color);
+  --error-text-color:                            rgb( 200,  50,  50 );
+  --error-text-font:                             inherit;
+  --error-text-font-size:                        inherit;
+  --error-text-font-weight:                      BOLDER;
+
+  --error-background-color:                      rgb( 250, 200, 200 );
+  --error-border:                                2px solid rgb( 200, 0, 0 );
+
+  --can-mark-error-border:                       2px solid transparent;
+  --mark-error-background-color:                 rgb( 250, 200, 200 );
+  --mark-error-border:                           2px solid rgb( 200, 0, 0 );
+
+  --message-text-background-color:               transparent; /* rgb( 250, 240, 240 ); */
+  --message-text-border:                         NONE; /* 1px solid var(--message-text-color); */
+  --message-text-color:                          rgb(  80, 255,  80 );
+  --message-text-font:                           inherit;
+  --message-text-font-size:                      inherit;
+  --message-text-font-weight:                    BOLDER;
+
+  --instructions-color:                          rgb( 254, 254, 255 );
+  --disclaimer-color:                            rgb( 203, 203, 250 );
+
+
+
+  --nav-background-color:                        rgb(  63,  63,  70 );
+  --nav-border:                                  none; /* 1px solid rgb(  35,  35,  39 );*/
+
+  --nav-item-background-color:                   rgb( 110, 110, 114 );
+  --nav-item-border:                             1px solid rgb(  70,  70,  74 );
+  --nav-item-color:                              rgb( 250, 250, 250 );
+  --nav-item-font:                               message-box;
+  --nav-item-font-size:                          1rem;
+  --nav-item-font-weight:                        110%;
+
+  --nav-item-past-background-color:              rgb( 110, 110, 114 );
+  --nav-item-past-border-color:                  rgb(  70,  70,  74 );
+  --nav-item-past-color:                         rgb( 200, 200, 200 );
+
+  --nav-item-current-background-color:           rgb(  77, 116, 159 );
+  --nav-item-current-border-color:               rgb( 140, 169, 200 );
+  --nav-item-current-color:                      rgb( 255, 255, 255 );
+  --nav-item-current-text-shadow-color:          rgb(  20,  20,  20 );
+
+  --nav-item-next-background-color:              rgb(  80,  80,  84 );
+  --nav-item-next-border-color:                  rgb(  20,  20,  24 );
+  --nav-item-next-color:                         rgb( 200, 200, 200 );
+
+  --nav-item-future-background-color:            rgb(  80,  80,  84 );
+  --nav-item-future-border-color:                rgb(  20,  20,  24 );
+  --nav-item-future-color:                       rgb( 200, 200, 200 );
+
+  --nav-item-active-background-color:            rgb(  55,  84, 115 );
+  --nav-item-active-border-color:                rgb(  20,  20,  24 );
+  --nav-item-active-color:                       rgb( 220, 220, 220 );
+
+  --nav-item-active-hover-background-color:      rgb(  60, 160, 165 );
+  --nav-item-active-hover-background-image:      linear-gradient(rgba(80,80,80,0.6) 20%, rgba(150,150,150,0.8) 80%);
+  --nav-item-active-hover-border-color:          rgb( 240, 240, 240 );
+  --nav-item-active-hover-color:                 rgb( 255, 255, 255 );
+  --nav-item-active-hover-text-shadow-color:     rgb(  20,  20,  20 );
+
+
+
+  --list-header-item-background-color:           rgb(  80,  80,  84 );
+  --list-header-item-border-color:               rgb(  30,  30,  32 );
+  --list-header-item-color:                      rgb( 180, 180, 180 );
+  --list-header-item-font-weight:                BOLD;
+  --list-header-item-shadow-color:               rgb(   0,   0,   0 );
+
+  --list-item-background-color:                  rgb( 110, 110, 114 );
+  --list-item-border-color:                      rgb(  20,  50,  50 );
+  --list-item-color:                             rgb( 250, 250, 250 );
+  --list-item-font:                              message-box;
+  --list-item-font-size:                         1rem;
+
+  --list-item-selected-background-color:         rgb(  77, 116, 159 );
+  --list-item-selected-border-color:             rgb(  40,  50,  60 );
+  --list-item-selected-color:                    rgb( 255, 255, 255 );
+  --list-item-selected-text-shadow-color:        rgb(  20,  20,  20 );
+
+  --list-item-hover-background-color:            rgb(  60, 160, 165 );
+  --list-item-hover-background-image:            linear-gradient(rgba(80,80,80,0.6) 20%, rgba(150,150,150,0.8) 80%);
+  --list-item-hover-border-color:                rgb( 240, 240, 240 );
+  --list-item-hover-color:                       rgb( 255, 255, 255 );
+  --list-item-hover-text-shadow-color:           rgb(  20,  20,  20 );
+
+  --list-item-disabled-background-color:         rgb(  80,  80,  84 );
+  --list-item-disabled-border-color:             rgb(  20,  20,  24 );
+  --list-item-disabled-color:                    rgb( 170, 190, 200 );
+  --list-item-disabled-text-decoration-color:    rgb(   0,   0,   0 );
+  --list-item-disabled-text-decoration-style:    solid;
+  --list-item-disabled-text-decoration-line:     line-through;
+  --list-item-disabled-text-decoration:          var(--list-item-disabled-text-decoration-line) var(--list-item-disabled-text-decoration-style) var(--list-item-disabled-text-decoration-color);
+
+
+
+  --identity-background-color:                   var(--list-item-background-color);
+  --identity-border-color:                       var(--list-item-border-color);
+  --identity-color:                              var(--list-item-color);
+  --identity-font:                               var(--list-item-font);
+  --identity-font-size:                          var(--list-item-font-size);
+
+  --identity-lock-in-menu-background-color:      rgb( 130,  90,  90 );
+  --identity-lock-in-menu-border-color:          rgb( 101,  16,  16 );
+  --identity-lock-in-menu-color:                 rgb( 120,   0,   0 );
+/*--identity-lock-in-menu-color:                 rgb( 179,  26,  30 ); */
+
+  --identity-not-show-in-menu-background-color:  var(--list-item-disabled-background-color);
+  --identity-not-show-in-menu-border-color:      var(--list-item-disabled-border-color);
+  --identity-not-show-in-menu-color:             var(--list-item-disabled-color);
+  --identity-not-show-in-menu-text-decoration-color: var(--list-item-disabled-text-decoration-color);
+  --identity-not-show-in-menu-text-decoration-line:  var(--list-item-disabled-text-decoration-line);
+  --identity-not-show-in-menu-text-decoration-style: var(--list-item-disabled-text-decoration-style);
+  --identity-not-show-in-menu-text-decoration:   var(--list-item-disabled-text-decoration);
+
+  --identity-selected-background-color:          var(--list-item-selected-background-color);
+  --identity-selected-border-color:              var(--list-item-selected-border-color);
+  --identity-selected-color:                     var(--list-item-selected-color);
+  --identity-selected-text-shadow-color:         var(--list-item-selected-text-shadow-color);
+
+  --identity-hover-background-color:             var(--list-item-hover-background-color);
+  --identity-hover-background-image:             var(--list-item-hover-background-image);
+  --identity-hover-border-color:                 var(--list-item-hover-border-color);
+  --identity-hover-color:                        var(--list-item-hover-color);
+  --identity-hover-text-shadow-color:            var(--list-item-hover-text-shadow-color);
+
+  --identity-status-dot-border:                  1px solid transparent;
+  --identity-status-dot-border-radius:           50%;
+  --identity-status-dot-color:                   transparent;
+  --identity-status-dot-height:                  10px;
+  --identity-status-dot-width:                   10px;
+
+  --identity-configured-background-color:        rgb(  63,  63,  70 );
+  --identity-configured-border-color:            rgb(  35,  35,  39 );
+  --identity-configured-color:                   rgb( 110, 205, 205 ); /* rgb( 180, 180, 180 ); */
+  --identity-configured-status-dot-border:       1px solid rgb( 200, 200, 200 );
+  --identity-configured-status-dot-color:        rgb(  19, 115, 217 );
+  --identity-configured-text-decoration:         NONE;
+
+  --identity-not-configured-status-dot-border:   1px solid rgb( 200, 200, 200 );
+  --identity-not-configured-status-dot-color:    var(--identity-background-color);
+  --identity-not-configured-text-decoration:     NONE;
+
+  --default-identity-color:                      rgb( 140, 220, 230 );
+  --default-identity-text-shadow-color:          rgb(  20,  20,  20 );
+  --default-identity-text-decoration-color:      var(--default-identity-color);
+  --default-identity-text-decoration-line:       underline;
+  --default-identity-text-decoration-style:      double;
+  --default-identity-text-decoration:            var(--default-identity-text-decoration-style) var(--default-identity-text-decoration-line) var(--default-identity-text-decoration-color);
+
+  --collected-identity-color:                    rgb( 140, 225, 140 );
+  --collected-identity-text-shadow-color:        rgb(  20,  20,  20 );
+  --collected-identity-text-decoration:          underline dotted var(--collected-identity-color);
+
+  --imported-identity-color:                     rgb( 230, 180, 230 );
+  --imported-identity-text-shadow-color:         rgb(  20,  20,  20 );
+  --imported-identity-text-decoration:           underline dotted var(--imported-identity-color);
+
+
+
+  --input-background-color:                      rgb( 240, 240, 240 );
+  --input-border-color:                          rgb(  40,  40,  40 );
+  --input-color:                                 rgb(  20,  20,  20 );
+  --input-outline-color:                         transparent;
+
+  --input-focus-background-color:                rgb( 240, 240, 240 );
+  --input-focus-border-color:                    rgb( 240, 240, 240 );
+  --input-focus-color:                           rgb(  20,  20,  20 );
+  --input-focus-outline-color:                   blue;
+
+
+
+  --value-background-color:                      rgb(  66,  66,  70 );
+  --value-border-color:                          rgb( 103, 108, 118 );
+  --value-color:                                 rgb( 200, 200, 210 );
+
+
+
+  --button-background-color:                     transparent; /* rgb( 110, 110, 114 ); */
+  --button-border-color:                         rgb( 200, 200, 200 );
+  --button-color:                                rgb( 250, 250, 250 );
+
+  --button-text-shadow:                          rgb(  20,  20,  20 ); /* OBSOLETE THIS */
+
+  --button-disabled-background-color:            rgb( 136,  87,  88 );
+  --button-disabled-border-color:                rgb( 160, 160, 160 );
+  --button-disabled-color:                       rgb( 200, 200, 200 );
+
+  --button-hover-background-color:               rgb(  60, 160, 165 );
+  --button-hover-border-color:                   rgb( 240, 240, 240 );
+  --button-hover-color:                          rgb( 255, 255, 255 );
+  --button-hover-text-shadow-color:              rgb(  20,  20,  20 );
+
+  --button-focus-background-color:               rgb(  60, 160, 165 ); /* change -focus- to -hover- */
+  --button-focus-border-color:                   rgb( 250, 250, 250 ); /* change -focus- to -hover- */
+  --button-focus-color:                          rgb( 255, 255, 255 ); /* change -focus- to -hover- */
+
+  --button-selected-background-color:            rgb(  77, 116, 159 );
+  --button-selected-border-color:                rgb(  50,  50,  50 );
+  --button-selected-color:                       rgb( 255, 255, 255 );
+  --button-selected-text-shadow-color:           rgb(  20,  20,  20 );
+
+  --button-cancel-background-color:              rgb(  19, 115, 217 );
+  --button-cancel-color:                         rgb( 250, 250, 250 );
+  --button-cancel-disabled-background-color:     rgb( 129, 129, 143 );
+  --button-cancel-disabled-color:                rgb( 200, 200, 200 );
+  --button-cancel-hover-background-color:        rgb(  28, 131, 228 );
+  --button-cancel-hover-color:                   rgb( 255, 255, 255 );
+
+  --button-save-background-color:                rgb(  19, 115, 217 );
+  --button-save-color:                           rgb( 250, 250, 250 );
+  --button-save-disabled-background-color:       rgb( 129, 129, 143 );
+  --button-save-disabled-color:                  rgb( 200, 200, 200 );
+  --button-save-hover-background-color:          rgb(  28, 131, 228 );
+  --button-save-hover-color:                     rgb( 255, 255, 255 );
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --page-background-color:                       rgb(  47,  47,  55 );
+    --page-color:                                  rgb( 215, 215, 215 );
+    --page-font:                                   message-box;
+    --page-font-size:                              1rem;
+    --page-text-shadow:                            rgb(  20,  20,  20 );
+
+  /*--body-background-color:                       rgb(  89,  89,  91 ); */
+    --body-background-color:                       rgba(100, 100, 110, 0.8);                      
+
+    --title-background-color:                      transparent;
+    --title-border-color:                          transparent;
+    --title-border-radius:                         0px;
+    --title-color:                                 rgb( 175, 228, 228 );
+    --title-font-size:                             1.50rem;
+    --title-font-weight:                           bold;
+    --title-line-height:                           1.3em;
+    --title-shadow-color:                          rgb(   0,  80,  80 );
+
+    --instructions-background-color:               transparent;
+    --instructions-border-color:                   transparent;
+    --instructions-border-radius:                  0px;
+    --instructions-color:                          rgb( 254, 254, 255 );
+    --instructions-font-size:                      0.85rem;
+    --instructions-font-weight:                    normal;
+
+    --menu-color:                                  rgb(  24,  24,  27 );
+    --menu-text-shadow:                            rgb( 240, 240, 240 );
+    --menu-background-color:                       rgb( 244, 244, 245 );
+    --menu-font:                                   message-box;
+    --menu-font-size:                              1rem;
+
+    --panel-background-color:                      rgb( 199, 199, 203 );
+    --panel-border-color:                          rgb(  85,  85,  94 );
+
+    --identity-background-color:                   rgb( 197, 197, 199 );
+    --identity-border-color:                       rgb(   0,   0,   0 );
+    --identity-color:                              rgb(   0,   0,   0 );
+
+    --identity-lock-in-menu-background-color:      rgb( 175, 175, 177 );
+    --identity-lock-in-menu-border-color:          rgb(  90,  90,  90 );
+    --identity-lock-in-menu-color:                 rgb(  90,  90,  90 );
+
+    --identity-not-show-in-menu-background-color:  rgb( 175, 175, 177 );
+    --identity-not-show-in-menu-border-color:      rgb(  90,  90,  90 );
+    --identity-not-show-in-menu-color:             rgb(  90,  90,  90 );
+
+    --identity-selected-background-color:          rgb(  77, 116, 159 );
+    --identity-selected-border-color:              rgb( 200, 200, 200 );
+    --identity-selected-color:                     rgb( 250, 250, 250 );
+    --identity-selected-text-shadow-color:         rgb( 240, 240, 240 );
+
+    --identity-hover-background-color:             rgb(  19, 115, 217 );
+    --identity-hover-background-image:             linear-gradient(rgba(80,80,80,0.6) 20%, rgba(150,150,150,0.8) 80%);
+    --identity-hover-border-color:                 rgb( 250, 250, 250 );
+    --identity-hover-color:                        rgb( 250, 250, 250 );
+    --identity-hover-text-shadow-color:            rgb( 240, 240, 240 );
+
+    --identity-configured-background-color:        rgb(  63,  63,  70 );
+    --identity-configured-border-color:            rgb(  35,  35,  39 );
+    --identity-configured-color:                   rgb( 110, 205, 205 ); /* rgb( 180, 180, 180 ); */
+    --identity-configured-status-dot-border-color: rgb( 200, 200, 200 );
+    --identity-configured-status-dot-color:        rgb(  19, 115, 217 );
+    --identity-configured-text-decoration:         NONE;
+
+    --identity-not-configured-status-dot-border-color: rgb( 200, 200, 200 );
+    --identity-not-configured-status-dot-color:    var(--identity-background-color);
+    --identity-not-configured-text-decoration:     NONE;
+
+    --button-background-color:                     rgb( 197, 197, 199 );
+    --button-border-color:                         rgb(   0,   0,   0 );
+    --button-color:                                rgb(   0,   0,   0 );
+
+    --button-text-shadow:                          rgb( 240, 240, 240 ); /* make this obsolete */
+
+    --button-disabled-background-color:            rgb( 175, 175, 177 );
+    --button-disabled-border-color:                rgb(  90,  90,  90 );
+    --button-disabled-color:                       rgb(  90,  90,  90 );
+
+    --button-hover-background-color:               rgb(  19, 115, 217 );
+    --button-hover-border-color:                   rgb( 250, 250, 250 );
+    --button-hover-color:                          rgb( 250, 250, 250 );
+    --button-hover-text-shadow-color:              rgb( 240, 240, 240 );
+
+    --button-focus-background-color:               rgb(  19, 115, 217 ); /* change -focus- to -hover- */
+    --button-focus-border-color:                   rgb( 250, 250, 250 ); /* change -focus- to -hover- */
+    --button-focus-color:                          rgb( 250, 250, 250 ); /* change -focus- to -hover- */
+
+    --button-selected-background-color:            rgb(  77, 116, 159 );
+    --button-selected-border-color:                rgb( 200, 200, 200 );
+    --button-selected-color:                       rgb( 250, 250, 250 );
+    --button-selected-text-shadow-color:           rgb( 240, 240, 240 );
+
+    --button-cancel-color:                         rgb( 250, 250, 250 );
+    --button-cancel-background-color:              rgb(  19, 115, 217 );
+    --button-cancel-hover-color:                   rgb( 255, 255, 255 );
+    --button-cancel-disabled-color:                rgb(  90,  90,  90 );
+    --button-cancel-disabled-background-color:     rgb( 175, 175, 177 );
+    --button-cancel-hover-background-color:        rgb(  28, 131, 228 );
+
+    --instructions-color:                          rgb(   5,   5,   6 );
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root { /* using defaults (above) */
+  }
+}
+
+:root { /* FOR TESTING */
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .action-buttons label {
+    transition: background-color .15s, border-color .15s
+  }
+}

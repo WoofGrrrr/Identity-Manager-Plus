@@ -1,0 +1,1054 @@
+@import url("../styles/theming.css");
+
+body, html {
+  background-color: var(--menu-background-color);
+  color:            var(--menu-color);
+  font:             var(--menu-font);
+  font-size:        var(--menu-font-size);
+  padding:          10px;
+
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select:    none; /* Firefox */
+  -ms-user-select:     none; /* IE10+/Edge */
+  user-select:         none; /* Standard */
+}
+
+
+
+/* GENERIC */
+.panel {
+}
+
+.panel-title {
+  background-color: var(--title-background-color);
+  border:           1px solid var(--title-border-color);
+  border-radius:    var(--title-border-radius);
+  color:            var(--title-color);
+  font-size:        var(--title-font-size);
+  font-weight:      var(--title-font-weight);
+  line-height:      var(--title-line-height);
+  margin-bottom:    2px;
+  padding:          0 0.5em;
+/*text-shadow:      1px 1px var(--title-shadow-color); */
+}
+
+.subpanel {
+}
+
+.subpanel-title {
+  background-color: var(--subtitle-background-color);
+  border:           1px solid var(--subtitle-border-color);
+  border-radius:    var(--subtitle-border-radius);
+  color:            var(--subtitle-color);
+  font-size:        var(--subtitle-font-size);
+  font-weight:      var(--subtitle-font-weight);
+  line-height:      var(--subtitle-line-height);
+  margin-bottom:    2px;
+  padding:          0 0.5em;
+/*text-shadow:      1px 1px var(--subtitle-shadow-color); */
+}
+
+.button-panel  {
+  margin-top: 0.5em;
+  text-align: center;
+}
+
+.grid-button-panel  {
+}
+
+.grid-button-panel-row  {
+  margin-bottom: 0.5em;
+}
+
+.grid-button-panel-label  {
+  text-align: right;
+}
+
+.grid-button-panel-button  {
+  text-align: center;
+  width:      100%;
+}
+
+.options-panel {
+  background-color: var(--panel-background-color);
+/*border:           1px solid var(--panel-bborder-color); */
+  border-radius:    5px;
+  padding:          0.5em;
+}
+
+.hint {
+}
+
+.compact-list {
+  margin: 0;
+  padding: 0px 0px 0px 1.0em;
+}
+
+.compact-list > li {
+}
+
+input[type="checkbox"].open-close-check {
+  display: none;
+}
+
+input[type="checkbox"].open-close-check + label {
+  background-repeat: no-repeat;
+  border:            NONE;                    
+  cursor:            pointer !important;
+  height:            10px;
+  width:             10px;
+  display:           inline-block;
+  padding:           0px;;
+}
+
+input[type="checkbox"].open-close-check:checked + label {
+  background-image:  url("../images/icons/light-gray-triangle-outline-down_10x10.png") !important;
+}
+
+input[type="checkbox"].open-close-check:not(checked) + label {
+  background-image:  url("../images/icons/light-gray-triangle-outline-right_10x10.png") !important;
+}
+
+.options-open-close-panel {
+/*background-color:  var(--panel-background-color);*/
+/*border:            1px solid var(--panel-border-color);*/
+/*border-radius:     5px;*/
+  margin-left:       12px;
+/*padding:           4px;*/
+}
+
+.dev-option-panel {
+  border:  1px solid transparent;
+  padding: 0.1 0.25em 0 0.25em;
+}
+
+.dev-button-panel {
+  display:         flex;
+  justify-content: space-evenly;
+}
+
+tr.can-mark-error > td.can-mark-error,
+td.can-mark-error,
+span.can-mark-error
+{
+  border:           var(--can-mark-error-border); /* make space for error border */
+}
+
+tr.can-mark-error[error="true"] > td.can-mark-error,
+td.can-mark-error[error="true"],
+span.can-mark-error[error="true"]
+{
+/*background-color: var(--mark-error-background-color); */
+  border:           var(--mark-error-border); /* MABXXX BACKGROUND-COLOR INSTEAD??? */
+}
+
+
+
+/* FULL PAGE */
+#idmOptionsWrapper :is(button, input, select, th, tr, td, table, input[type="checkbox"] ~ label):-moz-window-inactive {
+  opacity: var(--window-inactive-opacity);
+}
+
+#idmOptionsWrapper input[type="text"] {
+  background-color: var(--input-background-color) !important;
+  background-image: NONE !important;
+  color:            var(--input-color) !important;
+  -moz-appearance:  NONE;
+}
+
+#idmOptionsWrapper {
+
+  /* grid layout */
+  display:             grid;
+
+  grid-row-gap:        1em;
+  grid-template-areas: "extension-options"
+                       "display-order"
+                       "border-colors-d";
+  grid-template-rows:  min-content auto min-content;
+
+  #idmExtensionOptionsPanel {
+    grid-area: extension-options;
+  }
+  #idmIdentityChooserOptionsWrapper {
+    grid-area: display-order;
+  }
+  #idmBorderColors_D {
+    grid-area: border-colors-d;
+  }
+}
+
+
+
+#idmExtensionOptionsPanel {
+
+  /* grid layout */
+  display:               grid;
+
+  grid-template-areas:   "options spacer"
+                         "hint    spacer";
+  grid-template-columns: max-content auto;
+  grid-template-rows:    min-content min-content;
+
+  #idmExtensionOptions {
+    grid-area: options;
+  }
+  #idmRestartHint {
+    grid-area: hint;
+  }
+  #idmExtensionOptionsPanelSpacer {
+    grid-area: spacer;
+  }
+}
+
+#idmExtensionOptions {
+}
+
+#idmExtensionOptionsButtonPanel {
+  margin: 0.5em 0 0 0.5em;
+}
+
+#idmRestartHint {
+  grid-area: hint;
+}
+
+
+#idmDeveloperOptions {
+  border:     1px solid red;
+  margin-top: 0.5em;
+  padding:    0.25em 0.25em;
+}
+
+#idmRestartHint {
+  margin-top: 0.75em;
+}
+
+
+
+#idmIdentityChooserOptionsWrapper {
+/*margin-top: 2em; */
+
+  /* grid layout */
+  display:               grid;
+
+  grid-template-areas:   "chooser-options spacer";
+  grid-template-columns: max-content auto;
+
+  #idmIdentityChooserOptions {
+    grid-area: chooser-options;
+  }
+  #idmChooserOptionsWrapperSpacer {
+    grid-area: spacer;
+  }
+}
+
+
+
+#idmIdentityChooserOptions {
+  border:        1px solid var(--panel-border-color);
+  border-radius: 5px;
+  padding:       0 1em 1em 1em;
+
+  /* grid layout */
+  display:               grid;
+
+  grid-template-areas:   "controls spacer"
+                         "list     list";
+  grid-template-columns: max-content auto;
+
+  #idmIdentityChooserControls {
+    grid-area: controls;
+  }
+  #idmIdentityChooserOptionsSpacer {
+    grid-area: spacer;
+  }
+  #idmIdentityDisplayOrderListWrapper {
+    grid-area: list;
+  }
+}
+
+
+
+#idmIdentityChooserControls {
+
+  /* grid layout */
+  display:               grid;
+/*display:               NONE;*/
+
+/*grid-row-gap:          0.5em; /* USE margin-top 0.5em instead - display grid still adds gaps if rows are DISPLAY:NONE */
+  grid-row-gap:          0;
+  grid-template-areas:   "chooser-title       spacer"
+                         "popup-options-panel spacer"
+                         "display-order-title spacer"
+                         "display-order-hints spacer"
+                         "controls-panel      spacer";
+  grid-template-columns: max-content auto;
+  grid-template-rows:    auto auto auto auto auto;
+
+  #idmIdentityChooserTitle {
+    grid-area: chooser-title;
+  }
+  #idmPopupOptionsPanel   {
+    grid-area:  popup-options-panel;
+  }
+  #idmDisplayOrderTitle {
+    grid-area: display-order-title;
+  }
+  #idmDisplayOrderHintsPanel {
+    grid-area: display-order-hints;
+  }
+  #idmDisplayOrderControlsPanel {
+    grid-area: controls-panel;
+  }
+  #idmIdentityChooserControlsSpacer{
+    grid-area: spacer;
+  }
+}
+
+#idmIdentityChooserTitle {
+  margin-left: -1.0em;
+}
+
+#idmPopupOptionsPanel {
+  margin-top: 0.5em;
+}
+
+#idmDisplayOrderControlsTitlePanel {
+  margin-left: -1.0em;
+}
+
+#idmPopupOptions {
+}
+
+#idmEnableKeepComposeOnCloseWrapper {
+  margin: 0.75em 0;
+}
+
+#idmDisplayOrderTitle {
+  margin-left: -0.5em;
+}
+
+#idmDisplayOrderHintsPanel {
+  padding: 0 0.5em;
+}
+
+#idmDisplayOrderControlsPanel {
+  margin-top: 0.5em;
+} 
+
+#idmShowHideAllButtonPanel {
+}
+
+#idmLockUnlockAllButtonPanel {
+}
+
+#idmMoveSelectedButtonPanel {
+} 
+
+.identity-filter-control {
+  border:        1px solid transparent;
+  margin-left:   2.0em;
+}
+
+.identity-sort-control {
+  border:        1px solid transparent;
+  margin-left:   2.0em;
+}
+
+
+
+#idmIdentityDisplayOrderListWrapper {
+
+  /* grid layout */
+  display:               grid;
+
+  grid-template-areas:   "filters   spacer"
+                         "auto-sort spacer"
+                         "list      spacer";
+/*grid-template-columns: max-content auto;*/
+  grid-template-columns: auto min-content;
+  grid-template-rows:    min-content min-content auto;
+
+  #idmDisplayOrderFiltersPanel {
+    grid-area: filters;
+  }
+  #idmAutoSortControlsPanel {
+    grid-area: auto-sort;
+  }
+  #idmIdentityDisplayOrderList   {
+    grid-area: list;
+  }
+  #idmIdentityDisplayOrderListWrapperSpacer {
+    grid-area: spacer;
+  }
+}
+
+#idmIdentityDisplayOrderListWrapper {
+  margin-top: 1em;
+}
+
+#idmAutoSortControlsPanel {
+  margin-bottom: 0.25em;
+/*margin-top:    1.0em;*/
+  border:        1px solid var(--panel-border-color);
+  border-radius: 5px;
+  padding:       0.05em 0.25em;
+
+  & > span { /* #idmAutoSortByPanel and #idmAutoSortDirectionPanel */
+    display:        inline-block;
+    vertical-align: top;
+  }
+}
+
+#idmAutoSortControls {
+}
+
+#idmAutoSortButtonPanel {
+}
+
+#idmDisplayOrderFiltersPanel {
+  margin-bottom: 0.25em;
+/*margin-top:    1.0em;*/
+  border:        1px solid var(--panel-border-color);
+  border-radius: 5px;
+  padding:       0.05em 0.25em;
+}
+
+#idmDisplayOrderFilters { /* <TABLE> */
+/*width: 100%;*/
+}
+
+#idmDisplayOrderFilterPanelErrors { /* <SPAN> */
+  margin-top:       0.20em;
+}
+
+.filter-panel-error { /* <DIV> */
+  background-color: var(--error-text-background-color);
+  border:           var(--error-text-border);
+  color:            var(--error-text-color);
+  font:             var(--error-text-font);
+  font-size:        var(--error-text-font-size);
+  font-weight:      var(--error-text-font-weight);
+  margin-left:      2.0em;
+  margin-top:       0.20em;
+  padding:          0em 0.25em;
+  width:            fit-content;
+}
+
+#idmDisplayOrderFilterPanelMessages { /* <SPAN> */
+  margin-top:       0.20em;
+}
+
+.filter-panel-message { /* <DIV> */
+  background-color: var(--message-text-background-color);
+  border:           var(--message-text-border);
+  color:            var(--message-text-color);
+  font:             var(--message-text-font);
+  font-size:        var(--message-text-font-size);
+  font-weight:      var(--message-text-font-weight);
+  margin-left:      2.0em;
+  margin-top:       0.20em;
+  padding:          0em 0.25em;
+  width:            fit-content;
+}
+
+#idmIdentityDisplayOrderList { /*  <TABLE> Identity list */
+  background-color: var(--panel-background-color);
+  border:           1px solid var(--panel-border-color);
+  border-radius:    10px;
+  border-spacing:   1px 0.5em;
+  padding:          0.5em 1em 0.5em 0.5em;
+  -moz-appearance:  none;
+}
+
+#idmIdentityDisplayOrderList   {
+  overflow-y: auto;
+}
+
+
+.identity-list-header { /* <TR>  Identity list header row */
+}
+
+tr.identity-list-header > :nth-child(2) { /* this is a <TH> */
+  border-bottom-left-radius: 5px;
+  border-left:               1px solid var(--list-header-item-border-color);
+  border-top-left-radius:    5px;
+}
+
+tr.identity-list-header > :last-child(2) { /* this is a <TH> */
+  border-bottom-right-radius: 5px;
+  border-right:               1px solid var(--list-header-item-border-color);
+  border-top-right-radius:    5px;
+}
+
+.header-text {
+  background-color: var(--list-header-item-background-color);
+  border-bottom:    1px solid var(--list-header-item-border-color);
+  border-top:       1px solid var(--list-header-item-border-color);
+  color:            var(--list-header-item-color);
+  font-weight       var(--list-header-item-font-weight);
+  text-shadow:      1px 1px var(--list-header-item-shadow-color);
+}
+ 
+
+.header-controls-left { /* <TH> */
+}
+
+.header-border-color { /* <TH> */
+}
+
+.header-border-color-dot { /* <SPAN> */
+  background-color: TRANSPARENT;
+  border:           1px SOLID #808080; /* MABXXX use a variable */
+  border-radius:    50%;
+  display:          inline-block; 
+  height:           1em;
+  width:            1em;
+}
+
+.header-account { /* <TH> */
+}
+
+.header-label { /* <TH> */
+}
+
+.header-email { /* <TH> */
+}
+
+.header-pos { /* <TH> */
+}
+
+.header-index { /* <TH> */
+}
+
+.header-id { /* <TH> */
+}
+
+.header-controls-right { /* <TH> */
+}
+
+
+.identity-item { /* <TR>  Identity list row */
+  border:           none;
+  color:            var(--identity-color);
+  cursor:           default;
+  display:          table-row;
+  font:             var(--menu-font);
+  font-size:        var(--menu-font-size);
+  padding:          0.5rem 1.1rem;
+  text-align:       left;
+  text-decoration:  none;
+  text-shadow:      none;
+  white-space:      nowrap;
+  width:            100%;
+  -moz-appearance:  none;
+}
+
+.identity-item:is(.filter-by-account, .filter-by-label, .filter-by-email, .filter-by-imported, .filter-by-collected, .filter-by-showInMenu) { /* <TR>  Identity list row */
+  display:          NONE;
+}
+
+/* show ns-resize cursor for *NOT* lock-in-menu Identity Items */
+.identity-item:not(.lock-in-menu).identity-item-draggable {
+  cursor:           ns-resize;
+}
+
+/* show pointer cursor for lock-in-menu Identity Items */
+.identity-item.lock-in-menu {
+  cursor:           pointer;
+}
+
+.sortable-ghost { /* For Sortable.js: Class name for the drop placeholder */
+  background-color: red;
+}
+
+.sortable-chosen { /* For Sortable.js: Class name for the chosen item */
+  background-color: green;
+  opacity:          1 !important;
+}
+
+.sortable-drag { /* For Sortable.js: Class name for the dragging item */
+  background-color: blue;
+  opacity:          1 !important;
+}
+
+.identity-item-controls-left { /* .identity-item > .identity-item-controls-left */
+  height:        100%;
+  padding:       0;
+  padding-right: 0.25em;
+}
+
+.identity-item-check { /* any checkbox */
+  cursor: pointer !important;
+}
+
+/* those items that show actual Identity data: label, email, id, etc */
+.identity-item-data {
+  background-color: var(--identity-background-color);
+
+  border-bottom:    1px solid;
+  border-top:       1px solid;
+  border-color:     var(--identity-border-color); /* MUST BE AFTER border-bottom and border-top as they revert color */
+
+  color:            var(--identity-color);
+  padding:          0.1em 0.5em;
+  white-space:      nowrap;
+  -moz-appearance:  none;
+}
+
+.identity-item > :nth-child(2) { /* .identity-item:nth-child(2) hopefully the first identity-item-data */
+  /* hopefully the first identity-item-data: rounded left corners */
+  border-bottom-left-radius: 5px;
+  border-left-style:         solid;
+  border-left-width:         1px;
+  border-top-left-radius:    5px;
+}
+
+.identity-item > :nth-last-child(2) { /* .identity-item:nth-last-child(1) hopefully the last identity-item-data */
+  /* hopefully the last identity-item-data: rounded right corners */
+  border-bottom-right-radius: 5px;
+  border-right-style:         solid;
+  border-right-width:         1px;
+  border-top-right-radius:    5px;
+}
+
+/* colors for lock-in-menu identities */
+.identity-item.lock-in-menu:not(.not-show-in-menu) > .identity-item-data {
+  background-color:    var(--identity-lock-in-menu-background-color);
+  border-color:        var(--identity-lock-in-menu-border-color);
+}
+.identity-item.lock-in-menu:not(.not-show-in-menu, .account-default, .collected-identity, .imported-identity) > .identity-item-data {
+  color:               var(--identity-lock-in-menu-color);
+}
+
+/* colors for not-show-in-menu identities */
+.identity-item.not-show-in-menu > .identity-item-data {
+  background-color:    var(--identity-not-show-in-menu-background-color);
+  border-color:        var(--identity-not-show-in-menu-border-color);
+  text-decoration:     var(--identity-not-show-in-menu-text-decoration);
+}
+.identity-item.not-show-in-menu:not(.account-default, .collected-identity, .imported-identity) > .identity-item-data {
+  color:               var(--identity-not-show-in-menu-color);
+}
+
+/*** IDENTITY ITEM SHOW-IN-MENU CHECKBOXES ***/
+.show-in-menu-check { /* this specific checkbox: .identity-item > .identity-item-controls-left > .show-in-menu-check */
+}
+
+/* contains the dot to display the color from BorderColors D */
+.identity-item-border-color { /* .identity-item > .identity-item-border-color */
+  margin:              0;
+  padding:             0.1em 0.35em 0.0em 0.25em;
+  width:               1em;
+  max-width:           1em;
+}
+
+/* the actual dot to display the color from BorderColors D */
+.identity-item-border-color-dot { /* .identity-item > .identity-item-border-color > .identity-item-border-color-dot */
+  background-color: var(--bullet-color, TRANSPARENT);
+  border:              1px var(--bullet-border-style, dotted) #404040;   /* MABXXX Maybe use variables for default style and for color??? Maybe background-image */
+  border-radius:       50%;
+  display:             inline-block; 
+  height:              1em;
+  width:               1em;
+}
+
+.identity-item-account { /* .identity-item > .identity-item-account */
+  width:               auto;
+}
+
+.identity-item-label { /* .identity-item > .identity-item-label */
+  height:              100%;
+  width:               auto;
+}
+
+.identity-item-label-text { /* tr.identity-item > td.identity-item-label > span.identity-item-label-text */
+  display:             inline-block;
+  height:              100%;
+  text-decoration:     inherit;
+  vertical-align:      middle;
+}
+
+.identity-item-markers { /* tr.identity-item > td.identity-item-label > span.identity-item-markers */
+  height:              16px;
+  margin-left:         0.10em;
+  vertical-align:      middle;
+}
+
+/* tr.identity-item > td.identity-item-label > span.identity-item-markers > .identity-item-marker */
+.identity-item-marker {
+  background-color:    transparent !important;
+  background-position: center;
+  background-repeat:   no-repeat;
+  background-size:     cover;
+  display:             inline-block;
+  height:              16px;
+  min-height:          16px;
+  min-width:           16px;
+  width:               16px;
+}
+
+/* tr.identity-item > td.identity-item-label > span.identity-item-markers > .identity-item-marker.marker-default */
+.identity-item-marker.marker-default {
+  background-image:    url("../images/icons/crown_gold_16x16.png");
+}
+
+/* tr.identity-item > td.identity-item-label > span.identity-item-markers > .identity-item-marker.marker-collected */
+.identity-item.collected-identity .identity-item-marker.marker-collected {
+  background-image:    url("../images/icons/sun_yellow_16x16.png");
+}
+
+/* tr.identity-item > td.identity-item-label > span.identity-item-markers > .identity-item-marker.marker-imported */
+.identity-item.imported-identity .identity-item-marker.marker-imported {
+  background-image:    url("../images/icons/into_right-left_dark-blue_16x16.png");
+}
+
+.identity-item-email { /* .identity-item > .identity-item-email */
+  width:               auto;
+}
+
+.identity-item-pos { /* .identity-item > .identity-item-pos */
+  text-align:          right;
+}
+
+.identity-item-index { /* .identity-item > .identity-item-index */
+  text-align:          right;
+}
+
+.identity-item-id { /* .identity-item > .identity-item-id */
+  text-align:          right;
+}
+
+/* showInMenu and not lockInMenu and not disabled && hover */
+.identity-item:not(.not-show-in-menu, .lock-in-menu, [disabled]):hover > .identity-item-data {
+  background-color:    var(--identity-hover-background-color);
+  border-color:        var(--identity-hover-border-color);
+  color:               var(--identity-hover-color);
+  text-shadow:         1px 1px var(--identity-hover-text-shadow-color);
+}
+
+/* selected and not lockInMenu and not disabled */
+.identity-item[selected="true"]:not(.lock-in-menu, [disabled]) > .identity-item-data { /* what about when :hover??? */
+  background-color:    var(--identity-selected-background-color);
+  border-color:        var(--identity-selected-border-color);
+  color:               var(--identity-selected-color);
+  text-shadow:         1px 1px var(--identity-selected-text-shadow-color);
+}
+
+/* not showInMenu and not lockInMenu and not disabled && hover */
+.identity-item.not-show-in-menu:not(.lock-in-menu, [disabled]):hover > .identity-item-data { /* what about when selected??? */
+  background-color:    color-mix(in srgb, var(--identity-not-show-in-menu-background-color) 90%, #FFFFFF);
+/*border-color:        var(--identity-not-show-in-menu-border-color); */
+/*color:               var(--identity-not-show-in-menu-color); */
+  text-shadow:         1px 1px var(--identity-hover-text-shadow-color);
+}
+
+/* not lockInMenu and not disabled && hover */
+.identity-item:not(.lock-in-menu, [disabled]):hover > .identity-item-data {
+  background-image:    var(--identity-hover-background-image);
+}
+
+.identity-item-controls-right {
+  height:              100%;
+  padding:             0;
+  padding-left:        0.5em;
+
+  /* grid layout */
+  display:               grid;
+
+  grid-column-gap:       4px;
+  grid-template-areas:   "lock-in-menu move-up-down move-top-bottom edit";
+  grid-template-columns: min-content min-content min-content min-content;
+
+  .lock-in-menu-controls {
+    grid-area: lock-in-menu;
+  }
+  .move-up-down-controls {
+    grid-area: move-up-down;
+  }
+  .move-to-top-bottom-controls {
+    grid-area: move-top-bottom;
+  }
+  .edit-controls {
+    grid-area: edit;
+  }
+}
+
+/*** IDENTITY ITEM LOCK-IN-MENU CHECKBOXES ***/
+
+.lock-in-menu-controls {
+  cursor:  default;
+  margin:  0;
+  padding: 0;
+}
+
+/* REMEMBER:
+ * visibility:hidden hides the element, but it still takes up space in the layout.
+ * display:none      removes the element from the document. It does not take up any space. 
+ */
+.lock-in-menu-check {
+  display: none; /* not visible, takes no space. Replaced with a background image for the next-sibling label. Image checkboxes!  Ausgezeichnet!!!  */
+}
+
+.lock-in-menu-label {
+}
+
+.lock-in-menu-check + label {
+  background-color: transparent; /* <==================== MABXXX REPLACE THIS WITH A BACKGROUND IMAGE */
+  border:           1px solid #202020; /* <-------------------- MABXXX ------------------------<<< */
+  cursor:           pointer !important;
+  height:           16px;
+  width:            16px;
+  display:          inline-block;
+  margin-top:       0.5em;
+  padding:          0px;
+/*vertical-align:   middle;*/
+}
+
+.lock-in-menu-check:checked + label {
+  background-color: red; /* <==================== MABXXX REPLACE THIS WITH A BACKGROUND IMAGE */
+  border:           NONE;
+  padding:          0px;
+}
+
+.identity-controls-panel {
+  cursor:         default !important;
+  margin:         0;
+  padding:        0;
+}
+
+/* REMEMBER:
+ * visibility:hidden hides the element, but it still takes up space in the layout.
+ * display:none      removes the element from the document. It does not take up any space. 
+ */
+tr:not(.lock-in-menu) div:is(.move-up-down-controls, .move-to-controls) {
+  visibility: visible;
+}
+
+tr.lock-in-menu div:is(.move-up-down-controls, .move-to-controls) {
+  visibility: hidden; /* not visible but still takes up space */
+}
+
+
+.identity-item-controls-panel {
+}
+
+/*** IDENTITY ITEM MOVE UP/DOWN/TO-TOP/TO-BOTTOM BUTTON PANELS ***/
+
+.identity-item .identity-controls-panel.move-up-down-controls {
+  min-width:  24px;   /* buttons are 12px high x 24px wide */
+  min-height: 24px;   /* buttons are 12px high x 24px wide */
+}
+.identity-item .identity-controls-panel.move-to-top-bottom-controls {
+  min-width:  24px;   /* buttons are 12px high x 24px wide */
+  min-height: 24px;   /* buttons are 12px high x 24px wide */
+}
+
+.edit-controls {
+  display:        flex;
+  flex-direction: row;
+  vertical-align: middle;
+}
+
+
+
+/* MABXXX WHAT ABOUT .imported-identity ??? */
+.identity-item.collected-identity:not(.account-default) > .identity-item-data {
+  color:           var(--collected-identity-color);
+/*font-size:       110%; */
+  font-weight:     bold;
+  text-decoration: var(--collected-identity-text-decoration);
+  text-shadow:     1px 1px var(--collected-identity-text-shadow-color);
+}
+.identity-item.imported-identity:not(.account-default) > .identity-item-data {
+  color:           var(--imported-identity-color);
+/*font-size:       110%; */
+  font-weight:     bold;
+  text-decoration: var(--imported-identity-text-decoration);
+  text-shadow:     1px 1px var(--imported-identity-text-shadow-color);
+}
+.identity-item.account-default > .identity-item-data {
+  color:           var(--default-identity-color);
+/*font-size:       110%; */
+  font-weight:     bold;
+  text-decoration: var(--default-identity-text-decoration);
+  text-shadow:     1px 1px var(--default-identity-text-shadow-color);
+}
+.identity-item.account-default.identity-item.not-show-in-menu > .identity-item-data {
+  text-decoration-color: var(--identity-not-show-in-menu-text-decoration-color);
+  text-decoration-line:  var(--default-identity-text-decoration-line) var(--identity-not-show-in-menu-text-decoration-line);
+  text-decoration-style: var(--identity-not-show-in-menu-text-decoration-style);
+}
+
+
+
+#idmBorderColors_D {
+}
+
+
+
+/* BUTTONS IN GENERAL */
+
+#idmOptionsWrapper button.identity-item-button {
+  background-color:    transparent !important;
+  background-position: center;
+  background-repeat:   no-repeat;
+  background-size:     cover;
+  border:              1px solid transparent;
+  cursor:              pointer;
+  display:             block;
+  height:              10px;
+  min-height:          10px;
+  margin:              2px 0px 0px 0px;
+  padding:             0;
+  width:               10px;
+  min-width:           10px;
+  -moz-appearance:     none;
+}
+
+#idmOptionsWrapper button.identity-item-button:first-child {
+  margin-top:          2px; /* MABXXX NOT NEEDED */
+}
+
+
+
+/* ICON BUTTONS IN GENERAL */
+#idmOptionsWrapper button.edit-identity {
+  height:     24px;
+  min-height: 24px;
+  min-width:  24px;
+  width:      24px;
+}
+#idmOptionsWrapper button.delete-identity {
+  height:     24px;
+  min-height: 24px;
+  min-width:  24px;
+  width:      24px;
+}
+#idmOptionsWrapper button.move-identity-button {
+  height:     10px;
+  width:      24px;
+}
+
+/* ICON BUTTONS WHEN DISABLED */
+#idmOptionsWrapper button.edit-identity[disabled] {
+  background-image:    url("../idmages/icons/edit_medium_gray.png") !important;
+}
+#idmOptionsWrapper button.delete-identity[disabled] {
+  background-image:    url("../images/icons/trashcan-gray-24x24.png") !important;
+}
+tr.account-default button.delete-identity {
+  background-image:    url("../images/icons/trashcan-gray-24x24.png") !important;
+}
+
+/* ICON BUTTONS WHEN NOT DISABLED */
+#idmOptionsWrapper button.move-identity-up:not([disabled]) { /* MABXXX WHAT IF IT *IS* DISABLED??? */
+  background-image:    url("../images/icons/triangle-up-small-medium-blue_10x24.png") !important;
+}
+#idmOptionsWrapper button.move-identity-down:not([disabled]) { /* MABXXX WHAT IF IT *IS* DISABLED??? */
+  background-image:    url("../images/icons/triangle-down-small-medium-blue_10x24.png") !important;
+}
+#idmOptionsWrapper button.move-identity-to-top:not([disabled]) { /* MABXXX WHAT IF IT *IS* DISABLED??? */
+  background-image:    url("../images/icons/triangle-line-up-small-medium-blue_10x24.png") !important;
+}
+#idmOptionsWrapper button.move-identity-to-bottom:not([disabled]) { /* MABXXX WHAT IF IT *IS* DISABLED??? */
+  background-image:    url("../images/icons/triangle-line-down-small-medium-blue_10x24.png") !important;
+}
+#idmOptionsWrapper button.edit-identity:not([disabled]) {
+  background-image:    url("../images/icons/edit_light_gray_32x32.png") !important;
+}
+#idmOptionsWrapper button.delete-identity:not([disabled]) {
+  background-image:    url("../images/icons/trashcan-red-24x24.png") !important;
+}
+
+/* ICON BUTTONS WHEN HOVERING */
+/*
+#idmOptionsWrapper button.identity-item-button:not([disabled]):hover {
+  border-color:        var(--button-hover-border-color);
+}
+*/
+
+#idmOptionsWrapper button.move-identity-up:not([disabled]):hover {
+  background-image:    url("../images/icons/triangle-up-small-light-blue_outlined_10x24.png") !important;
+}
+#idmOptionsWrapper button.move-identity-down:not([disabled]):hover {
+  background-image:    url("../images/icons/triangle-down-small-light-blue_outlined_10x24.png") !important;
+}
+#idmOptionsWrapper button.move-identity-to-top:not([disabled]):hover {
+  background-image:    url("../images/icons/triangle-line-up-small-light-blue_outlined_10x24.png") !important;
+}
+#idmOptionsWrapper button.move-identity-to-bottom:not([disabled]):hover {
+  background-image:    url("../images/icons/triangle-line-down-small-light-blue_outlined_10x24.png") !important;
+}
+#idmOptionsWrapper button.edit-identity:not([disabled]):hover {
+  background-image:    url("../images/icons/edit_white_32x32.png") !important;
+}
+#idmOptionsWrapper button.delete-identity:not([disabled]):hover {
+  background-image:    url("../images/icons/trashcan-red-lighter-24x24.png") !important;
+}
+
+#idmOptionsWrapper button.identity-item-button[disabled]:not(.edit-identity, .delete-identity) { /* edit & delete have their own diabled icons */
+  opacity: 0.7; /* MABXXX SHOULD USE A DIFFERENT backgrond-image INSTEAD */
+}
+
+
+
+/* Anything done with non-specific selectors can be influenced
+ * by outsiders, e.g. userChrome.css
+ */
+
+/* BACICALLY ALMOST NONE OF THIS BUTTON CRAP EVEN WORKS - THANKS FOR WASING MY TIME, THUNDERBIRD */
+/* I could not get ANY variables to work, not from themes.css, AND not locally */
+#idmOptionsWrapper button:not(.identity-item-button, .identity-item-marker) {
+  background-image: NONE !important;
+  border:           1px solid transparent;
+  border-radius:    0.5em;
+  font:             var(--menu-font);
+  font-size:        var(--menu-font-size);
+  height:           1.5rem;
+  margin:           0 ;
+  padding:          0.8rem 1.1rem;
+  text-align:       left;
+  text-decoration:  none;
+  text-shadow:      none;
+  -moz-appearance:  none;
+  appearance:       none;
+}
+
+#idmOptionsWrapper button:not(.identity-item-button, .identity-item-marker, [disabled]) {
+  background-color: rgb(110, 110, 114);
+  border-color:     rgb(200, 200, 200);
+  color:            rgb(250, 250, 250);
+  color:            BLACK; /* yeah, this does NOT work */
+}
+
+#idmOptionsWrapper button:not(.identity-item-button, .identity-item-marker)[disabled] {
+/*background-color: rgb(75, 75, 75);*/
+/*border-color:     rgb(90, 90, 90);*/
+/*color:            rgb(120, 120, 120); /* does even THIS work? NO. */
+  opacity:          var(--window-inactive-opacity);
+}
+
+#idmOptionsWrapper button:not(.identity-item-button, .identity-item-marker, [disabled]):hover { /* HOVER ESPECIALLY DOES NOT WORK */
+  background-color: rgb(60, 160, 165);
+  background-image: NONE !important;
+  border-color:     rgb(240, 240, 240);
+  color:            rgb(255, 255, 255);
+  text-shadow:      1px 1px rgb(20, 20, 20);
+}
+
+#idmOptionsWrapper button:not(.identity-item-marker, [disabled]) {
+  cursor:           pointer;
+}
+
+#idmOptionsWrapper button:not(.identity-item-marker)[disabled] {
+  cursor:           not-allowed;
+}
+
+#idmOptionsWrapper button > label {
+  cursor:           inherit;
+}
+
+#idmOptionsWrapper button:not(.identity-item-button, .identity-item-marker):-moz-window-inactive {
+  opacity: var(--window-inactive-opacity);
+}

@@ -1,0 +1,358 @@
+/* identity editor styles */
+
+@import url("../styles/theming.css");
+
+body, html {
+  background-color: var(--menu-background-color);
+  color:            var(--menu-color);
+  font:             var(--menu-font);
+  font-size:        var(--menu-font-size);
+  height:           100%;
+/*margin:           5px; */
+/*width:            100%; */
+}
+
+.layout-vertical {
+  display:        flex;
+  flex-direction: column;
+}
+
+.layout-horizontal {
+  display:        flex;
+  flex-direction: row;
+}
+
+div#identity_editor {
+  height:  100%;
+  margin:  0.8em auto;
+  padding: 2px;
+  width:   100%;
+}
+
+#instructions_panel {
+  margin: 0.5em 1em;
+}
+
+#instructions {
+  color:       var(--instructions-color);
+  font-size:   1.5rem;
+  font-weight: 300;
+  line-height: 1.3em;
+}
+
+#disclaimer {
+  color:      var(--disclaimer-color);
+  font-size:  0.75rem;
+  margin-top: 0.5rem;
+}
+
+#identity_data_panel { /* this is a <DIV> */
+  background-color: var(--panel-background-color);
+  border:           1px solid var(--panel-border-color);
+  border-radius:    5px;
+  margin:           0.2em 1em;
+  padding:          0.2em;
+}
+
+div#identity_editor:not(.identity-border-color) #identity_border_color_panel {
+  display: none;
+}
+
+div#identity_editor.identity-border-color #identity_border_color_panel {
+  display: table-row;
+}
+
+#identity_border_color_swatch {
+  background-color: transparent;
+  border:           1px solid transparent;
+  border-radius:    5px;
+  display:          inline-block;
+  height:           0.85em;
+  width:            5em;
+}
+
+div#identity_editor.identity-border-color #identity_border_color_swatch {
+  background-color: var(--identity-border-color, --button-background-color);
+  border-color:     #000000;
+}
+
+div#identity_editor.identity-border-color #identity_data_panel {
+  border: 4px solid var(--identity-border-color);
+}
+
+#identity_data { /* this is a <TABLE> */
+}
+
+.identity-data-item { /* this is a <TR> */
+}
+
+.identity-data-label { /* this is a <TD> */
+  font-weight:    bold;
+  vertical-align: top;
+}
+
+.identity-data-indicator-slot { /* this is a <TD> */
+  margin:         0 !important;
+  max-width:      1em !important;
+  padding:        0 !important;
+  text-align:     RIGHT !important;
+  vertical-align: TOP !important;
+  width:          1em !important;
+}
+
+.identity-data-indicator { /* this is a <LABEL> */
+/*color:           RED !important; */
+  margin:          0 !important;
+  max-width:       1em !important;
+  padding:         0 !important;
+  vertical-align:  TOP !important;
+  text-align:      RIGHT !important;
+  width:           1em !important;
+  -moz-appearance: none;
+}
+
+.identity-data-value { /* this is a <TD> */
+  vertical-align: top;
+}
+
+:is(div, label)[hide-me="true"] {
+  display: none;
+}
+:is(div, label)[hide-me="false"] {
+  display: inline;
+}
+
+tr[hide-me="true"] {
+  display: none;
+}
+tr[hide-me="false"] {
+  display: table-row;
+}
+
+#identity_data .identity-item-text { /* MABXXX I can't get this to override userContent.css */
+  background-color: var(--input-background-color) !important;
+  border:           2px inset var(--input-border-color) !important;
+  border-radius:    5px;
+  color:            var(--input-color) !important;
+  outline:          NONE !important;
+  min-width:        30em;
+  -moz-appearance:  none;
+}
+
+#identity_data .identity-item-text::focus { /* MABXXX I can't get this to override userContent.css */
+  background-color: var(--input-focus-background-color) !important;
+  border:           2px inset var(--input-focus-border-color) !important;
+  color:            var(--input-focus-color) !important;
+  outline:          2px var(--input-focus-outline-color) !important;
+}
+
+#identity_data .identity-item-textarea { /* MABXXX I can't get this to override userContent.css */
+  background-color: var(--input-background-color) !important;
+  border:           2px inset var(--input-border-color) !important;
+  border-color:     var(--input-border-color) !important;
+  color:            var(--input-color) !important;
+  outline:          NONE;
+  min-width:        50em;
+}
+
+#identity_data .identity-item-textarea::focus { /* MABXXX I can't get this to override userContent.css */
+  background-color: var(--input-focus-background-color) !important;
+  border:           2px inset var(--input-focus-border-color) !important;
+  color:            var(--input-focus-color) !important;
+  outline:          2px var(--input-focus-outline-color) !important;
+}
+
+.identity-item-value-box {
+  display: inline-flex;
+}
+
+.identity-item-value {
+  background-color: var(--value-background-color) !important;
+  border:           1px solid var(--value-border-color) !important;
+  border-radius:    5px;
+  color:            var(--value-color) !important;
+  padding:          0em 0.5em;
+}
+
+/* #identity_accountdefault_check + label { */
+#identity_accountdefault_check:checked + label {
+  color:           var(--default-identity-color);
+/*font-size:       110%; */
+  font-weight:     bold;
+/*text-decoration: underline var(--default-identity-color); */
+  text-shadow:     1px 1px var(--default-identity-text-shadow-color);
+}
+
+.identity-item-select {
+  -moz-appearance:  none;
+}
+
+.identity-item-check {
+}
+
+.identity-item-check-label {
+}
+
+#identity_signature_panel {
+  margin-left:  4em;
+  margin-top:   4px;
+}
+
+.identity-data-error {
+  display: NONE;
+}
+
+.identity-data-error[error="true"] {
+  display:        flex;
+  flex-direction: row;
+}
+
+.identity-data-error-icon-large {
+  height:         16px;
+  max-height:     16px;
+  max-width:      16px;
+  vertical-align: middle;
+  width:          16px;
+}
+
+.identity-data-error-icon {
+  height:         8px;
+  max-height:     8px;
+  max-width:      8px;
+  vertical-align: middle;
+  width:          8px;
+}
+
+.identity-data-error-text {
+  color:       RED !important;
+  margin-left: 0.25em;
+}
+
+
+
+#controls_panel {
+  margin-top:   10px;
+  margin-left:  8px;
+  margin-right: 20px;
+
+  /* grid layout */
+
+  display:               grid;
+  column-gap:            4px;
+  row-gap:               0px;
+  grid-template-areas:   "controls-panel-spacer button-panel";
+  grid-template-columns: auto max-content;
+
+  & #controls_panel_spacer {
+    grid-area: controls-panel-spacer;
+  }
+  & #button_panel {
+    grid-area: button-panel;
+  }
+}
+
+#controls_panel_spacer {
+}
+
+#button_panel {
+}
+
+
+
+/* Anything done with non-specific selectors can be influenced
+ * by outsiders, e.g. userContent.css
+ */
+
+div#identity_editor textarea.identity-item-textarea,
+div#identity_editor input[type="text"].identity-item-text
+{
+  color:            #D8D8D8;
+  text-shadow:      none;
+  -moz-appearance:  none;
+}
+
+div#identity_editor textarea.identity-item-textarea:not([readonly]),
+div#identity_editor input[type="text"].identity-item-text:not([readonly])
+{
+  background-color: rgb(75, 75, 75);
+  background-image: linear-gradient(to right, rgba(40,40,40,0.8) 30%, rgba(90,90,90,0.3) 80%);
+}
+
+div#identity_editor textarea.identity-item-textarea:not([readonly]):hover,
+div#identity_editor input[type="text"].identity-item-text:not([readonly]):hover
+{
+  background-color: rgb(80, 80, 100);
+  background-image: linear-gradient(to right, rgba(40,40,40,0.8) 30%, rgba(90,90,90,0.3) 80%);
+}
+
+div#identity_editor textarea.identity-item-textarea:not([readonly]):focus,
+div#identity_editor input[type="text"].identity-item-text:not([readonly]):focus
+{
+  background-color: rgb(50, 50, 50);
+  background-image: NONE;
+}
+
+div#identity_editor button {
+  background-image: NONE !important;
+  border:           1px solid transparent;
+  border-radius:    0.5em;
+  cursor:           pointer;
+  font:             var(--menu-font);
+  font-size:        var(--menu-font-size);
+  font-size:        1rem;
+  height:           1.5rem;
+  margin:           0;
+  padding:          0.8rem 1.1rem;
+  text-align:       left;
+  text-decoration:  none;
+  text-shadow:      none;
+  -moz-appearance:  none;
+}
+
+div#identity_editor button:not([disabled]) {
+  background-color: var(--button-background-color);
+  border-color:     var(--button-border-color);
+  color:            var(--button-color);
+}
+
+div#identity_editor button[disabled] {
+  background-color: var(--button-disabled-background-color);
+  border-color:     var(--button-disabled-border-color);
+  color:            var(--button-disabled-color);
+}
+
+div#identity_editor button:not([disabled]):hover {
+  background-color: var(--button-hover-background-color);
+  background-image: NONE !important;
+  border-color:     var(--button-hover-border-color);
+  color:            var(--button-hover-color);
+  text-shadow:      1px 1px var(--button-hover-text-shadow-color);
+}
+
+div#identity_editor button#save_button:not([disabled]) {
+/*margin:           1em auto; */
+  margin:           0 1em;
+}
+
+div#identity_editor button#save_button:not([disabled]) {
+  background-color: var(--button-save-background-color);
+  color:            var(--button-save-color);
+}
+
+div#identity_editor button#save_button[disabled] {
+  background-color: var(--button-save-disabled-background-color);
+  color:            var(--button-save-disabled-color);
+}
+
+div#identity_editor button#save_button:not([disabled]):hover {
+  background-color: var(--button-save-hover-background-color);
+  background-image: NONE !important;
+  border-color:     var(--button-save-hover-color);
+  color:            var(--button-save-hover-color);
+}
+
+
+
+div#identity_editor :is(button, input, select, th, tr, td, table, input[type="checkbox"] ~ label):-moz-window-inactive {
+  opacity: var(--window-inactive-opacity);
+}

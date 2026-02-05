@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/.
+   - Portions Copyright (C) Philipp Kewisch -->
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <title>Identity Manager Plus for Thunderbird</title>
+</head>
+<body>
+  <div class="content">
+    <div class="section header">
+      <h1>Identity Manager Plus for Thunderbird</h1>
+      <p>
+        Welcome to version 25.3.31 of Identity Manager Plus,
+        the initial release.
+      </p>
+
+      <p>
+        Identity Manager Plus makes managing and using your Thunderbid Account
+        Identities just a bit easier.
+      </p>
+
+      <p>
+        It started out as a small enhancement to the original
+        <a href="https://github.com/speedball2001/identitychooser-mx">
+          Identity Chooser MX
+        </a>
+        add-on, with some UI enhancements so that I could add the ability
+        to sort my Identities by email address, but then I went on from there.
+      </p>
+
+      <p>
+        Identity Manager Plus includes these features from Identity Chooser MX:
+
+        <ul>
+         <li>
+           It displays an Identity Chooser Pop-Up Menu when you compose a new email,
+           where you choose an Identity to use for the <strong>From</strong> email address.
+         </li>
+
+         <li>
+           On the extension's Options Page:
+           <ul>
+             <li>
+               You can use drag-and-drop to specify the order in which your Identities
+               are listed on the Identity Chooser Pop-Up Menu.
+             </li>
+
+             <li>
+               For each Identity, you can click a check-box to <strong>NOT Include</strong> that
+               Identity on the Identity Chooser Pop-Up Menu.
+             </li>
+
+             <li>
+               You can chose when the Identity Chooser Pop-Up Menu is displayed:
+               <ul>
+                 <li>When you are composing a <strong>New</strong> Message</li>
+                 <li>When you are <strong>Replying</strong> to a Message</li>
+                 <li>When you are <strong>Forwarding</strong> a Message</li>
+                 <li>When you are opening a <strong>Draft</strong> Messsage</li>
+             </li>
+           </ul>
+         </li>
+
+         <li>
+           It integrates with the BorderColors D add-on (more below.)
+         </li>
+        </ul>
+      </p>
+
+      <p>
+        Identity Mananger Plus adds these features:
+        <ul>
+          <li>
+            On the extension's Options Page:
+            <ul>
+
+              <li>
+                You can select one or more Identities and click a button to <strong>MOVE</strong>
+                those Identities to the <strong>Top</strong> or to the <strong>Bottom</strong> of the list.
+              </li>
+
+              <li>
+                You can sort your Identities using criteria that you select:
+                <ul>
+                  <li>By Name</li>
+                  <li>By Email Address</li>
+                  <li>By Email Address Domain</li>
+                  <li>By Email Address Host Name</li>
+                  <li>In Ascending Order</li>
+                  <li>In Descending Order</li>
+                </ul>
+              </li>
+
+              <li>
+                <p>
+                  For each Identity, you can click a button to <strong>LOCK</strong> that Identity at
+                  its current position in the Identity Chooser Pop-Up Menu.
+                </p>
+                <p>
+                  Sorting the list or moving other Identies to the Top or to the Bottom of
+                  the list will <strong>NOT</strong> move these <strong>Locked</strong> Identities.
+                <p>
+                </p>
+                  (Because of the way that drag-and-drop works, it does not prevent a
+                  locked Identity from being moved when you move a different Identity
+                  above, below, or on top of it. I am looking for a solution to this.)
+                </p>
+              </li>
+
+              <li>
+                There is an option to choose what happens when you simply close the
+                Identity Chooser Pop-Up Menu without choosing an Identity.  The default
+                is to close the New Message Window as well. But there is an option
+                to leave the New Message Window open and just use the default
+                Identity as configured by Thunderbird.
+              </li>
+          </li>
+
+          <li>
+            On the Indentity Chooser Pop-Up Menu, it adds a <strong>Use Default</strong> button
+            in addition to the <strong>Cancel</strong> button. This button simply closes
+            the Identity Chooser Pop-Up Menu so that the New Message Window will
+            use the default <strong>From</strong> email address as configured by Thunderbird.
+          </li>
+
+          <li>
+            You can edit or delete and Identities or create new ones directly on the Options Page.
+          </li>
+
+          <li>
+            There is an option to create a new Identity when sending an email and none of your
+            existing Identities has the email's <strong>From</strong> email address.
+          </li>
+        </ul>
+      </p>
+
+      <p>
+        Future Ideas:
+        <ul>
+          <li>?</li>
+          <li>?</li>
+        </ul>
+      </p>
+
+    </div>
+
+    <div class="section image-left">
+      <img src="identitychooser-light.png" alt="The Identity Chooser Pop-Up Menu in action"/>
+      <div class="text">
+        <h2>How does it work?</h2>
+        <p>
+          Whenever you open an New Message Window to write a new email,
+          reply to a message in your inbox or forward something to a
+          friend, Identity Chooser will open a window to allow you to
+          choose your sender address before it continues access the
+          New Message Window.
+        </p>
+
+        <p>
+          This workflow works every time and everywhere when
+          Thunderbird opens a new message. This means that the Identity
+          Chooser doesn't work only in the main window, it is also
+          active when you create a new email directly out of the
+          address book, for instance.
+        </p>
+      </div>
+    </div>
+
+    <div class="section image-right">
+      <img src="configuration-light.png" alt="Flexible configuration options"/>
+      <div class="text">
+        <h2>Configuration</h2>
+        <p>
+          Identity Manager Plus is very configurable:
+        </p>
+
+        <ul>
+          <li>It lets you decide when it is active (Compose, Reply, Forward, and/or Draft)</li>
+          <li>You can you arrange the order of your Identities the way you want</li>
+          <li>You can hide the Identities you don't want to see in the Identity Choose Pop-Up Window</li>
+        </ul>
+
+        <p>
+          If you want to show a colorful border around the New Message
+          Window so that you can readily know which Identity you are sending
+          your email from, I recommend the add-on
+          <a href="https://addons.thunderbird.net/addon/bordercolors-d/" target="_blank">
+            BorderColors D
+          </a>.
+        </p>
+        <p>
+          Identity Manager Plus detects an installed copy of BorderColors D and
+          integrates with it. In the list of Identities on the Identity Chooser
+          Pop-Up Menu and on the Identity Manager Plus Condiguration Page,
+          the configured border color from BorderColors D for each Identity 
+          is displayed as a small, colored &quot;dot&quot;.
+        </p>
+      </div>
+    </div>
+
+    <div class="section footer">
+      <h2>Thank you!</h2>
+
+      <p>
+        Some of this this extension is based on the original
+        <a href="https://addons.thunderbird.net/en-US/thunderbird/addon/identity-chooser/">
+          Identity Manager MX
+        </a>
+        Extension.
+      </p>
+
+      <p>
+        If you have any questions, please get in touch via this
+        Extension's
+        <a XXXXhref="https://XXX github.com/speedball2001/identitychooser-mx" target="_blank">
+          GitHub page</a>.
+        This is also where you
+        can help improve future versions of the extension.
+      </p>
+    </div>
+  </div>
+</body>

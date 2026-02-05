@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html language="en">
+
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title data-l10n-id="identitiesPopup_identitiesPopupTitle">Identity Chooser</title>
+    <link rel="stylesheet" href="./identityChooser.css" type="text/css" >
+    <script type="module" src="./identityChooser.js" defer></script>
+  </head>
+
+  <body>
+    <div id="idmIdentityListPopup">
+      <p id="instructions" data-l10n-id="identitiesPopup_instructions">Please select an Identity to proceed:</p>
+
+      <div id="idmIdentityListFiltersPanel">
+        <span id="idmIdentityListFiltersPanelTitlePanel">
+          <label id="idmIdentityListFiltersPanelTitle"
+                 for="idmIdentityListFiltersPanel"
+                 data-l10n-id="identitiesPopup_identityListFiltersPanel.title"
+                 tooltip-l10n-id="identitiesPopup_identityListFiltersPanel.tooltip">
+            Filter:
+          </label>
+        </span>
+
+        <span class="identity-filter-control" id="idmIdentityListFilterByLabelPanel">
+          <label id="idmIdentityListFilterByLabelPanelLabel"
+                 for="idmIdentityListFilterByLabelPanel"
+                 data-l10n-id="identitiesPopup_identityListFilterByLabelPanel.label"
+                 tooltip-l10n-id="identitiesPopup_identityListFilterByLabelPanel.tooltip">
+            by Name+Label
+          </label>
+          <input type="text" id="idmIdentityListFilterByLabelRegexText"/>
+          <button id="idmIdentityListFilterByLabelResetButton">
+            <label id="idmIdentityListFilterByLabelResetButtonLabel"
+                   for="idmIdentityListFilterByLabelResetButton"
+                   data-l10n-id="identitiesPopup_identityListFilterByLabelResetButton.label"
+                   tooltip-l10n-id="identitiesPopup_identityListFilterByLabelResetButton.tooltip">
+            </label>
+          </button>
+        </span>
+
+        <span class="identity-filter-control" id="idmIdentityListFilterByEmailPanel">
+          <label id="idmIdentityListFilterByEmailPanelLabel"
+                 for="idmIdentityListFilterByEmailPanel"
+                 data-l10n-id="identitiesPopup_identityListFilterByEmailPanel.label"
+                 tooltip-l10n-id="identitiesPopup_identityListFilterByEmailPanel.tooltip">
+            by Email
+          </label>
+          <input type="text" id="idmIdentityListFilterByEmailRegexText"/>
+          <button id="idmIdentityListFilterByEmailResetButton">
+            <label id="idmIdentityListFilterByEmailResetButtonLabel"
+                   for="idmIdentityListFilterByEmailResetButton"
+                   data-l10n-id="identitiesPopup_identityListFilterByEmailResetButton.label"
+                   tooltip-l10n-id="identitiesPopup_identityListFilterByEmailResetButton.tooltip">
+            </label>
+          </button>
+        </span>
+
+        <span class="identity-filter-control" id="idmIdentityListFilterButtonPanel">
+          <button id="idmIdentityListFilterResetAllButton">
+            <label id="idmIdentityListFilterResetAllButtonLabel"
+                   for="idmIdentityListFilterResetAllButton"
+                   data-l10n-id="identitiesPopup_identityListFilterResetAllButton.label"
+                   tooltip-l10n-id="identitiesPopup_identityListFilterResetAllButton.tooltip">
+            </label>
+          </button>
+        </span>
+      </div> <!-- END OF <div class="options-panel" id="idmIdentityListFiltersPanel"> -->
+
+      <div id="idmIdentityListWrapper">
+
+        <table id="idmIdentityList">
+        </table>
+      </div>
+
+      <div id="controlsPanel">
+        <span id="defaultIdentityPanel">
+          <label id="defaultIdentityLabel" data-l10n-id="identitiesPopup_defaultIdentityLabel" hidden>Default Identity:</label>
+          <label id="defaultIdentityInfo" hidden>Default</label>
+        </span>
+        <span id="controlsPanelSpacer">
+        </span>
+        <span id="buttonPanel">
+          <button id="defaultButton" data-l10n-id="identitiesPopup_defaultButton">Use Default</button>
+          <button id="cancelButton" data-l10n-id="identitiesPopup_cancelButton">Cancel</button>
+        </span>
+      </div>
+
+      <span id="leftSpacer"></span>
+      <span id="rightSpacer"></span>
+      <span id="bottomSpacer"></span>
+    </div>
+  </body>
+
+</html>

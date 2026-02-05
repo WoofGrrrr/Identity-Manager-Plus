@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html language="en">
+
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title data-l10n-id="identityEditor_title">Identity Editor</title>
+    <link rel="stylesheet" href="./identityEditor.css" type="text/css">
+    <script type="module" src="./identityEditor.js" defer></script>
+  </head>
+
+  <body>
+    <div id="identity_editor">
+
+      <div id="instructions_panel" class="layout-vertical">
+        <div id="instructions" data-l10n-id="identityEditor_instructions_edit">Edit, then click &quot;Save:&quot;</div>
+        <div class="identity-data-error" error-for="instructions" error="false">
+          <span class="identity-data-error-icon-large"><img src="../images/icons/forbidden_16x16.png"/></span> <!-- MABXXX SHOULD BE SET IN CSS -->
+          <label class="identity-data-error-text" error-for="instructions"></label>
+        </div>
+        <div id="disclaimer" data-l10n-id="identityEditor_disclaimer">identityEditor_disclaimer</div>
+      </div>
+
+      <div id="identity_data_panel">
+        <table id="identity_data">
+
+          <tr id="identity_border_color_panel">
+            <td class="identity-data-indicator-slot">
+              <label class="identity-data-indicator" indicator-for="identity_border_color_swatch"></label>
+            </td>
+            <td class="identity-data-label">
+              <label data-l10n-id="identityEditor_identity_border_color_label">
+                Border Color:
+              </label>
+            </td>
+            <td class="identity-data-value">
+              <span> 
+                <span id="identity_border_color_swatch"></span>
+                <label data-l10n-id="identityEditor_identity_border_color_text">
+                  Color from the &quot;BorderColors D&quot; Add-on
+                </label>
+              </span>
+            </td>
+          </tr>
+
+          <tr id="identity_collected_panel" class="identity-data-item">
+            <td class="identity-data-indicator-slot">
+              <label class="identity-data-indicator" indicator-for="identity_collected_check"></label>
+            </td>
+            <td class="identity-data-label">
+            </td>
+            <td class="identity-data-value">
+              <table id="identity_collected_data_panel">
+                <tr>
+                  <td>
+                    <input class="identity-item-check" type="checkbox" id="identity_collected_check" disabled disabled="true"/> <!-- just for display - for now -->
+                  </td>
+                  <td>
+                    <label class="identity-item-check-label" for="identity_collected_check" data-l10n-id="identityEditor_identity_collected_check_label">
+                      Identity was &quot;Collected&quot;
+                    </label>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                  </td>
+                  <td>
+                    <label data-l10n-id="identityEditor_identity_collected_hint1">
+                       (created automatically from an unkown &quot;From:&quot; email address)
+                    </label>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                  </td>
+                  <td>
+                    <label data-l10n-id="identityEditor_identity_collected_hint2">
+                      (Saving will change this status to NOT Collected)
+                    </label>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr id="identity_imported_panel" class="identity-data-item">
+            <td class="identity-data-indicator-slot">
+              <label class="identity-data-indicator" indicator-for="identity_imported_check"></label>
+            </td>
+            <td class="identity-data-label">
+            </td>
+            <td class="identity-data-value">
+              <table id="identity_imported_data_panel">
+                <tr>
+                  <td>
+                    <input class="identity-item-check" type="checkbox" id="identity_imported_check" disabled disabled="true"/> <!-- just for display - for now -->
+                  </td>
+                  <td>
+                    <label class="identity-item-check-label" for="identity_imported_check" data-l10n-id="identityEditor_identity_imported_check_label">
+                      Identity was &quot;Imported&quot;
+                    </label>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                  </td>
+                  <td>
+                    <label data-l10n-id="identityEditor_identity_imported_hint1">
+                      (Saving will change this status to NOT Imported)
+                    </label>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr id="identity_showinmenu_panel" class="identity-data-item">
+            <td class="identity-data-indicator-slot">
+              <label class="identity-data-indicator" indicator-for="identity_showinmenu_check"></label>
+            </td>
+            <td class="identity-data-label">
+            </td>
+            <td class="identity-data-value">
+              <input class="identity-item-check" type="checkbox" id="identity_showinmenu_check"/>
+              <label class="identity-item-check-label" for="identity_showinmenu_check" data-l10n-id="identityEditor_identity_showinmenu_check_label">
+                Show this Identity in the Identity Chooser list
+              </label>
+            </td>
+          </tr>
+
+          <tr id="identity_account_panel" class="identity-data-item">
+            <td class="identity-data-indicator-slot">
+              <label class="identity-data-indicator" indicator-for="identity_account">*</label>
+            </td>
+            <td class="identity-data-label">
+              <label data-l10n-id="identityEditor_identity_account_label">
+                Account:
+              </label>
+            </td>
+            <td class="identity-data-value"> <!-- js code will set hide-me to the correct values -->
+              <Label id="identity_account_name" hide-me="true">
+                [Account Name goes here]
+              </label>
+              <div id="identity_account" class="layout-vertical" hide-me="true">
+                <select id="identity_account_select" class="identity-item-select">
+                  <option data-l10n-id="identityEditor_identity_account_select" value=""></option>
+                </select>
+                <div class="identity-data-error" error-for="identity_account_select" error="false">
+                  <span class="identity-data-error-icon"><img src="../images/icons/forbidden_8x8.png"/></span>
+                  <label class="identity-data-error-text" error-for="identity_account_select"></label>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr id="identity_accountdefault_panel" class="identity-data-item">
+            <td class="identity-data-indicator-slot">
+              <label class="identity-data-indicator" indicator-for="identity_accountdefault_check"></label>
+            </td>
+            <td class="identity-data-label">
+            </td>
+            <td class="identity-data-value">
+              <input class="identity-item-check" type="checkbox" id="identity_accountdefault_check" disabled disabled="true"/> <!-- just for display - for now -->
+              <label class="identity-item-check-label" for="identity_accountdefault_check" data-l10n-id="identityEditor_identity_accountdefault_check_label">
+                This is the Default Identity for this Account
+              </label>
+            </td>
+          </tr>
+
+          <tr id="identity_name_panel" class="identity-data-item">
+            <td class="identity-data-indicator-slot">
+              <label class="identity-data-indicator" indicator-for="identity_name">*</label>
+            </td>
+            <td class="identity-data-label">
+              <label data-l10n-id="identityEditor_identity_name_label">
+                Your Name:
+              </label>
+            </td>
+            <td class="identity-data-value">
+              <div class="layout-vertical">
+                <input class="identity-item-text" type="text" id="identity_name"/>
+                <div class="identity-data-error" error-for="identity_name" error="false">
+                  <span class="identity-data-error-icon"><img src="../images/icons/forbidden_8x8.png"/></span>
+                  <label class="identity-data-error-text" error-for="identity_name"></label>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr id="identity_email_panel" class="identity-data-item">
+            <td class="identity-data-indicator-slot">
+              <label class="identity-data-indicator" indicator-for="identity_email">*</label>
+            </td>
+            <td class="identity-data-label">
+              <label data-l10n-id="identityEditor_identity_email_label">
+                Email Address:
+              </label>
+            </td>
+            <td class="identity-data-value">
+              <div class="layout-vertical">
+                <input class="identity-item-text" type="text" id="identity_email"/>
+                <div class="identity-data-error" error-for="identity_email" error="false">
+                  <span class="identity-data-error-icon"><img src="../images/icons/forbidden_8x8.png"/></span>
+                  <label class="identity-data-error-text" error-for="identity_email"></label>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr id="identity_replyto_panel" class="identity-data-item">
+            <td class="identity-data-indicator-slot">
+              <label class="identity-data-indicator" indicator-for="identity_replyto"></label>
+            </td>
+            <td class="identity-data-label">
+              <label data-l10n-id="identityEditor_identity_replyto_label">
+                Reply-to Address:
+              </label>
+            </td>
+            <td class="identity-data-value">
+              <div class="layout-vertical">
+                <input class="identity-item-text" type="text" id="identity_replyto"/>
+                <div class="identity-data-error" error-for="identity_replyto" error="false">
+                  <span class="identity-data-error-icon"><img src="../images/icons/forbidden_8x8.png"/></span>
+                  <label class="identity-data-error-text" error-for="identity_replyto"></label>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr id="identity_compose_html_panel" class="identity-data-item">
+            <td class="identity-data-indicator-slot">
+              <label class="identity-data-indicator" indicator-for="identity_compose_html_check"></label>
+            </td>
+            <td>
+            </td>
+            <td class="identity-data-value">
+              <input class="identity-item-check" type="checkbox" id="identity_compose_html_check"/>
+              <label class="identity-item-check-label" for="identity_compose_html_check" data-l10n-id="identityEditor_identity_compose_html_check_label">
+                Compose messages in HTML format
+              </label>
+            </td>
+          </tr>
+
+          <tr id="identity_organization_panel" class="identity-data-item">
+            <td class="identity-data-indicator-slot">
+              <label class="identity-data-indicator" indicator-for="identity_organization"></label>
+            </td>
+            <td class="identity-data-label">
+              <label data-l10n-id="identityEditor_identity_organization_label">
+                Organization:
+              </label>
+            </td>
+            <td class="identity-data-value">
+              <div class="layout-vertical">
+                <input class="identity-item-text" type="text" id="identity_organization"/>
+                <div class="identity-data-error" error-for="identity_organization" error="false">
+                  <span class="identity-data-error-icon"><img src="../images/icons/forbidden_8x8.png"/></span>
+                  <label class="identity-data-error-text" error-for="identity_organization"></label>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr id="identity_label_panel" class="identity-data-item">
+            <td class="identity-data-indicator-slot">
+              <label class="identity-data-indicator" indicator-for="identity_label"></label>
+            </td>
+            <td class="identity-data-label">
+              <label data-l10n-id="identityEditor_identity_label_label">
+                Identity Label:
+              </label>
+            </td>
+            <td class="identity-data-value">
+              <div class="layout-vertical">
+                <input class="identity-item-text" type="text" id="identity_label"/>
+                <div class="identity-data-error" error-for="identity_label" error="false">
+                  <span class="identity-data-error-icon"><img src="../images/icons/forbidden_8x8.png"/></span>
+                  <label class="identity-data-error-text" error-for="identity_label"></label>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr id="identity_positioninmenu_panel" class="identity-data-item">
+            <td class="identity-data-indicator-slot">
+              <label class="identity-data-indicator" indicator-for="identity_positioninmenu"></label>
+            </td>
+            <td class="identity-data-label">
+              <label data-l10n-id="identityEditor_identity_positioninmenu_label">
+                Identity Chooser Position:
+              </label>
+            </td>
+            <td class="identity-data-value">
+              <div class="layout-vertical">
+                <div class="identity-item-value-box">
+                  <label class="identity-item-value" id="identity_positioninmenu"></label>                       <!-- for display purposes only -->
+                </div>
+                <div class="identity-data-error" error-for="identity_positioninmenu" error="false">
+                  <span class="identity-data-error-icon"><img src="../images/icons/forbidden_8x8.png"/></span>
+                  <label class="identity-data-error-text" error-for="identity_positioninmenu"></label>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr id="identity_lockinmenu_panel" class="identity-data-item">
+            <td class="identity-data-indicator-slot">
+              <label class="identity-data-indicator" indicator-for="identity_lockinmenu_check"></label>
+            </td>
+            <td class="identity-data-label">
+            </td>
+            <td class="identity-data-value">
+              <input class="identity-item-check" type="checkbox" id="identity_lockinmenu_check"/>
+              <label class="identity-item-check-label" for="identity_lockinmenu_check" data-l10n-id="identityEditor_identity_lockinmenu_check_label">
+                Position is locked
+              </label>
+            </td>
+          </tr>
+
+          <tr id="identity_signature_html_panel" class="identity-data-item">
+            <td class="identity-data-indicator-slot">
+              <label class="identity-data-indicator" indicator-for="identity_signature_html_check"></label>
+            </td>
+            <td class="identity-data-label">
+              <label data-l10n-id="identityEditor_identity_signature_text_label">
+                Signature text:
+              </label>
+            </td>
+            <td class="identity-data-value">
+              <input class="identity-item-check" type="checkbox" id="identity_signature_html_check"/>
+              <label class="identity-item-check-label" for="identity_signature_html_check"
+                     data-l10n-id="identityEditor_identity_signature_text_html_check_label">
+                Use HTML
+              </label>
+            </td>
+          </tr>
+
+        </table>
+
+        <div id="identity_signature_panel" class="layout-vertical">
+          <textarea class="identity-item-textarea" type="text" id="identity_signature" rows="10" cols="60">
+          </textarea>
+          <div class="identity-data-error" error-for="identity_signature" error="false">
+            <span class="identity-data-error-icon"><img src="../images/icons/forbidden_8x8.png"/></span>
+            <label class="identity-data-error-text" error-for="identity_signature"></label>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="controls_panel">
+        <span id="controls_panel_spacer"></span>
+        <span id="button_panel">
+          <button id="cancel_button" data-l10n-id="identityEditor_cancel_button">Cancel</button>
+          <button id="save_button" data-l10n-id="identityEditor_save_button">Save</button>
+        </span>
+      </div>
+
+    </div>
+  </body>
+
+</html>

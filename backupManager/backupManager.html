@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html language="en">
+
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title data-l10n-id="idmBackupManager_pageTitle">Identity Manager Plus</title>
+    <link rel="stylesheet" href="./backupManager.css" type="text/css" >
+    <script type="module" src="./backupManager.js" defer></script>
+  </head>
+
+  <body>
+    <div id="idmBackupManager">
+      <div id="idmBackupManagerTitlePanel" data-l10n-id="idmBackupManager_title">
+        Backup Manager
+      </div>
+
+      <div id="idmBackupManagerInstructionsPanel">
+        <div id="idmBackupManagerInstructions" >
+          <ul>
+            <li><label data-l10n-id="idmBackupManager_instructions_1">Click on a Backup File to Select it - it will be highlighted</label></li>
+            <li><label data-l10n-id="idmBackupManager_instructions_2">Click again to De-select it</label></li>
+            <li><label data-l10n-id="idmBackupManager_instructions_3">Click the Restore Button Restore Options from the selected file</label></li>
+            <li><label data-l10n-id="idmBackupManager_instructions_4">Click the Create Backup button to backup the current options</label></li>
+            <li><label data-l10n-id="idmBackupManager_instructions_5">Click the Delete button to delete the selected backup files</label></li>
+            <li>
+              <label data-l10n-id="idmBackupFilesDirectoryPathName.label"></label>
+              <div id="idmBackupFilesDirectoryPathName"></div>
+            </li>
+          <ul>
+        </div>
+        <div class="backup-error" error-for="idmBackupManagerInstructions" error="false">
+          <span class="backup-error-icon-large"><img src="../images/icons/forbidden_16x16.png"/></span>
+          <label class="backup-error-text" error-for="idmBackupManagerInstructions"></label>
+        </div>
+      </div>
+
+      <div id="idmBackupManagerFileNameListWrapper">
+        <table id="idmBackupManagerFileNameList">
+        </table>
+      </div>
+
+      <div id="idmBackupManagerControlsPanel">
+        <div id="idmBackupManagerControlsButtonPanel">
+          <button id="idmBackupManagerBackupButton" data-l10n-id="idmBackupManager_backupButton">Backup</button>
+          <button id="idmBackupManagerRestoreButton" data-l10n-id="idmBackupManager_restoreButton">Restore</button>
+          <button id="idmBackupManagerDeleteButton" data-l10n-id="idmBackupManager_deleteButton">Restore</button>
+          <button id="idmBackupManagerDoneButton" data-l10n-id="idmBackupManager_doneButton">Done</button>
+        </div>
+        <div id="idmBackupManagerControlsPanelSpacerLeft"></div>
+        <div id="idmBackupManagerControlsPanelSpacerRight"></div>
+      </div>
+
+      <div id="idmBackupManagerLeftSpacer"></div>
+      <div id="idmBackupManagerRightSpacer"></div>
+      <div id="idmBackupManagerBottomSpacer"></div>
+    </div>
+  </body>
+
+</html>

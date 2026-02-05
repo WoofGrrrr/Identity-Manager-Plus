@@ -1,0 +1,340 @@
+/* identity chooser styles */
+
+@import url("../styles/theming.css");
+
+body, html {
+  background-color: var(--menu-background-color);
+  color:            var(--menu-color);
+  font:             var(--menu-font);
+  font-size:        var(--menu-font-size);
+  height:           100%;
+/*margin:           5px; */
+/*width:            100%; */
+}
+
+
+
+td[error="true"],
+span[error="true"]
+{
+  background-color: var(--error-background-color);
+  border:           var(--error-border);
+}
+
+
+
+#idmIdentityListPopup {
+  height: 100%;
+  margin: 0.8em auto;
+  width:  100%;
+
+  /* grid layout */
+
+  display:    grid;
+  column-gap: 2px;
+  row-gap:    0px;
+  grid-template-areas:
+    "instructions   instructions           instructions"
+    "filters        filters                filters"      
+    "left-spacer    identity-list-wrapper  right-spacer"
+    "left-spacer    controls-panel         right-spacer"
+    "bottom-spacer  bottom-spacer          bottom-spacer";
+  grid-template-columns: auto max-content auto;
+  grid-template-rows:    min-content auto min-content min-content;
+
+  & #instructions {
+    grid-area: instructions;
+  }
+  & #idmIdentityListFiltersPanel {
+    grid-area: filters;
+  }
+  & #idmIdentityListWrapper {
+    grid-area: identity-list-wrapper;
+  }
+  & #controlsPanel {
+    grid-area: controls-panel
+  }
+  & #leftSpacer {
+    grid-area: left-spacer;
+  }
+  & #rightSpacer {
+    grid-area: right-spacer;
+  }
+  & #bottomSpacer {
+    grid-area:  bottom-spacer;
+
+    height:     20px;
+    min-height: 20px;
+  }
+}
+
+#instructions {
+  color:       var(--instructions-color);
+  font-size:   1.5rem;
+  font-weight: 300;
+  line-height: 1.3em;
+  margin-top:  0.5rem;
+  margin-left: 0.5rem;
+}
+
+#idmIdentityListFiltersPanel {
+  margin-top:    1.0em;
+  border:        1px solid var(--panel-border-color);
+  border-radius: 5px;
+  padding:       0.5em;
+}
+
+
+
+#idmIdentityListWrapper { /* this is a <DIV> */
+  background-color: var(--panel-background-color);
+  border:           1px solid var(--panel-border-color);
+  border-radius:    10px;
+  margin-left:      8px;
+/*margin-right:     20px;*/
+  margin-top:       0;
+  overflow-y:       auto;
+}
+
+.identity-filter-control {
+  border:        1px solid transparent;
+  margin-left:   2.0em;
+}
+
+/* #idmIdentityList <table>
+ * classes:
+ * - identity-item <tr>
+ *   - identity-border-color <td>
+ *     - identity-border-color-dot <span> (OPTIONAL)
+ *   - identity-item-data.identity-item-label <td>
+ *   - identity-item-data.identity-item-email <td>
+ */
+
+#idmIdentityList { /* this is a <TABLE> */
+/*background-color: var(--panel-background-color); */
+/*border:           1px solid var(--panel-background-color); */
+  border-radius:    10px;
+  border-spacing:   1px 0.5em;
+  margin-right:     20px;
+  padding:          0.5em 1em 0.5em 0.5em;
+  overflow-y:       auto;
+  -moz-appearance:  none;
+}
+
+.identity-item { /* this is a <TR> */
+/*background-color: var(--identity-background-color); */
+  background-color: transparent !important; /* place it on the TD's instead */
+
+  border:           none !important;
+/*border-bottom:    1px solid; */
+/*border-color:     var(--identity-border-color); */
+/*border-top:       1px solid; */
+
+  display:          table-row;
+
+  font:             var(--menu-font);
+  font-size:        var(--menu-font-size);
+  padding:          0.5rem 1.1rem;
+  text-align:       left;
+  text-decoration:  none;
+  text-shadow:      none;
+  white-space:      nowrap;
+  width:            100%;
+  -moz-appearance:  none;
+}
+
+.identity-item:is(.identity-filtered-by-label, .identity-filtered-by-email) { /* <TR>  Identity list row */
+  display:          none;
+}
+
+.identity-item-data { /* this is a <TD> */
+  background-color: var(--identity-background-color);
+
+  border-bottom:    1px solid; /* this defaults to currentcolor */
+  border-top:       1px solid; /* this defaults to currentcolor */
+  border-color:     var(--identity-border-color) !important;
+
+  color:            var(--identity-color);
+  margin:           0 0.5em;
+  padding:          0 1em;
+  white-space:      nowrap;
+  -moz-appearance:  none;
+}
+
+.default-identity {
+  color:            var(--default-identity-color);
+  font-weight:      bold;
+  text-shadow:      1px 1px var(--default-identity-text-shadow-color);
+}
+
+.identity-item > :first-child {
+  border-bottom-left-radius: 5px;
+  border-left:               1px solid var(--identity-border-color) !important;
+  border-top-left-radius:    5px;
+}
+
+.identity-item > :last-child {
+  border-bottom-right-radius: 5px;
+  border-right:               1px solid var(--identity-border-color) !important;
+  border-top-right-radius:    5px;
+}
+
+
+/* contains the dot to display the color from BorderColors D */
+.identity-item-border-color { /* .identity-item > .identity-item-data.identity-item-border-color */
+  margin:    0;
+  padding:   0.1em 0.35em 0.0em 0.25em;
+  width:     1em;
+  max-width: 1em;
+}
+
+/* the actual dot to display the color from BorderColors D */
+.identity-item-border-color-dot { /* .identity-item > .identity-item-data.identity-item-border-color > .identity-item-border-color-dot */
+  background-color: var(--bullet-color, TRANSPARENT);
+  border:           1px var(--bullet-border-style, dotted) #404040;   /* MABXXX Maybe use variables for default style and for color??? Maybe background-image */
+  border-radius:    50%;
+  display:          inline-block; 
+  height:           1em;
+  width:            1em;
+}
+
+.identity-item-label { /* .identity-item > identity-item-data.identity-label - this is a <TD> */
+}
+
+.identity-item-email { /* .identity-item > identity-item-data.identity-email - this is a <TD> */
+}
+
+.identity-item:not([disabled]):is(:hover) > .identity-item-data {
+  background-color: var(--identity-hover-background-color);
+  border-color:     var(--identity-hover-border-color);
+  color:            var(--identity-hover-color);
+  text-shadow:      1px 1px var(--identity-hover-text-shadow-color);
+}
+
+
+
+#controlsPanel {
+  margin-top:   5px;
+  margin-left:  8px;
+  margin-right: 20px;
+
+  /* grid layout */
+
+  display:               grid;
+  column-gap:            4px;
+  row-gap:               0px;
+  grid-template-areas:   "default-identity-panel controls-panel-spacer button-panel";
+  grid-template-columns: max-content auto max-content;
+
+  & #defaultIdentityPanel {
+    grid-area: default-identity-panel;
+  }
+  & #controlsPanelSpacer {
+    grid-area: controls-panel-spacer;
+  }
+  & #buttonPanel {
+    grid-area: button-panel;
+  }
+}
+
+#defaultIdentityPanel {
+}
+
+#defaultIdentityLabel {
+  font-weight: bold;
+}
+
+#defaultIdentityInfo {
+  color:            var(--default-identity-color);
+  font-weight:      bold;
+  padding:          0 0.25em;
+  text-shadow:      1px 1px var(--default-identity-text-shadow-color);
+}
+
+#controlsPanelSpacer {
+}
+
+#buttonPanel {
+}
+
+#bottomSpacer {
+  height:     20px;
+  min-height: 20px;
+}
+
+
+
+/* Anything done with non-specific selectors can be influenced
+ * by outsiders, e.g. userChrome.css
+ */
+
+#idmIdentityListPopup input[type="text"] {
+  background-color: var(--input-background-color) !important;
+  background-image: NONE !important;
+  color:            var(--input-color) !important;
+  -moz-appearance:  NONE;
+}
+
+#idmIdentityListPopup button {
+  background-image: NONE !important;
+  border:           1px solid transparent;
+  border-radius:    0.5em;
+  cursor:           pointer;
+  font:             var(--menu-font);
+  font-size:        var(--menu-font-size);
+  font-size:        1rem;
+  height:           1.5rem;
+  margin:           0;
+  padding:          0.8rem 1.1rem;
+  text-align:       left;
+  text-decoration:  none;
+  text-shadow:      none;
+  -moz-appearance:  none;
+}
+
+#idmIdentityListPopup button:not([disabled]) {
+  background-color: var(--button-background-color);
+  border-color:     var(--button-border-color);
+  color:            var(--button-color);
+}
+
+#idmIdentityListPopup button[disabled] {
+  background-color: var(--button-disabled-background-color);
+  border-color:     var(--button-disabled-border-color);
+  color:            var(--button-disabled-color);
+}
+
+#idmIdentityListPopup button:not([disabled]):hover {
+  background-color: var(--button-hover-background-color);
+  background-image: NONE !important;
+  border-color:     var(--button-hover-border-color);
+  color:            var(--button-hover-color);
+  text-shadow:      1px 1px var(--button-hover-text-shadow-color);
+}
+
+button#cancelButton:not([disabled]) {
+/*margin:           1em auto; */
+  margin-left:      1em;
+}
+
+button#cancelButton:not([disabled]) {
+  background-color: var(--button-cancel-background-color);
+  color:            var(--button-cancel-color);
+}
+
+button#cancelButton[disabled] {
+  background-color: var(--button-cancel-disabled-background-color);
+  color:            var(--button-cancel-disabled-color);
+}
+
+button#cancelButton:not([disabled]):hover {
+  background-color: var(--button-cancel-hover-background-color);
+  background-image: NONE !important;
+  border-color:     var(--button-cancel-hover-color);
+  color:            var(--button-cancel-hover-color);
+}
+
+#idmIdentityListPopup :is(button, input, select, th, tr, td, table, input[type="checkbox"] ~ label):-moz-window-inactive {
+  opacity: var(--window-inactive-opacity);
+
+}

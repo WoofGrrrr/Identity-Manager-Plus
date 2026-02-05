@@ -1,0 +1,1151 @@
+{
+  "extensionName": {
+    "message": "Identity Manager Plus"
+  },
+  "extensionDescription": {
+    "message": "Identitiy Manager Plus makes managing and using your Thunderbird Account Identities a bit easier.\n\nIt displays a list of your Identities and allows you to choose the correct Identity when composing a new email, replying to one, or forwarding one.\n\nAnd it allows you to decide in which order your Identities are listed.\n\nPart of it is based on the Identity Chooser MX Extension."
+  },
+  "options_optionsPageTitleXXXXXXXXX": {
+    "message": "Identity Manager Plus -- Settings"
+  },
+  "options_optionsPageTitle": {
+    "message": "Settings"
+  },
+  "options_IdentityChooserOptionsTitle": {
+    "message": "Identity Chooser Options"
+  },
+  "options_IdentityChooserPopupOptionsTitle": {
+    "message": "Popup Options"
+  },
+  "options_idmDisplayOrderActionsTitle": {
+    "message": "Actions"
+  },
+  "options_displayOrderTitle": {
+    "message": "Display Order"
+  },
+  "options_idmDisplayOrderHints.label": {
+    "message": "Hints"
+  },
+  "options_identitiesLoadingMessage": {
+    "message": "...Loading Identities..."
+  },
+  "options_idmEnableComposeMessageCheck.label": {
+    "message": "Show the Identity Chooser when writing a New email"
+  },
+  "options_idmEnableComposeMessageCheck.tooltip": {
+    "message": "Check to show the Identity Chooser when writing a New email"
+  },
+  "options_idmEnableReplyMessageCheck.label": {
+    "message": "Show the Identity Chooser when Replying to an email"
+  },
+  "options_idmEnableReplyMessageCheck.tooltip": {
+    "message": "Check to show the Identity Chooser when Replying to an email"
+  },
+  "options_idmEnableForwardMessageCheck.label": {
+    "message": "Show the Identity Chooser when Forwarding an email"
+  },
+  "options_idmEnableForwardMessageCheck.tooltip": {
+    "message": "Check to show the Identity Chooser when Forwarding an email"
+  },
+  "options_idmEnableDraftMessageCheck.label": {
+    "message": "Show the Identity Chooser when opening a Draft"
+  },
+  "options_idmEnableDraftMessageCheck.tooltip": {
+    "message": "Check to show the Identity Chooser when opening a Draft"
+  },
+  "options_idmEnableKeepComposeOnCloseCheck.label": {
+    "message": "Keep the Message Compose Window open when closing the Identity Chooser without choosing an Identity"
+  },
+  "options_idmEnableKeepComposeOnCloseCheck.tooltip": {
+    "message": "Check to keep the Message Compose Window open when closing the Identity Chooser without choosing an Identity"
+  },
+  "options_identityManagerPlusOptionsTitle": {
+    "message": "Identity Manager Plus Options"
+  },
+  "options_idmCollectFromAddressesCheck.label": {
+    "message": "Collect (create) a new Identity when a \"From\" email address doesn't match any existing Identity"
+  },
+  "options_idmCollectFromAddressesCheck.tooltip": {
+    "message": "Check to collect (create) a new Identity when a \"From\" email address doesn't match any existing Identity"
+  },
+  "options_idmCollectFromAddressAlertCheck.label": {
+    "message": "Display an alert when a new Identity has been Collected"
+  },
+  "options_idmCollectFromAddressAlertCheck.tooltip": {
+    "message": "Check to display an alert when a new Identity has been Collected"
+  },
+  "options_idmExtensionOptionsButtonBackupManager.label": {
+    "message": "Manage Backups"
+  },
+  "options_idmExtensionOptionsButtonBackupManager.tooltip": {
+    "message": "Display the Backup Manager to List, Create, Delete, or Restore from Options Backup Files"
+  },
+  "options_idmExtensionOptionsButtonBackupManager_noAccess.tooltip": {
+    "message": "Backups are not available because access to the FileSystemBroker Extension has not been granted"
+  },
+  "options_idmSkipOnboardingCheck.label": {
+    "message": "Do not show the \"Welcome\" Screen when this extension is updated or re-installed"
+  },
+  "options_idmShowOptionsWindowOnStartupCheck.label": {
+    "message": "Display the extension Options in a Window when this extension is started, updated, or re-installed"
+  },
+  "options_idmDisplayColumnsInDisplayOrder.label": {
+    "message": "Include in the Display Order (requires refresh):"
+  },
+  "options_idmDisplayIdentityPositionInDisplayOrderCheck.label": {
+    "message": "Position"
+  },
+  "options_idmDisplayIdentityIndexInDisplayOrderCheck.label": {
+    "message": "Index"
+  },
+  "options_idmDisplayIdentityIdInDisplayOrderCheck.label": {
+    "message": "Identity ID"
+  },
+  "options_idmDisplayInDisplayOrderRefreshButton.label": {
+    "message": "Refresh"
+  },
+  "options_idmHideOrShowChooserControls_Hide.label": {
+    "message": "Hide Controls"
+  },
+  "options_idmHideOrShowChooserControls_Hide.tooltip": {
+    "message": "Click to Hide The Display Order Controls"
+  },
+  "options_idmHideOrShowChooserControls_Show.label": {
+    "message": "Show Controls"
+  },
+  "options_idmHideOrShowChooserControls_Show.tooltip": {
+    "message": "Click to Show The Display Order Controls"
+  },
+  "options_idmAutoSortControlsTitle": {
+    "message": "Sort:"
+  },
+  "options_idmAutoSortBySelect.label": {
+    "message": "by value"
+  },
+  "options_idmAutoSortBySelectOption_none": {
+    "message": "--- select sort by value ---"
+  },
+  "options_idmAutoSortBySelectOption_name": {
+    "message": "Name+Label"
+  },
+  "options_idmAutoSortBySelectOption_emailAddress": {
+    "message": "Email Address"
+  },
+  "options_idmAutoSortBySelectOption_emailDomain": {
+    "message": "Email Address Domain"
+  },
+  "options_idmAutoSortBySelectOption_emailHost": {
+    "message": "Email Address Host Name"
+  },
+  "options_idmAutoSortDirectionSelect.labelBefore": {
+    "message": "in"
+  },
+  "options_idmAutoSortDirectionSelect.labelAfter": {
+    "message": "order"
+  },
+  "options_idmAutoSortDirectionSelectOption_none": {
+    "message": "--- select sort order ---"
+  },
+  "options_idmAutoSortDirectionSelectOption_ascending": {
+    "message": "Ascending"
+  },
+  "options_idmAutoSortDirectionSelectOption_descending": {
+    "message": "Descending"
+  },
+  "options_idmAutoSortListButton.label": {
+    "message": "Sort"
+  },
+  "options_restart.hint": {
+    "message": "Hint: Changing some of these options may require you to restart Thunderbird"
+  },
+  "options_sortOptionsTitle": {
+    "message": "Display Order"
+  },
+  "options_sortOrder.hint": {
+    "message": "Re-order Identities using Drag and Drop"
+  },
+  "options_sortOrder.hint2": {
+    "message": "To Hide an Identity from the Identity Chooser, Un-Check it"
+  },
+  "options_sortOrder.hint3": {
+    "message": "Sort the Identities using the Sort Controls"
+  },
+  "options_sortOrder.hint4": {
+    "message": "To Lock an Identity into its position, click the Lock icon"
+  },
+  "options_idmRefreshListButton.label": {
+    "message": "Refresh List"
+  },
+  "options_idmSelectDeselectAllButtonsLabel": {
+    "message": "Select or De-Select All Identities:"
+  },
+  "options_idmSelectAllButton.label": {
+    "message": "Select All"
+  },
+  "options_idmDeselectAllButton.label": {
+    "message": "De-Select All"
+  },
+  "options_idmMoveSelectedButtonsLabel": {
+    "message": "Move Selected Identities:"
+  },
+  "options_idmMoveSelectedToTopButton.label": {
+    "message": "Move To Top"
+  },
+  "options_idmMoveSelectedToBottomButton.label": {
+    "message": "Move To Bottom"
+  },
+  "options_idmLockUnlockButtonsLabel": {
+    "message": "Lock or Unlock Identities into their current positions"
+  },
+  "options_idmLockSelectedButton.label": {
+    "message": "Lock Selected"
+  },
+  "options_idmUnlockSelectedButton.label": {
+    "message": "Unlock Selected"
+  },
+  "options_idmLockAllButton.label": {
+    "message": "Lock All"
+  },
+  "options_idmUnlockAllButton.label": {
+    "message": "Unlock All"
+  },
+  "options_idmShowHideButtonsLabel": {
+    "message": "Show or Hide Identites in the Identity Chooser"
+  },
+  "options_idmShowSelectedButton.label": {
+    "message": "Show Selected"
+  },
+  "options_idmHideSelectedButton.label": {
+    "message": "Hide Selected"
+  },
+  "options_idmShowAllButton.label": {
+    "message": "Show All"
+  },
+  "options_idmHideAllButton.label": {
+    "message": "Hide All"
+  },
+  "options_idmCreateIdentityButtonsLabel": {
+    "message": "Create a New Identity"
+  },
+  "options_idmCreateIdentityButton.label": {
+    "message": "Create..."
+  },
+  "options_idmDisplayOrderFiltersPanel.title": {
+    "message": "Filter:"
+  },
+  "options_idmDisplayOrderFiltersPanel.tooltip": {
+    "message": "List only the Identities that match the given criteria"
+  },
+  "options_idmDisplayOrderFiltersPanel.hint1": {
+    "message": "When a filter is applied, filtered-out Identities are De-Selected"
+  },
+  "options_idmDisplayOrderFilterByAccountPanel.label": {
+    "message": "by Account"
+  },
+  "options_idmDisplayOrderFilterByAccountPanel.tooltip": {
+    "message": "List only Identities whose Accounts match the selected Account"
+  },
+  "options_idmDisplayOrderFilterByAccountSelect_anyAccount": {
+    "message": "--- any account ---"
+  },
+  "options_idmDisplayOrderFilterByAccountResetButton.label": {
+    "message": "Reset"
+  },
+  "options_idmDisplayOrderFilterByAccountResetButton.tooltip": {
+    "message": "Reset the \"by Account\" Filter"
+  },
+  "options_idmDisplayOrderFilterByImportedPanel.label": {
+    "message": "by Imported"
+  },
+  "options_idmDisplayOrderFilterByImportedPanel.tooltip": {
+    "message": "List only Identities that match the selected Imported status"
+  },
+  "options_idmDisplayOrderFilterByImportedSelect_any": {
+    "message": "--- any ---"
+  },
+  "options_idmDisplayOrderFilterByImportedSelect_imported": {
+    "message": "Imported"
+  },
+  "options_idmDisplayOrderFilterByImportedSelect_notImported": {
+    "message": "Not Imported"
+  },
+  "options_idmDisplayOrderFilterByImportedResetButton.label": {
+    "message": "Reset"
+  },
+  "options_idmDisplayOrderFilterByImportedResetButton.tooltip": {
+    "message": "Reset the \"by Imported\" Filter"
+  },
+  "options_idmDisplayOrderFilterByLabelPanel.label": {
+    "message": "by Name+Label"
+  },
+  "options_idmDisplayOrderFilterByLabelPanel.tooltip": {
+    "message": "List only Identities whose Names+Labels match the given Regular Expression"
+  },
+  "options_idmDisplayOrderFilterByLabelResetButton.label": {
+    "message": "Reset"
+  },
+  "options_idmDisplayOrderFilterByLabelResetButton.tooltip": {
+    "message": "Reset the \"by Name+Label\" Filter"
+  },
+  "options_idmDisplayOrderFilterByCollectedPanel.label": {
+    "message": "by Collected"
+  },
+  "options_idmDisplayOrderFilterByCollectedPanel.tooltip": {
+    "message": "List only Identities that match the selected Collected status"
+  },
+  "options_idmDisplayOrderFilterByCollectedSelect_any": {
+    "message": "--- any ---"
+  },
+  "options_idmDisplayOrderFilterByCollectedSelect_collected": {
+    "message": "Collected"
+  },
+  "options_idmDisplayOrderFilterByCollectedSelect_notCollected": {
+    "message": "Not Collected"
+  },
+  "options_idmDisplayOrderFilterByCollectedResetButton.label": {
+    "message": "Reset"
+  },
+  "options_idmDisplayOrderFilterByCollectedResetButton.tooltip": {
+    "message": "Reset the \"by Collected\" Filter"
+  },
+  "options_idmDisplayOrderFilterByShowInMenuPanel.label": {
+    "message": "by Show/Hide"
+  },
+  "options_idmDisplayOrderFilterByShowInMenuPanel.tooltip": {
+    "message": "List only Identities that the Identity Chooser will Show or Hide"
+  },
+  "options_idmDisplayOrderFilterByShowInMenuSelect_any": {
+    "message": "--- any ---"
+  },
+  "options_idmDisplayOrderFilterByShowInMenuSelect_show": {
+    "message": "Show"
+  },
+  "options_idmDisplayOrderFilterByShowInMenuSelect_hide": {
+    "message": "Hide"
+  },
+  "options_idmDisplayOrderFilterByShowInMenuResetButton.label": {
+    "message": "Reset"
+  },
+  "options_idmDisplayOrderFilterByShowInMenuResetButton.tooltip": {
+    "message": "Reset the \"by Show/Hide\" Filter"
+  },
+  "options_idmDisplayOrderFilterByEmailPanel.label": {
+    "message": "by Email"
+  },
+  "options_idmDisplayOrderFilterByEmailPanel.tooltip": {
+    "message": "List only Identities whose Email Addresses match the given Regular Expression"
+  },
+  "options_idmDisplayOrderFilterByEmailResetButton.label": {
+    "message": "Reset"
+  },
+  "options_idmDisplayOrderFilterByEmailResetButton.tooltip": {
+    "message": "Reset the \"by Email Address\" Filter"
+  },
+  "options_idmDisplayOrderFilterResetAllButton.label": {
+    "message": "Reset All"
+  },
+  "options_idmDisplayOrderFilterResetAllButton.tooltip": {
+    "message": "Reset ALL Identity Filters"
+  },
+  "options_idmDisplayOrderFilterError_labelRegexInvalid": {
+    "message": "Invalid Regular Expression for Name+Label"
+  },
+  "options_idmDisplayOrderFilterError_emailRegexInvalid": {
+    "message": "Invalid Regular Expression for Email"
+  },
+  "options_idmDisplayOrderFilteMessage_noMatch": {
+    "message": "No Identities match the selected filters"
+  },
+  "options_idmAutoSortListButton.tooltip": {
+    "message": "Sort the Display Order List using the selected options (Locked Identities will not move)"
+   },
+  "options_idmRefreshListButton.tooltip": {
+    "message": "Refresh the Display Order List"
+  },
+  "options_idmSelectAllButton.tooltip": {
+    "message": "Select All (filtered) Identities in the list"
+  },
+  "options_idmDeselectAllButton.tooltip": {
+    "message": "De-Select All Identities"
+  },
+  "options_idmShowSelectedButton.tooltip": {
+    "message": "Check the checkboxes to Show the Selected Identities in the Identity Chooser"
+  },
+  "options_idmShowAllButton.tooltip": {
+    "message": "Check ALL the checkboxes to Show ALL Identities in the Identity Chooser"
+  },
+  "options_idmHideSelectedButton.tooltip": {
+    "message": "Un-Check ALL the checkboxes to Hide the Selected Identities in the Identity Chooser"
+  },
+  "options_idmHideAllButton.tooltip": {
+    "message": "Un-Check ALL the checkboxes to Hide ALL Identities in the Identity Chooser"
+  },
+  "options_idmLockSelectedButton.tooltip": {
+    "message": "Lock the Selected Identities in their current positions in the Display Order"
+  },
+  "options_idmLockAllButton.tooltip": {
+    "message": "Lock ALL Identities in their current positions in the Display Order"
+  },
+  "options_idmUnlockSelectedButton.tooltip": {
+    "message": "Unlock the Selected Identities from their current positions in the Display Order"
+  },
+  "options_idmUnlockAllButton.tooltip": {
+    "message": "Unlock ALL Identities from their current positions in the Display Order"
+  },
+  "options_idmMoveSelectedToTopButton.tooltip": {
+    "message": "Move ALL Selected Identities to the TOP of the Display Order (Locked Identities will not move)"
+  },
+  "options_idmMoveSelectedToBottomButton.tooltip": {
+    "message": "Move ALL Selected Identities to the BOTTOM of the Display Order (Locked Identities will not move)"
+  },
+  "options_idmCreateIdentityButton.tooltip": {
+    "message": "Create a New Identity"
+  },
+  "options_check_showInMenu.tooltip": {
+    "message": "Check here to show this Identity in the Identity Chooser, Un-Check to hide it"
+  },
+  "options_check_lockInMenu.tooltip": {
+    "message": "Click to Lock or Unlock this Identity into its current position in the Display Order"
+  },
+  "options_button_moveIdentityUp.tooltip": {
+    "message": "Move this Identity UP one position in the Display Order (Locked Identities will not move)"
+  },
+  "options_button_moveIdentityDown.tooltip": {
+    "message": "Move this Identity DOWN one position in the Display Order (Locked Identities will not move)"
+  },
+  "options_button_moveIdentityToTop.tooltip": {
+    "message": "Move this Identity to the TOP of the Display Order (Locked Identities will not move)"
+  },
+  "options_button_moveIdentityToBottom.tooltip": {
+    "message": "Move this Identity to the BOTTOM of the Display Order (Locked Identities will not move)"
+  },
+  "options_button_editIdentity.tooltip": {
+    "message": "Edit this Identity"
+  },
+  "options_button_deleteIdentity.tooltip": {
+    "message": "Delete this Identity (The Default Identity for an Account cannot be deleted)"
+  },
+  "options_idmWarnColorsTitle": {
+    "message": "Border Colors"
+  },
+  "options_idmWarnColorsHint": {
+    "message": "<p>If you want to show a colorful border around the \"Message Compose\" Window so you can tell which Identity you are using to send a message, try the <a href='https://addons.thunderbird.net/addon/bordercolors-d/'>BorderColors D</a> Add-on[1]. Identity Manager Plus detects an installed copy of BorderColors D and integrates with it.</p><p style='margin-left:1em'>[1] <a href='https://addons.thunderbird.net/addon/bordercolors-d/'>https://addons.thunderbird.net/addon/bordercolors-d/</a></p>"
+  },
+  "options_idmImportIdentitiesButtonsLabel": {
+    "message": "Import Identities from A Spreadsheet or CSV File"
+  },
+  "options_idmImportIdentitiesButton.label": {
+    "message": "Import..."
+  },
+  "options_idmImportIdentitiesButton.tooltip": {
+    "message": "Display A Window to Select Identities to Import from A Spreadhseet or CSV File"
+  },
+  "options_idmImportIdentitiesButton_noAccess.tooltip": {
+    "message": "Importing is not available because access to the FileSystemBroker Extension has not been granted"
+  },
+  "options_idmp-dev-RunFilesystemBrokerTestsButton.label": {
+    "message": "FSBroker (Messaging)"
+  },
+  "options_idmp-dev-RunFilesystemBrokerTestsButton.tooltip": {
+    "message": "Run the FileSytemBroker tests using direct messaging"
+  },
+  "options_idmp-dev-RunFilesystemBrokerApiTestsButton.label": {
+    "message": "FSBroker API"
+  },
+  "options_idmp-dev-RunFilesystemBrokerApiTestsButton.tooltip": {
+    "message": "Run the FileSytemBroker tests using the FileSytemBroker API"
+  },
+  "options_idmp-dev-RunFilesystemApiTestsButton.label": {
+    "message": "FSEXP API"
+  },
+  "options_idmp-dev-RunFilesystemApiTestsButton.tooltip": {
+    "message": "Run the FileSystemExp (Extension Experiment) API tests"
+  },
+  "options_idmp-dev-RunParseCSVFileTestsButton.label": {
+    "message": "Parse CSV File"
+  },
+  "options_idmp-dev-RunParseCSVFileTestsButton.tooltip": {
+    "message": "Run the Parse CSV File test"
+  },
+  "options_idmp-dev-RunOptionsBackupTestsButton.label": {
+    "message": "Backup Options"
+  },
+  "options_idmp-dev-RunOptionsBackupTestsButton.tooltip": {
+    "message": "Run the Backup Options to a file tests"
+  },
+  "options_idmp-dev-displayOptionsAsPopupButton.label": {
+    "message": "Show Options in Popup Window"
+  },
+  "options_idmp-dev-displayOptionsAsPopupButton.tooltip": {
+    "message": "Display these options in a Popup Window"
+  },
+  "idmIdentityImporter_page.title": {
+    "message": "Import Identities"
+  },
+  "idmIdentityImporter.title": {
+    "message": "Select and Import Identities from a Spreadsheet or CSV File"
+  },
+  "idmIdentityImporter_error_l10nFailed": {
+    "message": "Internal Error: Localization Failed"
+  },
+  "idmIdentityImporter_error_domIdFailed": {
+    "message": "Internal Error: DOM ID Failed"
+  },
+  "idmIdentityImporter_error_domSelectorFailed": {
+    "message": "Internal Error: DOM Selector Failed"
+  },
+  "idmIdentityImporter_error_domAttributeFailed": {
+    "message": "Internal Error: DOM Attrribute Failed"
+  },
+  "idmIdentityImporterNav_SelectFile": {
+    "message": "Select a File"
+  },
+  "idmIdentityImporterNav_SelectCriteria": {
+    "message": "Select Data Criteria"
+  },
+  "idmIdentityImporterNav_SelectIdentities": {
+    "message": "Select Identities"
+  },
+  "idmIdentityImportIdentitiesSelector.title": {
+    "message": "Select one or more Identities to Import"
+  },
+  "idmIdentityImportIdentitiesSelectorFileName.label": {
+    "message": "Importing from file:"
+  },
+  "idmIdentityImportIdentitiesSelector_instructions_1": {
+    "message": "Click on an Identity to Select it - it will be highlighted"
+  },
+  "idmIdentityImportIdentitiesSelector_instructions_2": {
+    "message": "Click on an Identity again to De-Select it"
+  },
+  "idmIdentityImportIdentitiesSelector_instructions_3": {
+    "message": "Click the Import Button to Create the Selected Identities"
+  },
+  "idmIdentityImportIdentitiesSelector_instructions_4": {
+    "message": "Each Identity MUST have an Account and a Name"
+  },
+  "idmIdentityImportIdentitiesSelector_instructions_5": {
+    "message": "Identities that already exist (blue marker) cannot be selected"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsTitle.label": {
+    "message": "Actions:"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsFilterPanel.label": {
+    "message": "Filter Identities:"
+  },
+  "idmIdentityImportIdentitiesSelectorHideExistingCheck.label": {
+    "message": "Hide Existing"
+  },
+  "idmIdentityImportIdentitiesSelectorFilterRegexText.label": {
+    "message": "Match Email Address by RegEx"
+  },
+  "idmIdentityImportIdentitiesSelectorFilterRegexText_error_invalid": {
+    "message": "Invalid RegEx"
+  },
+  "idmIdentityImportIdentitiesSelectorFilterRegexResetButton.label": {
+    "message": "Reset"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSelectButtonPanel.label": {
+    "message": "Select or De-Select All Identities:"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSelectAllButton.label": {
+    "message": "Select All"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsDeselectAllButton.label": {
+    "message": "De-Select All"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetDataAllButtonPanel.label": {
+    "message": "Set or Clear Data for All Identities:"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetDataAllButton.label": {
+    "message": "Set Data for All"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsClearDataAllButton.label": {
+    "message": "Clear Data for All"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetDataSelectedButtonPanel.label": {
+    "message": "Set or Clear Data for Selected Identities:"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetDataSelectedButton.label": {
+    "message": "Set Data for Selected"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsClearDataSelectedButton.label": {
+    "message": "Clear Data for Selected"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetDataPanelTitle.label": {
+    "message": "Data to Set:"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetData_Account.label": {
+    "message": "Account:"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetData_Name.label": {
+    "message": "Name:"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetData_Label.label": {
+    "message": "Label:"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetData_ReplyTo.label": {
+    "message": "Reply To:"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetData_Organization.label": {
+    "message": "Organization:"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetData_ComposeHtml.label": {
+    "message": "Compose in HTML?"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetData_KeepComposeHtmlCheck.label": {
+    "message": "Do not change"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetData_ComposeHtmlCheck.label": {
+    "message": "New setting"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetData_Signature.label": {
+    "message": "Signature:"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetData_SigIsHtml.label": {
+    "message": "Signature is HTML?"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetData_KeepSigIsHtmlCheck.label": {
+    "message": "Do not change"
+  },
+  "idmIdentityImportIdentitiesSelector_actionsSetData_SigIsHtmlCheck.label": {
+    "message": "New setting"
+  },
+  "idmIdentityImportIdentitiesSelectorActionsDataButtonReset.label": {
+    "message": "Reset"
+  },
+  "idmIdentityImportIdentitiesSelector_loading": {
+    "message": "...reading identities from file..."
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_Status": {
+    "message": "*"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_Account": {
+    "message": "Account"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_Email": {
+    "message": "Email Address"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_Name": {
+    "message": "Name"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_Label": {
+    "message": "Label"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_ReplyTo": {
+    "message": "Reply-To"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_Organization": {
+    "message": "Organization"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_ComposeHtml": {
+    "message": "*c"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_Signature": {
+    "message": "Signature"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_SigIsHtml": {
+    "message": "*s"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_Status-tooltip": {
+    "message": "Identity Status Indicator: Blue if an Identity already exists"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_Account-tooltip": {
+    "message": "Email Accounts for the Identities"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_Email-tooltip": {
+    "message": "Email Addresses for the Identities"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_Name-tooltip": {
+    "message": "Names for the Identities"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_Label-tooltip": {
+    "message": "Labels for the Identities"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_ReplyTo-tooltip": {
+    "message": "Reply-To Email Addresses for the Identities"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_Organization-tooltip": {
+    "message": "Organization Names for the Identities"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_ComposeHtml-tooltip": {
+    "message": "Compose in HTML: Checkboxes to indicate if composing messages from the Identities default to HTML Format"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_Signature-tooltip": {
+    "message": "Signatures for outgoing messages from the Identities"
+  },
+  "idmIdentityImportIdentitiesSelector_listHeader_SigIsHtml-tooltip": {
+    "message": "Signature is HTML: Checkboxes to indicate if the Signatures are in HTML Format"
+  },
+  "idmIdentityImportIdentitiesSelector_account_select": {
+    "message": "--- select an account ---"
+  },
+  "idmIdentityImportIdentitiesSelector_listItem_Status-tooltip": {
+    "message": "The Identity already exists"
+  },
+  "idmIdentityImportIdentitiesSelector_listItem_Account-tooltip": {
+    "message": "The Email Account for the Identity"
+  },
+  "idmIdentityImportIdentitiesSelector_listItem_Email-tooltip": {
+    "message": "The Email Address for the Identity"
+  },
+  "idmIdentityImportIdentitiesSelector_listItem_Name-tooltip": {
+    "message": "The Name for the Identity"
+  },
+  "idmIdentityImportIdentitiesSelector_listItem_Label-tooltip": {
+    "message": "The Label for the Identity"
+  },
+  "idmIdentityImportIdentitiesSelector_listItem_ReplyTo-tooltip": {
+    "message": "The Reply-To Email Address for the Identity"
+  },
+  "idmIdentityImportIdentitiesSelector_listItem_Organization-tooltip": {
+    "message": "The Organization Name for the Identity"
+  },
+  "idmIdentityImportIdentitiesSelector_listItem_ComposeHtml-tooltip": {
+    "message": "If checked, composing messages from the Identity will default to HTML format (Compose in HTML)"
+  },
+  "idmIdentityImportIdentitiesSelector_listItem_Signature-tooltip": {
+    "message": "The Email Signature for outgoing messages from the Identity"
+  },
+  "idmIdentityImportIdentitiesSelector_listItem_SigIsHtml-tooltip": {
+    "message": "If checked, the Signature is in HTML format (Signature is HTML)"
+  },
+  "idmIdentityImportIdentitiesSelector_editListItem_Status-tooltip": {
+    "message": "The Identity does not already exist"
+  },
+  "idmIdentityImportIdentitiesSelector_editListItem_Account-tooltip": {
+    "message": "Select an Email Account for the Identity"
+  },
+  "idmIdentityImportIdentitiesSelector_editListItem_Email-tooltip": {
+    "message": "The Email Address for the Identity"
+  },
+  "idmIdentityImportIdentitiesSelector_editListItem_Name-tooltip": {
+    "message": "Enter a Name for the Identity (required)"
+  },
+  "idmIdentityImportIdentitiesSelector_editListItem_Label-tooltip": {
+    "message": "Enter a Label for the Identity (optional)"
+  },
+  "idmIdentityImportIdentitiesSelector_editListItem_ReplyTo-tooltip": {
+    "message": "Enter a Reply-To Email Address for the Identity (optional)"
+  },
+  "idmIdentityImportIdentitiesSelector_editListItem_Organization-tooltip": {
+    "message": "Enter an Organization Name for the Identity (optional)"
+  },
+  "idmIdentityImportIdentitiesSelector_editListItem_ComposeHtml-tooltip": {
+    "message": "Check this checkbox if composing messages will default to HTML format"
+  },
+  "idmIdentityImportIdentitiesSelector_editListItem_Signature-tooltip": {
+    "message": "Enter an Email Signature for outgoing messages from the Identity (optional)"
+  },
+  "idmIdentityImportIdentitiesSelector_editListItem_SigIsHtml-tooltip": {
+    "message": "Check this checkbox if the Signature is in HTML format"
+  },
+  "idmIdentityImportIdentitiesSelector_cancelButton": {
+    "message": "Cancel"
+  },
+  "idmIdentityImportIdentitiesSelector_importButton": {
+    "message": "Import"
+  },
+  "idmIdentityImportIdentitiesSelector_error_responseMessagefailed": {
+    "message": "Internal Error: Failed to send response message"
+  },
+  "idmIdentityImportIdentitiesSelector_error_sheetDataFailed": {
+    "message": "Failed to get Identities from Spreadsheet/CSV File data"
+  },
+  "idmIdentityImportIdentitiesSelector_error_sheetDataError": {
+    "message": "Error getting Identities from Spreadsheet/CSV File data"
+  },
+  "idmIdentityImportIdentitiesSelector_error_sheetDataUndefined": {
+    "message": "Spreadsheet/CSV File Identities data undefined"
+  },
+  "idmIdentityImportIdentitiesSelector_error_noImportIdentities": {
+    "message": "No Identities to Import"
+  },
+  "identityImportIdentitiesSelector_error_noIdentiesImported": {
+    "message": "No Identities Imported"
+  },
+  "idmIdentityImportIdentitiesSelector_error_noAccountSelected": {
+    "message": "All Identities Must Have An Account"
+  },
+  "idmIdentityImportIdentitiesSelector_error_noNameEntered": {
+    "message": "All Identities Must Have A Name"
+  },
+  "idmIdentityImportIdentitiesSelector_error_invalidEmailAddressDataType_1": {
+    "message": "Invalid Identity Email Address found - must be type 'String'"
+  },
+  "idmIdentityImportIdentitiesSelector_error_invalidEmailAddressDataType_2": {
+    "message": "Correct Email Address Column Number?"
+  },
+  "idmIdentityImportIdentitiesSelector_error_invalidEmailAddress_1": {
+    "message": "Invalid Identity Email Address found"
+  },
+  "idmIdentityImportIdentitiesSelector_error_invalidEmailAddress_2": {
+    "message": "Correct Email Address Column Number? Is First Row a Column Header?"
+  },
+  "idmIdentityImportIdentitiesSelector_error_invalidNameDataType_1": {
+    "message": "Invalid Identity Name found - must be type 'String'"
+  },
+  "idmIdentityImportIdentitiesSelector_error_invalidNameDataType_2": {
+    "message": "Correct Name Column Number?"
+  },
+  "idmIdentityImportFileSelector.title": {
+    "message": "Select A File to Import"
+  },
+  "idmIdentityImportFile_instructions_1": {
+    "message": "To filter the files by FileName, Enter a FileName GLOB and click the Apply Button"
+  },
+  "idmIdentityImportFile_instructions_2": {
+    "message": "Click on a FileName to select a file (required)"
+  },
+  "idmIdentityImportFile_instructions_3": {
+    "message": "Click again to De-Select it, or click on another FileName"
+  },
+  "idmIdentityImportFile_instructions_4": {
+    "message": "Click the Continue... Button"
+  },
+  "idmIdentityImportFile_instructions_5": {
+    "message": "??? - MESSAGE NOT USED YET"
+  },
+  "idmIdentityImportFileSelector_actionsTitle.label": {
+    "message": "Filter Files:"
+  },
+  "idmIdentityImportFileSelector_actionsFilterPanel.label": {
+    "message": "Filter Files by FileName GLOB"
+  },
+  "idmIdentityImportFileSelectorFilterGlobButton.label": {
+    "message": "Apply"
+  },
+  "idmIdentityImportFileSelectorFilterResetButton.label": {
+    "message": "Reset"
+  },
+  "idmIdentityImportFile_cancelButton": {
+    "message": "Cancel"
+  },
+  "idmIdentityImportFile_continueButton": {
+    "message": "Continue..."
+  },
+  "idmIdentityImportFileSelector_loading": {
+    "message": "...getting file names..."
+  },
+  "idmIdentityImportFileSelector_listHeader_FileName": {
+    "message": "File Name"
+  },
+  "idmIdentityImportFileSelector_error_fileNamesFailed": {
+    "message": "Failed to get file names"
+  },
+  "idmIdentityImportFileSelector_error_noFileNames": {
+    "message": "No files were found"
+  },
+  "idmIdentityImportCriteriaSelector.title": {
+    "message": "Select Import Data Criteria"
+  },
+  "idmIdentityImportCriteriaSelectorFileName.label": {
+    "message": "Importing from file:"
+  },
+  "idmIdentityImportCriteriaSelector_error_sheetDataFailed": {
+    "message": "Failed to get Spreadsheet/CSV File data"
+  },
+  "idmIdentityImportCriteriaSelector_error_sheetDataError": {
+    "message": "Error getting Spreadsheet/CSV File data"
+  },
+  "idmIdentityImportCriteriaSelector_error_sheetDataUndefined": {
+    "message": "Spreadsheet/CSV File data undefined"
+  },
+  "idmIdentityImportCriteriaSelector_error_noSheetData": {
+    "message": "Spreadsheet/CSV File returned no data"
+  },
+  "idmIdentityImportCriteriaFilesDirectoryPathName.label": {
+    "message": "Import Files must be placed in this Directory:"
+  },
+  "idmIdentityImportCriteria_instructions_1": {
+    "message": "The first few rows from the Import Spreadhseet/CSV File are listed below"
+  },
+  "idmIdentityImportCriteria_instructions_2": {
+    "message": "Check the Checkbox to indicate if the first row of the Import File is a Header"
+  },
+  "idmIdentityImportCriteria_instructions_3": {
+    "message": "Use the Email Address Column Selector to indicate which Column contains Identity Email Addresses (required)"
+  },
+  "idmIdentityImportCriteria_instructions_4": {
+    "message": "Use the Name Column Selector to indicate which Column contains Identity Names (optional)"
+  },
+  "idmIdentityImportCriteria_instructions_5": {
+    "message": "Click the Continue... Button"
+  },
+  "idmIdentityImportCriteria_cancelButton": {
+    "message": "Cancel"
+  },
+  "idmIdentityImportCriteria_continueButton": {
+    "message": "Continue..."
+  },
+  "idmIdentityImportCriteriaSelector_loading": {
+    "message": "...reading data from file..."
+  },
+  "idmIdentityImportCriteriaSelector_listHeader_Column": {
+    "message": "#"
+  },
+  "idmIdentityImportCriteria_hasHeaderRowCheck.label": {
+    "message": "The First Row is a Column Header"
+  },
+  "idmIdentityImportCriteria_emailColumnSelect.label": {
+    "message": "Select the Column that contains Identity Email Addresses (required)"
+  },
+  "idmIdentityImportCriteria_emailColumnSelect.default": {
+    "message": "--- select email column ---"
+  },
+  "idmIdentityImportCriteria_nameColumnSelect.label": {
+    "message": "Select the Column that contains Identity Names (optional)"
+  },
+  "idmIdentityImportCriteria_nameColumnSelect.default": {
+    "message": "--- no name column ---"
+  },
+  "idmIdentityImportSelectCritera_error_noEmailColNum": {
+    "message": "An Email Address Column must be selected"
+  },
+  "idmIdentityImportSelectCritera_error_sameEmailColNum_NameColNum": {
+    "message": "Email Address Column and Name Column must not be the same"
+  },
+  "identityEditor_title": {
+    "message": "Identity Editor"
+  },
+  "identityEditor_instructions_edit": {
+    "message": "Make changes to this Identity, then click \"Save\""
+  },
+  "identityEditor_instructions_create": {
+    "message": "Enter the information for this Identity, then click \"Save\""
+  },
+  "identityEditor_disclaimer": {
+    "message": "(Thunderbird allows Web Extensions access to only a very limited set of the possible Identity values. In order to set the other values, you must use \"Manage Identities..\" on the \"Account Settings\" tab.)"
+  },
+  "identityEditor_identity_border_color_label": {
+    "message": "Border Color:"
+  },
+  "identityEditor_identity_border_color_text": {
+    "message": "Color from the \"BorderColors D\" Add-on"
+  },
+  "identityEditor_identity_accountdefault_check_label": {
+    "message": "Check this if this is the Default Identity for this Account"
+  },
+  "identityEditor_identity_showinmenu_check_label": {
+    "message": "Show this Identity in the Identity Chooser"
+  },
+  "identityEditor_identity_positioninmenu_label": {
+    "message": "Identity Chooser Position:"
+  },
+  "identityEditor_identity_lockinmenu_check_label": {
+    "message": "Lock Identity in Position"
+  },
+  "identityEditor_identity_collected_check_label": {
+    "message": "This Identity was \"Collected\""
+  },
+  "identityEditor_identity_collected_hint1": {
+    "message": " (An email was sent with a \"From:\" address that did not match an Identity)"
+  },
+  "identityEditor_identity_collected_hint2": {
+    "message": "(Saving will change this status to NOT Collected)"
+  },
+  "identityEditor_identity_imported_check_label": {
+    "message": "This Identity was Imported"
+  },
+  "identityEditor_identity_imported_hint1": {
+    "message": "(Saving will change this status to NOT Imported)"
+  },
+  "identityEditor_identity_account_label": {
+    "message": "Account:"
+  },
+  "identityEditor_identity_account_select": {
+    "message": "--- select an account ---"
+  },
+  "identityEditor_identity_name_label": {
+    "message": "Your Name:"
+  },
+  "identityEditor_identity_email_label": {
+    "message": "Email Address:"
+  },
+  "identityEditor_identity_replyto_label": {
+    "message": "Reply-to Address:"
+  },
+  "identityEditor_identity_compose_html_check_label": {
+    "message": "Compose messages in HTML format"
+  },
+  "identityEditor_identity_organization_label": {
+    "message": "Organizaton:"
+  },
+  "identityEditor_identity_label_label": {
+    "message": "Identity Label:"
+  },
+  "identityEditor_identity_signature_text_label": {
+    "message": "Signature Text:"
+  },
+  "identityEditor_identity_signature_text_html_check_label": {
+    "message": "Use HTML"
+  },
+  "identityEditor_cancel_button": {
+    "message": "Cancel"
+  },
+  "identityEditor_save_button": {
+    "message": "Save"
+  },
+  "identityEditor_error_message_no_identity_id": {
+    "message": "Program Error: No Identity ID provided to Identity Editor"
+  },
+  "identityEditor_error_message_identity_not_found": {
+    "message": "Identity Not Found:"
+  },
+  "identityEditor_error_message_identity_missing_account_id": {
+    "message": "Identity has no Account ID:"
+  },
+  "identityEditor_error_message_account_not_found": {
+    "message": "Account Not Found:"
+  },
+  "identityEditor_error_message_instructions": {
+    "message": "Correct the errors indicated below and try again"
+  },
+  "identityEditor_error_message_missing_account": {
+    "message": "An Account is required"
+  },
+  "identityEditor_error_message_missing_name": {
+    "message": "A Name is required"
+  },
+  "identityEditor_error_message_missing_email": {
+    "message": "An Email Address is required"
+  },
+  "identityEditor_error_message_invalid_email": {
+    "message": "Invalid Email Address"
+  },
+  "identityEditor_error_message_invalid_replyto": {
+    "message": "Invalid Reply-to Address"
+  },
+  "identityEditor_error_message_create_failed": {
+    "message": "Identity creation failed"
+  },
+  "identityEditor_error_message_update_failed": {
+    "message": "Identity update failed"
+  },
+  "identityEditor_error_message_close_failed_no_window_id": {
+    "message": "Internal Error: Window close failed - No Window ID"
+  },
+  "identityEditor_error_message_response_message_failed_ui": {
+    "message": "Internal Error: Failed to send response message - Cannot update the UI"
+  },
+  "idmBackupFilesDirectoryPathName.label": {
+    "message": "Backup Files are placed in this Directory:"
+  },
+  "idmBackupManager_pageTitle": {
+    "message": "Backup Manager"
+  },
+  "idmBackupManager_title": {
+    "message": "Backup Manager"
+  },
+  "idmBackupManager_instructions_1": {
+    "message": "Click on a Backup File to Select it - it will be highlighted"
+  },
+  "idmBackupManager_instructions_1": {
+    "message": "Click on a Backup File to Select it - it will be highlighted"
+  },
+  "idmBackupManager_instructions_2": {
+    "message": "Click again to De-select it"
+  },
+  "idmBackupManager_instructions_3": {
+    "message": "Click the Restore button to restore options from the (one) selected backup file"
+  },
+  "idmBackupManager_instructions_4": {
+    "message": "Click the Backup button to backup the current options"
+  },
+  "idmBackupManager_instructions_5": {
+    "message": "Click the Delete button to delete one or more selected backup files"
+  },
+  "idmBackupManager_message_fileNamesLoading": {
+    "message": "...loading backup filenames..."
+  },
+  "idmBackupManager_doneButton": {
+    "message": "Done"
+  },
+  "idmBackupManager_restoreButton": {
+    "message": "Restore"
+  },
+  "idmBackupManager_backupButton": {
+    "message": "Backup"
+  },
+  "idmBackupManager_deleteButton": {
+    "message": "Delete"
+  },
+  "idmBackupManager_message_error_restoreFailed": {
+    "message": "Failed to restore options from backup file"
+  },
+  "idmBackupManager_message_error_responseMessageFailed": {
+    "message": "Failed to send response message to Options UI - Close the UI and Re-Open it"
+  },
+  "identitiesPopup_identitiesPopupTitle": {
+    "message": "Identity Chooser"
+  },
+  "identitiesPopup_instructions": {
+    "message": "Please select an identity to proceed:"
+  },
+  "identitiesPopup_defaultIdentityLabel": {
+    "message": "Default Identity:"
+  },
+  "identitiesPopup_identityListFiltersPanel.title": {
+    "message": "Filter:"
+  },
+  "identitiesPopup_identityListFiltersPanel.tooltip": {
+    "message": "List only the Identities that match the given criteria"
+  },
+  "identitiesPopup_identityListFilterByAccountPanel.label": {
+    "message": "by Account"
+  },
+  "identitiesPopup_identityListFilterByAccountPanel.tooltip": {
+    "message": "List only Identities whose Accounts match the selected Account"
+  },
+  "identitiesPopup_identityListFilterByAccountSelect_anyAccount": {
+    "message": "--- any account ---"
+  },
+  "identitiesPopup_identityListFilterByAccountResetButton.label": {
+    "message": "Reset"
+  },
+  "identitiesPopup_identityListFilterByAccountResetButton.tooltip": {
+    "message": "Reset the \"by Account\" Filter"
+  },
+  "identitiesPopup_identityListFilterByLabelPanel.label": {
+    "message": "by Name+Label"
+  },
+  "identitiesPopup_identityListFilterByLabelPanel.tooltip": {
+    "message": "List only Identities whose Names+Labels match the given Regular Expression"
+  },
+  "identitiesPopup_identityListFilterByLabelResetButton.label": {
+    "message": "Reset"
+  },
+  "identitiesPopup_identityListFilterByLabelResetButton.tooltip": {
+    "message": "Reset the \"by Name+Label\" Filter"
+  },
+  "identitiesPopup_identityListFilterByEmailPanel.label": {
+    "message": "by Email"
+  },
+  "identitiesPopup_identityListFilterByEmailPanel.tooltip": {
+    "message": "List only Identities whose Email Addresses match the given Regular Expression"
+  },
+  "identitiesPopup_identityListFilterByEmailResetButton.label": {
+    "message": "Reset"
+  },
+  "identitiesPopup_identityListFilterByEmailResetButton.tooltip": {
+    "message": "Reset the \"by Email Address\" Filter"
+  },
+  "identitiesPopup_identityListFilterResetAllButton.label": {
+    "message": "Reset All"
+  },
+  "identitiesPopup_identityListFilterResetAllButton.tooltip": {
+    "message": "Reset ALL Identity Filters"
+  },
+  "identitiesPopup_defaultButton": {
+    "message": "Use Default"
+  },
+  "identitiesPopup_cancelButton": {
+    "message": "Cancel"
+  },
+  "composeActionLabel": {
+    "message": "Identity"
+  },
+  "idmComposeWindow_menuItem_identityChooser": {
+    "message": "Choose Identity"
+  }
+}

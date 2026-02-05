@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+
+<html language="en">
+
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title data-l10n-id="idmIdentityImporter_page.title">Import Identities</title>
+    <script type="module" src="./identityImporter.js" defer></script>
+    <script src="../modules/SheetJS/xlsx.core.min.js"></script>
+    <link rel="stylesheet" href="./identityImporter.css" type="text/css" >
+  </head>
+
+  <body>
+    <div id="idmIdentityImporter">
+      <div class="title" id="idmIdentityImporterTitle" data-l10n-id="idmIdentityImporter.title">
+        Select And Import Identities
+      </div>
+
+      <div class="import-criteria-error" error-for="idmIdentityImporterTitle" error="false">
+        <span class="import-criteria-error-icon-large"><img src="../images/icons/forbidden_16x16.png"/></span> <!-- src should be in css -->
+        <label class="import-criteria-error-text" error-for="idmIdentityImporterTitle"></label>
+      </div>
+
+      <table id="import_error_list">
+      </table>
+
+      <div id="idmIdentityImportFileSelector">
+        <div id="idmIdentityImportFileSelectorNavWrapper" class="nav-wrapper">
+          <div id="idmIdentityImportFileSelectorNav" class="nav">
+            <span class="nav-item nav-current" nav="select-file" data-l10n-id="idmIdentityImporterNav_SelectFile">Select a File</span>
+            <span class="nav-step-fwd">==&gt;</span>
+            <span class="nav-item nav-next" nav="select-criteria" data-l10n-id="idmIdentityImporterNav_SelectCriteria">Select Data Criteria</span>
+            <span class="nav-step-fwd">==&gt;</span>
+            <span class="nav-item nav-future" nav="select-identities" data-l10n-id="idmIdentityImporterNav_SelectIdentities">Select Identities</span>
+          </div>
+        </div>
+
+        <div class="sub-title" id="idmIdentityImportFileSelectorTitle" data-l10n-id="idmIdentityImportFileSelector.title">
+          Select A File to Import
+        </div>
+
+        <div id="idmIdentityImportFileInstructionsPanel">
+          <div id="idmIdentityImportFileInstructions" >
+            <ul>
+              <li><label data-l10n-id="idmIdentityImportFile_instructions_1">To filter the files by FileName, Enter a FileName GLOB and click the Filter Button</label></li>
+              <li><label data-l10n-id="idmIdentityImportFile_instructions_2">Click on a FileName to select a file (required)</label></li>
+              <li><label data-l10n-id="idmIdentityImportFile_instructions_3">Click again the De-Select it, or click on another FileName</label></li>
+              <li><label data-l10n-id="idmIdentityImportFile_instructions_4">Click the Continue... Button</label></li>
+<!--          <li><label data-l10n-id="idmIdentityImportFile_instructions_5"></label></li> -->
+              <li>
+                <label data-l10n-id="idmIdentityImportCriteriaFilesDirectoryPathName.label">Import Files must be placed in this Directory:</label></li>
+                <label id="idmIdentityImportCriteriaFilesDirectoryPathName"></label>
+              </li>
+            <ul>
+          </div>
+          <div class="import-file-error" error-for="idmIdentityImportFileInstructions" error="false">
+            <span class="import-file-error-icon-large"><img src="../images/icons/forbidden_16x16.png"/></span> <!-- src should be in css -->
+            <label class="import-file-error-text" error-for="idmIdentityImportFileInstructions"></label>
+          </div>
+        </div>
+
+        <div id="idmIdentityImportFileSelectorActionsWrapper">
+          <div id="idmIdentityImportFileSelectorActionsPanel">
+
+<!--        <div id="idmIdentityImportFileSelectorActionsTitle">
+              <label data-l10n-id="idmIdentityImportFileSelector_actionsTitle.label">
+                Filter Files:
+              </label>
+            </div>
+-->
+            <table id="idmIdentityImportFileSelectorActions">
+
+              <tr id="idmIdentityImportFileSelectorFilterPanel">
+                <td class="identity-action-label">
+                  <label data-l10n-id="idmIdentityImportFileSelector_actionsFilterPanel.label">
+                    Filter Files by FileName GLOB
+                  </label>
+                </td>
+                <td colspan=3>
+                  <div>
+                    <input type="text" id="idmIdentityImportFileSelectorFilterGlobText">
+                    <button id="idmIdentityImportFileSelectorFilterGlobButton" disabled>
+                      <label for="idmIdentityImportFileSelectorFilterGlobButton" data-l10n-id="idmIdentityImportFileSelectorFilterGlobButton.label">
+                        Apply
+                      </label>
+                    </button>
+                    <button id="idmIdentityImportFileSelectorFilterResetButton">
+                      <label for="idmIdentityImportFileSelectorFilterResetButton" data-l10n-id="idmIdentityImportFileSelectorFilterResetButton.label">
+                        Reset
+                      </label>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+            </table>
+          </div>
+        </div>
+
+        <div id="idmIdentityImportFileDataListWrapper">
+          <table id="idmIdentityImportFileDataList">
+          </table>
+        </div>
+
+        <div id="idmIdentityImportFileControlsPanel">
+          <div id="idmIdentityImportFileControlsButtonPanel">
+            <button class='cancel-button' id="idmIdentityImportFileControlsCancelButton"
+                    data-l10n-id="idmIdentityImportFile_cancelButton">Cancel</button>
+            <button class='ok-button' id="idmIdentityImportFileControlsContinueButton" disabled
+                    data-l10n-id="idmIdentityImportFile_continueButton">Continue...</button>
+          </div>
+          <div id="idmIdentityImportFileControlsPanelSpacerLeft"></div>
+          <div id="idmIdentityImportFileControlsPanelSpacerRight"></div>
+        </div>
+
+        <div id="idmIdentityImportFileLeftSpacer"></div>
+        <div id="idmIdentityImportFileRightSpacer"></div>
+        <div id="idmIdentityImportFileBottomSpacer"></div>
+      </div>
+
+
+
+      <div id="idmIdentityImportCriteriaSelector">
+        <div id="idmIdentityImportCriteriaSelectorNavWrapper" class="nav-wrapper">
+          <div id="idmIdentityImportCriteriaSelectorNav" class="nav">
+            <span class="nav-item nav-past nav-active" nav="select-file" data-l10n-id="idmIdentityImporterNav_SelectFile">Select a File</span>
+            <span class="nav-step-rev">&lt;==</span>
+            <span class="nav-item nav-current" nav="select-criteria" data-l10n-id="idmIdentityImporterNav_SelectCriteria">Select Data Criteria</span>
+            <span class="nav-step-fwd">==&gt;</span>
+            <span class="nav-item nav-next" nav="select-identities" data-l10n-id="idmIdentityImporterNav_SelectIdentities">Select Identities</span>
+          </div>
+        </div>
+
+        <div id="idmIdentityImportCriteriaSelectorFileNamePanel" class="filename-panel">
+          <label for="idmIdentityImportCriteriaSelectorFileName" class="highlight-label" data-l10n-id="idmIdentityImportCriteriaSelectorFileName.label">
+            Importing from File:
+          </label>
+          <label id="idmIdentityImportCriteriaSelectorFileName"></label>
+        </div>
+
+        <div class="sub-title" id="idmIdentityImportCriteriaSelectorTitle" data-l10n-id="idmIdentityImportCriteriaSelector.title">
+          Select Import Data Criteria
+        </div>
+
+        <div id="idmIdentityImportCriteriaInstructionsPanel">
+          <div id="idmIdentityImportCriteriaInstructions" >
+            <ul>
+              <li>
+                <label data-l10n-id="idmIdentityImportCriteria_instructions_1">
+                  The first few rows from the Import Spreadhseet/CSV File are listed below
+                </label>
+              </li>
+              <li>
+                <label data-l10n-id="idmIdentityImportCriteria_instructions_2">
+                  Check the Checkbox to indicate if the first row of the Import File is a Header
+                </label>
+              </li>
+              <li>
+                <label data-l10n-id="idmIdentityImportCriteria_instructions_3">
+                  Select which Column contains Identity Email Addresses (required)
+                </label>
+              </li>
+              <li>
+                <label data-l10n-id="idmIdentityImportCriteria_instructions_4">
+                  Select which Column contains Identity Names (optional)
+                </label>
+              </li>
+              <li>
+                <label data-l10n-id="idmIdentityImportCriteria_instructions_5">
+                  Click the Continue... Button
+                </label>
+              </li>
+            <ul>
+          </div>
+          <div class="import-criteria-error" error-for="idmIdentityImportCriteriaInstructions" error="false">
+            <span class="import-criteria-error-icon-large"><img src="../images/icons/forbidden_16x16.png"/></span> <!-- src should be in css -->
+            <label class="import-criteria-error-text" error-for="idmIdentityImportCriteriaInstructions"></label>
+          </div>
+        </div>
+
+        <div id="idmIdentityImportCriteriaSelectionPanel">
+          <table id="idmIdentityImportCriteriaSelectionControls">
+            <tr class="">
+              <td class="criteria-selection-control-label">
+                <label  for="idmIdentityImportCriteriaSelectionHasHeaderRowCheck" data-l10n-id="idmIdentityImportCriteria_hasHeaderRowCheck.label">
+                  The First Row is a Column Header
+                </label>
+              </td>
+              <td class="criteria-selection-control">
+                <input type="checkbox" id="idmIdentityImportCriteriaSelectionHasHeaderRowCheck"/>
+              </td>
+            </tr>
+            <tr class="">
+              <td class="criteria-selection-control-label">
+                <label  for="idmIdentityImportCriteriaSelectionEmailColumnSelect" data-l10n-id="idmIdentityImportCriteria_emailColumnSelect.label">
+                  Select the Column that contains Identity Email Addresses (required)
+                </label>
+              </td>
+              <td class="criteria-selection-control">
+                <select id="idmIdentityImportCriteriaSelectionEmailColumnSelect"/>
+              </td>
+            </tr>
+            <tr class="">
+              <td class="criteria-selection-control-label">
+                <label  for="idmIdentityImportCriteriaSelectionNameColumnSelect" data-l10n-id="idmIdentityImportCriteria_nameColumnSelect.label">
+                  Select the Column that contains Identity Names (optional)
+                </label>
+              </td>
+              <td class="import-criteria-selection-control">
+                <select id="idmIdentityImportCriteriaSelectionNameColumnSelect"/>
+              </td>
+            </tr>
+            <div id="idmIdentityImportCriteriaSelectionPanelSpacerLeft"></div>
+            <div id="idmIdentityImportCriteriaSelectionPanelSpacerRight"></div>
+          </table>
+        </div>
+
+        <div id="idmIdentityImportCriteriaDataListWrapper">
+          <table id="idmIdentityImportCriteriaDataList">
+          </table>
+        </div>
+
+        <div id="idmIdentityImportCriteriaControlsPanel">
+          <div id="idmIdentityImportCriteriaControlsButtonPanel">
+            <button class='cancel-button' id="idmIdentityImportCriteriaControlsCancelButton"
+                    data-l10n-id="idmIdentityImportCriteria_cancelButton">Cancel</button>
+            <button class='ok-button' id="idmIdentityImportCriteriaControlsContinueButton" disabled
+                    data-l10n-id="idmIdentityImportCriteria_continueButton">Continue...</button>
+          </div>
+          <div id="idmIdentityImportCriteriaControlsPanelSpacerLeft"></div>
+          <div id="idmIdentityImportCriteriaControlsPanelSpacerRight"></div>
+        </div>
+
+        <div id="idmIdentityImportCriteriaLeftSpacer"></div>
+        <div id="idmIdentityImportCriteriaRightSpacer"></div>
+        <div id="idmIdentityImportCriteriaBottomSpacer"></div>
+      </div>
+
+
+
+      <div id="idmIdentityImportIdentitiesSelector">
+        <div id="idmIdentityImportIdentitiesSelectorNavWrapper" class="nav-wrapper">
+          <div id="idmIdentityImportIdentitiesSelectorNav" class="nav">
+            <span class="nav-item nav-past nav-active" nav="select-file" data-l10n-id="idmIdentityImporterNav_SelectFile">Select a File</span>
+            <span class="nav-step-rev">&lt;==</span>
+            <span class="nav-item nav-past nav-active" nav="select-criteria" data-l10n-id="idmIdentityImporterNav_SelectCriteria">Select Data Criteria</span>
+            <span class="nav-step-rev">&lt;==</span>
+            <span class="nav-item nav-current" nav="select-identities" data-l10n-id="idmIdentityImporterNav_SelectIdentities">Select Identities</span>
+          </div>
+        </div>
+
+        <div id="idmIdentityImportIdentitiesSelectorFileNamePanel" class="filename-panel">
+          <label for="idmIdentityImportIdentitiesSelectorFileName" class="highlight-label" data-l10n-id="idmIdentityImportIdentitiesSelectorFileName.label">
+            Importing from File:
+          </label>
+          <label id="idmIdentityImportIdentitiesSelectorFileName"></label>
+        </div>
+
+        <div class="sub-title" id="idmIdentityImportIdentitiesSelectorTitle" data-l10n-id="idmIdentityImportIdentitiesSelector.title">
+          Select Identities to Import
+        </div>
+
+        <div id="idmIdentityImportIdentitiesSelectorInstructionsPanel">
+          <div id="idmIdentityImportIdentitiesSelectorInstructions" >
+            <ul>
+              <li>
+                <label data-l10n-id="idmIdentityImportIdentitiesSelector_instructions_1">
+                  Click on an Identity to Select it - it will be highlighted
+                </label>
+              </li>
+              <li>
+                <label data-l10n-id="idmIdentityImportIdentitiesSelector_instructions_2">
+                  Click again to De-select it
+                </label>
+              </li>
+              <li>
+                <label data-l10n-id="idmIdentityImportIdentitiesSelector_instructions_3">
+                  Click the Import Button to add the selected Identities
+                </label>
+              </li>
+              <li>
+                <label data-l10n-id="idmIdentityImportIdentitiesSelector_instructions_4">
+                  Each Identity MUST have an Account and a Name
+                </label>
+              </li>
+              <li>
+                <label data-l10n-id="idmIdentityImportIdentitiesSelector_instructions_5">
+                  Identities that already exist (blue marker) cannot be selected
+                </label>
+              </li>
+            <ul>
+          </div>
+          <div class="import-data-error" error-for="idmIdentityImportIdentitiesSelectorInstructions" error="false">
+            <span class="import-data-error-icon-large"><img src="../images/icons/forbidden_16x16.png"/></span> <!-- src should be in css -->
+            <label class="import-data-error-text" error-for="idmIdentityImportIdentitiesSelectorInstructions"></label>
+          </div>
+        </div>
+
+        <div id="idmIdentityImportIdentitiesSelectorActionsWrapper">
+          <div id="idmIdentityImportIdentitiesSelectorActionsPanel">
+
+            <div id="idmIdentityImportIdentitiesSelectorActionsTitle">
+              <label  data-l10n-id="idmIdentityImportIdentitiesSelector_actionsTitle.label">
+                Actions:
+              </label>
+            </div>
+
+            <table id="idmIdentityImportIdentitiesSelectorActions">
+
+              <tr id="idmIdentityImportIdentitiesSelectorFilterPanel">
+                <td class="identity-action-label">
+                  <label data-l10n-id="idmIdentityImportIdentitiesSelector_actionsFilterPanel.label">
+                    Filter Identities
+                  </label>
+                </td>
+                <td>
+                  <div>
+                    <input type="checkbox" class="icGeneralOption" id="idmIdentityImportIdentitiesSelectorHideExistingCheck">
+                    <label for="idmIdentityImportIdentitiesSelectorHideExistingCheck"
+                           data-l10n-id="idmIdentityImportIdentitiesSelectorHideExistingCheck.label">
+                      Hide Existing
+                    </label>
+                  </div>
+                </td>
+                <td>
+                  <div>
+                    <label for="idmIdentityImportIdentitiesSelectorFilterRegexText"
+                           data-l10n-id="idmIdentityImportIdentitiesSelectorFilterRegexText.label">
+                      Match Email Address by RegEx
+                    </label>
+                    <input type="text" id="idmIdentityImportIdentitiesSelectorFilterRegexText">
+                    <button id="idmIdentityImportIdentitiesSelectorFilterRegexResetButton">
+                      <label for="idmIdentityImportIdentitiesSelectorFilterRegexResetButton"
+                             data-l10n-id="idmIdentityImportIdentitiesSelectorFilterRegexResetButton.label">
+                        Reset
+                      </label>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr id="idmIdentityImportIdentitiesSelectorSelectButtonPanel">
+                <td class="identity-action-label">
+                  <label data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSelectButtonPanel.label">
+                    Select or De-Select all Identities
+                  </label>
+                </td>
+                <td>
+                  <button id="idmIdentityImportIdentitiesSelectorSelectAllButton">
+                    <label for="idmIdentityImportIdentitiesSelectorSelectAllButton"
+                           data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSelectAllButton.label">
+                      Select All
+                    </label>
+                  </button>
+                </td>
+                <td>
+                  <button id="idmIdentityImportIdentitiesSelectorDeselectAllButton">
+                    <label for="idmIdentityImportIdentitiesSelectorDeselectAllButton"
+                           data-l10n-id="idmIdentityImportIdentitiesSelector_actionsDeselectAllButton.label">
+                      De-Select All
+                    </label>
+                  </button>
+                </td>
+              </tr>
+
+              <tr id="idmIdentityImportIdentitiesSelectorSetDataAllButtonPanel">
+                <td class="identity-action-label">
+                  <label data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetDataAllButtonPanel.label">
+                    Set or Clear Data for All Identities
+                  </label>
+                </td>
+                <td>
+                  <button id="idmIdentityImportIdentitiesSelectorSetDataAllButton">
+                    <label for="idmIdentityImportIdentitiesSelectorSetDataAllButton"
+                           data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetDataAllButton.label">
+                      Set Data
+                    </label>
+                  </button>
+                </td>
+                <td>
+                  <button id="idmIdentityImportIdentitiesSelectorClearDataAllButton">
+                    <label for="idmIdentityImportIdentitiesSelectorClearDataAllButton"
+                      data-l10n-id="idmIdentityImportIdentitiesSelector_actionsClearDataAllButton.label">
+                      Clear Data
+                    </label>
+                  </button>
+                </td>
+              </tr>
+
+              <tr id="idmIdentityImportIdentitiesSelectorSetDataSelectedButtonPanel">
+                <td class="identity-action-label">
+                  <label data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetDataSelectedButtonPanel.label">
+                    Set or Clear Data for Selected Identities
+                  </label>
+                </td>
+                <td>
+                  <button id="idmIdentityImportIdentitiesSelectorSetDataSelectedButton">
+                    <label for="idmIdentityImportIdentitiesSelectorSetDataSelectedButton"
+                           data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetDataSelectedButton.label">
+                      Set Data
+                    </label>
+                  </button>
+                </td>
+                <td>
+                  <button id="idmIdentityImportIdentitiesSelectorClearDataSelectedButton">
+                    <label for="idmIdentityImportIdentitiesSelectorClearDataSelectedButton"
+                      data-l10n-id="idmIdentityImportIdentitiesSelector_actionsClearDataSelectedButton.label">
+                      Clear Data
+                    </label>
+                  </button>
+                </td>
+              </tr>
+
+            </table>
+
+            <div id="idmIdentityImportIdentitiesSelectorActionsSetDataPanel">
+              <div id="idmIdentityImportIdentitiesSelectorActionsSetDataPanelTitle">
+                <label id="idmIdentityImportIdentitiesSelectorSetDataTitleLabel"
+                       data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetDataPanelTitle.label">
+                  Data to Set:
+                </label>
+              </div>
+
+              <table id="idmIdentityImportIdentitiesSelectorSetDataList">
+
+                <tr>
+                  <td class="identity-set-data-label">
+                    <label data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetData_Account.label">
+                      Account:
+                    </label>
+                  </td>
+                  <td class="identity-set-data-value">
+                    <select id="idmIdentityImportIdentitiesSelector_actionsSetData_Account.select" class="identity-set-data-select">
+                      <!-- options to be added by identityImporter.js -->
+                    </select>
+                  </td>
+
+                  <td class="identity-set-data-label">
+                    <label data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetData_Name.label">
+                      Name:
+                    </label>
+                  </td>
+                  <td class="identity-set-data-value">
+                    <input type="text" id="idmIdentityImportIdentitiesSelector_actionsSetData_Name.text" class="identity-set-data-text"/>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="identity-set-data-label">
+                    <label data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetData_ReplyTo.label">
+                      Reply To:
+                    </label>
+                  </td>
+                  <td class="identity-set-data-value">
+                    <input type="text" id="idmIdentityImportIdentitiesSelector_actionsSetData_ReplyTo.text" class="identity-set-data-text"/>
+                  </td>
+
+                  <td class="identity-set-data-label">
+                    <label data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetData_Organization.label">
+                      Organization:
+                    </label>
+                  </td>
+                  <td class="identity-set-data-value">
+                    <input type="text" id="idmIdentityImportIdentitiesSelector_actionsSetData_Organization.text" class="identity-set-data-text"/>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="identity-set-data-label">
+                    <label data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetData_Label.label">
+                      Label:
+                    </label>
+                  </td>
+                  <td class="identity-set-data-value" colspan="3">
+                    <input type="text" id="idmIdentityImportIdentitiesSelector_actionsSetData_Label.text" class="identity-set-data-text"/>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="identity-set-data-label">
+                    <label data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetData_Signature.label">
+                      Signature:
+                    </label>
+                  </td>
+                  <td class="identity-set-data-value" colspan=3>
+                    <input type="text" id="idmIdentityImportIdentitiesSelector_actionsSetData_Signature.text" class="identity-set-data-text"/>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="identity-set-data-label">
+                    <label data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetData_SigIsHtml.label">
+                      Signature is HTML?
+                    </label>
+                  </td>
+                  <td class="identity-set-data-value checkbox-panel">
+                    <span class="identity-set-data-checkbox-panel">
+                      <input type="checkbox" id="idmIdentityImportIdentitiesSelector_actionsSetData_KeepSigIsHtml.check" class="identity-set-data-check"/>
+                      <label id="idmIdentityImportIdentitiesSelector_actionsSetData_KeepSigIsHtmlCheck.label"
+                             for="idmIdentityImportIdentitiesSelector_actionsSetData_KeepSigIsHtml.check"
+                             data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetData_KeepSigIsHtmlCheck.label">
+                        Do not change
+                      </label>
+                      <span class='identity-set-data-checkbox-spacer'></span>
+                      <input type="checkbox" id="idmIdentityImportIdentitiesSelector_actionsSetData_SigIsHtml.check" class="identity-set-data-check"/>
+                      <label id="idmIdentityImportIdentitiesSelector_actionsSetData_SigIsHtmlCheck.label"
+                             for="idmIdentityImportIdentitiesSelector_actionsSetData_SigIsHtml.check"
+                             data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetData_SigIsHtmlCheck.label">
+                        New setting
+                      </label>
+                    </span>
+                  </td>
+
+                  <td class="identity-set-data-label">
+                    <label data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetData_ComposeHtml.label">
+                      Compose in HTML?
+                    </label>
+                  </td>
+                  <td class="identity-set-data-value checkbox-panel">
+                    <span class="identity-set-data-checkbox-panel ">
+                      <input type="checkbox" id="idmIdentityImportIdentitiesSelector_actionsSetData_KeepComposeHtml.check" class="identity-set-data-check"/>
+                      <label id="idmIdentityImportIdentitiesSelector_actionsSetData_KeepComposeHtmlCheck.label"
+                             for="idmIdentityImportIdentitiesSelector_actionsSetData_KeepComposeHtml.check"
+                             data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetData_KeepComposeHtmlCheck.label">
+                        Do not change
+                      </label>
+                      <span class='identity-set-data-checkbox-spacer'></span>
+                      <input type="checkbox" id="idmIdentityImportIdentitiesSelector_actionsSetData_ComposeHtml.check" class="identity-set-data-check"/>
+                      <label id="idmIdentityImportIdentitiesSelector_actionsSetData_ComposeHtmlCheck.label"
+                             for="idmIdentityImportIdentitiesSelector_actionsSetData_ComposeHtml.check"
+                             data-l10n-id="idmIdentityImportIdentitiesSelector_actionsSetData_ComposeHtmlCheck.label">
+                        New setting
+                      </label>
+                    </span>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                  </td>
+                  <td colspan=3>
+                    <div id="idmIdentityImportIdentitiesSelectorActionsSetDataButtonPanel">
+                      <button id="idmIdentityImportIdentitiesSelectorActionsDataButtonReset">
+                        <label for="idmIdentityImportIdentitiesSelectorActionsDataButtonReset"
+                               data-l10n-id="idmIdentityImportIdentitiesSelectorActionsDataButtonReset.label">
+                          Reset
+                        </label>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+              </table>
+
+            </div>
+
+            <div id="idmIdentityImportIdentitiesSelectorActionsSpacerRight"></div>
+          </div>
+        </div>
+
+        <div id="idmIdentityImportIdentitiesSelectorIdentityListWrapper">
+          <table id="idmIdentityImportIdentitiesSelectorIdentityList">
+          </table>
+        </div>
+
+        <div id="idmIdentityImportIdentitiesSelectorControlsPanel">
+          <div id="idmIdentityImportIdentitiesSelectorControlsButtonPanel">
+            <button class='cancel-button' id="idmIdentityImportIdentitiesSelectorControlsCancelButton"
+                    data-l10n-id="idmIdentityImportIdentitiesSelector_cancelButton">Cancel</button>
+            <button class='ok-button' id="idmIdentityImportIdentitiesSelectorControlsImportButton"
+                    disabled data-l10n-id="idmIdentityImportIdentitiesSelector_importButton">Import</button>
+          </div>
+          <div id="idmIdentityImportIdentitiesSelectorControlsPanelSpacerLeft"></div>
+          <div id="idmIdentityImportIdentitiesSelectorControlsPanelSpacerRight"></div>
+        </div>
+
+        <div id="idmIdentityImportIdentitiesSelectorLeftSpacer"></div>
+        <div id="idmIdentityImportIdentitiesSelectorRightSpacer"></div>
+        <div id="idmIdentityImportIdentitiesSelectorBottomSpacer"></div>
+      </div>
+    </div>
+  </body>
+
+</html>

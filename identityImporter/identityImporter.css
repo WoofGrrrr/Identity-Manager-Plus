@@ -1,0 +1,1324 @@
+/* Identity Importer styles */
+
+@import url("../styles/theming.css");
+
+html, body {
+  background-color: var(--page-background-color);
+  color:            var(--page-color);
+  font:             var(--page-font);
+  font-size:        var(--page-font-size);
+  height:           100%;
+}
+
+body {
+  background-color: var(--body-background-color);
+  height:           100%;
+}
+
+
+.button-panel {
+  display:         flex;
+  flex-direction:  row;
+  justify-content: space-evenly;
+  vertical-align:  middle;
+}
+
+#idmIdentityImporterTitle { /* also .title */
+  background-color: var(--title-background-color);
+  border:           1px solid var(--title-border-color);
+  border-radius:    var(--title-border-radius);
+  color:            var(--title-color);
+  font-size:        var(--title-font-size);
+  font-weight:      var(--title-font-weight);
+  line-height:      var(--title-line-height);
+  margin-left:      1.0em;
+  margin-top:       1.0em;
+  text-align:       left;
+  text-shadow:      1px 1px var(--title-shadow-color);
+  width:            100%;
+}
+
+.sub-title {
+  background-color: var(--title-background-color);
+  border:           1px solid var(--title-border-color);
+  border-radius:    var(--title-border-radius);
+  color:            var(--title-color);
+/*font-size:        var(--title-font-size);*/
+  font-weight:      var(--title-font-weight);
+/*line-height:      var(--title-line-height);*/
+  margin-left:      2.0em;
+  margin-top:       1.0em;
+  text-align:       left;
+  text-shadow:      1px 1px var(--title-shadow-color);
+  width:            100%;
+}
+
+.filename-panel {
+  margin-left:      4.0em;
+}
+
+.highlight-label {
+/*color:            var(--title-color); */
+  font-weight:      var(--title-font-weight);
+  text-shadow:      1px 1px var(--title-shadow-color);
+}
+
+#import_error_list { /* This is a <TABLE> */
+  display:          none;
+}
+
+#import_error_list[error="true"] {
+  background-color: var(--error-list-background-color);
+  border:           var(--error-list-border);
+  border-spacing:   0 0.5em;
+  display:          table;
+  margin-left:      2.0em;
+}
+
+.import-error-item { /* this is a <TR> */
+  background-color: var(--error-item-background-color);
+  border:           var(--error-item-border);
+  padding:          4px;
+}
+
+.import-error-info { /* this is a <TD> */
+  background-color: var(--error-info-background-color);
+  border:           var(--error-info-border);
+}
+
+.import-error-icon-large { /* this is an <IMG> */
+  height:         16px;
+  max-height:     16px;
+  max-width:      16px;
+  vertical-align: middle;
+  width:          16px;
+}
+
+.import-error-icon { /* this is an <IMG> */
+  height:         8px;
+  max-height:     8px;
+  max-width:      8px;
+  vertical-align: middle;
+  width:          8px;
+}
+
+.import-error-text { /* this is a <DIV> */
+  color:          var(--error-text-color);
+  display:        inline-grid;
+  font:           var(--error-text-font);
+  font-size:      var(--error-text-font-size);
+  font-weight:    var(--error-text-font-weight);
+  margin-left:    0.25em;
+}
+
+td[error="true"] {
+/*background-color: var(--error-background-color); */
+  border:           var(--error-border); /* MABXXX BACKGROUND-COLOR INSTEAD??? */
+}
+
+
+
+.nav-wrapper {
+}
+
+.nav {
+  background-color: var(--nav-background-color);
+  border:           var(--nav-border);
+  margin-left:      4.0em;
+  padding:          0.5em 2.0em;
+
+  display:          inline-flex;
+  align-items:      stretch;
+  column-gap:       0.75em;
+  flex-direction:   row;
+}
+
+
+.nav-item {
+  flex:             1;
+  padding:          0.0em 0.5em;
+  white-space:      nowrap;
+
+  background-color: var(--nav-item-background-color);
+  border:           var(--nav-item-border);
+  color:            var(--nav-item-color);
+  font:             var(--nav-item-font);
+  font-size:        var(--nav-item-font-size);
+  font-weight:      var(--nav-item-font-weight);
+}
+
+.nav-past {
+  background-color: var(--nav-item-past-background-color);
+  border:           1px solid var(--nav-item-past-border-color);
+  color:            var(--nav-item-past-color);
+}
+
+.nav-current {
+  background-color: var(--nav-item-current-background-color);
+  border:           1px solid var(--nav-item-current-border-color);
+  color:            var(--nav-item-current-color);
+  text-shadow:      1px 1px var(--nav-item-current-text-shadow-color);
+}
+
+.nav-next {
+  background-color: var(--nav-item-next-background-color);
+  border:           1px solid var(--nav-item-next-border-color);
+  color:            var(--nav-item-next-color);
+}
+
+.nav-future {
+  background-color: var(--nav-item-future-background-color);
+  border:           1px solid var(--nav-item-future-border-color);
+  color:            1px solid var(--nav-item-future-color);
+}
+
+.nav-active {
+  background-color: var(--nav-item-active-background-color);
+  border:           1px solid var(--nav-item-active-border-color);
+  color:            var(--nav-item-active-color);
+  cursor:           pointer;
+}
+
+.nav-active:hover {
+  background-color: var(--nav-item-active-hover-background-color);
+  background-image: var(--nav-item-active-hover-background-image);
+  border:           1px solid var(--nav-item-active-hover-border-color);
+  color:            var(--nav-item-active-hover-color);
+  text-shadow:      1px 1px var(--nav-item-active-hover-text-shadow-color);
+}
+
+.nav-step-fwd {
+}
+
+.nav-step-rev {
+}
+
+
+
+#idmIdentityImportFileSelector {
+  height: 100%;
+  margin: 0.8em auto;
+  width:  100%; /* MABXXX -- WHY DOESN'T THIS MAKE THE DIV AS WIDE AS THE PAGE??? */
+
+  /* grid layout */
+
+  display:    grid;
+  column-gap: 2px;
+  row-gap:    0px;
+  grid-template-areas:
+    "nav            nav             nav"
+    "title          title           title"
+    "instructions   instructions    instructions"
+    "left-spacer    selection-panel right-spacer"
+    "left-spacer    list-wrapper    right-spacer"
+    "left-spacer    controls-panel  right-spacer"
+    "bottom-spacer  bottom-spacer   bottom-spacer";
+
+  grid-template-columns: auto max-content auto;
+  grid-template-rows:    min-content min-content auto min-content min-content;
+
+  & #idmIdentityImportFileSelectorNavWrapper {
+    grid-area: nav;
+  }
+
+  & #idmIdentityImportFileSelectorTitle {
+    grid-area: title;
+  }
+
+  & #idmIdentityImportFileInstructionsPanel {
+    grid-area: instructions;
+  }
+
+  & #idmIdentityImportFileSelectionPanel {
+    grid-area: selection-panel
+  }
+
+  & #idmIdentityImportFileDataListWrapper {
+    grid-area: list-wrapper;
+  }
+
+  & #idmIdentityImportFileControlsPanel {
+    grid-area: controls-panel
+  }
+
+  & #idmIdentityImportFileLeftSpacer {
+    grid-area: left-spacer;
+  }
+
+  & #idmIdentityImportFileRightSpacer {
+    grid-area: right-spacer;
+  }
+
+  & #idmIdentityImportFileBottomSpacer {
+    grid-area:  bottom-spacer;
+  }
+}
+
+#idmIdentityImportFileSelectorNavWrapper {
+}
+
+#idmIdentityImportFileSelectorNav {
+}
+
+#idmIdentityImportFileSelectorTitle {
+}
+
+#idmIdentityImportFileInstructionsPanel {
+  background-color: var(--instructions-background-color);
+  border:           1px solid var(--instructions-border-color);
+  border-radius:    var(--instructions-border-radius);
+  color:            var(--instructions-color);
+  font-size:        var(--instructions-font-size);
+  font-weight:      var(--instructions-font-weight);
+/*margin-top:       1.0em; */
+  margin-left:      1.0em;
+}
+
+#idmIdentityImportFileInstructions {
+}
+
+#idmIdentityImportFileSelectionPanel {
+  background-color: var(--panel-background-color);
+  border:           1px solid var(--panel-border-color);
+  border-radius:    10px;
+  margin-left:      3.0em;
+  padding:          0.5em 1.0em 0.5em 1.0em;
+}
+
+#idmIdentityImportFileDataListWrapper { /* this is a <DIV> */
+  background-color: var(--panel-background-color);
+  border:           1px solid var(--panel-border-color);
+  border-radius:    10px;
+  margin:           12px;
+  overflow-x:       hidden;
+  overflow-y:       auto;
+/*padding:          0.5em 1.0em 0.5em 1.0em;*/
+  padding:          0.25em 0.5em 0.25em 0.5em;
+}
+
+#idmIdentityImportFileDataList { /* this is a <TABLE> */
+  border-radius:    10px;
+  border-spacing:   1px 0.5em;
+  margin-right:     20px;
+  overflow-x:       hidden;
+  overflow-y:       auto;
+  width:            100%;
+  -moz-appearance:  NONE;
+}
+
+#idmIdentityImportFileControlsPanel {
+  margin-left: 3.0em;
+}
+
+.import-file-error {
+  display: NONE;
+}
+
+.import-file-error[error="true"] {
+  background-color: var(--error-background-color);
+  border:           var(--error-border);
+  display:          flex;
+  flex-direction:   row;
+}
+
+.import-file-error-icon-large {
+  height:         16px;
+  max-height:     16px;
+  max-width:      16px;
+  vertical-align: middle;
+  width:          16px;
+}
+
+.import-file-error-icon {
+  height:         8px;
+  max-height:     8px;
+  max-width:      8px;
+  vertical-align: middle;
+  width:          8px;
+}
+
+.import-file-error-text {
+  color:          var(--error-text-color);
+  font:           var(--error-text-font);
+  font-size:      var(--error-text-font-size);
+  font-weight:    var(--error-text-font-weight);
+  margin-left:    0.25em;
+}
+
+.filename-list-header { /* this is a <TR> */
+}
+
+.filename-list-header-text { /* this is a <TH> */
+  background-color: var(--list-header-item-background-color);
+  border-bottom:    1px solid var(--list-header-item-border-color);
+  border-top:       1px solid var(--list-header-item-border-color);
+  color:            var(--list-header-item-color);
+  font-weight       var(--list-header-item-font-weight);
+  text-shadow:      1px 1px var(--list-header-item-shadow-color);
+}
+
+tr.filename-list-header > :first-child { /* this is a <TH> */
+  border-bottom-left-radius: 5px;
+  border-left:               1px solid var(--list-header-item-border-color);
+  border-top-left-radius:    5px;
+}
+
+tr.identity-list-header > :last-child { /* this is a <TH> */
+  border-bottom-right-radius: 5px;
+  border-right:               1px solid var(--list-header-item-border-color);
+  border-top-right-radius:    5px;
+}
+
+.filename-list-item { /* this is a <TR> */
+  background-color: transparent !important;
+
+  border:           NONE !important;
+
+  font:             var(--list-item-font);
+  font-size:        var(--list-item-font-size);
+  padding:          0.75rem 1.1rem;
+  text-align:       left;
+  text-decoration:  NONE;
+  text-shadow:      NONE;
+  white-space:      nowrap;
+  width:            100%;
+  -moz-appearance:  NONE;
+}
+
+.filename-list-item-data { /* this is a <TD> */
+  background-color: var(--list-item-background-color);
+  border:           1px solid transparent;
+  border-color:     var(--list-item-border-color) transparent;
+  border-bottom-left-radius: 5px;
+  color:            var(--list-item-color);
+  margin:           0 0.5em;
+  padding:          0.1em 0.25em;
+  text-decoration:  var(--list-item-text-decoration);
+  white-space:      nowrap;
+  -moz-appearance:  NONE;
+}
+
+tr.filename-list-item > :first-child { /* MABXXX SELECTED??? HOVER??? */
+  border-bottom-left-radius: 5px;
+  border-left:               1px solid var(--list-item-border-color);
+  border-top-left-radius:    5px;
+}
+
+tr.filename-list-item > :last-child { /* MABXXX SELECTED??? HOVER??? */
+  border-bottom-right-radius: 5px;
+  border-right:               1px solid var(--list-item-border-color);
+  border-top-right-radius:    5px;
+}
+
+tr.filename-list-item.selected > td.filename-list-item-data {
+  background-color: var(--list-item-selected-background-color);
+  border-color:     var(--list-item-selected-border-color) transparent;
+  color:            var(--list-item-selected-color);
+  text-decoration:  var(--list-item-selected-text-decoration);
+  text-shadow:      1px 1px var(--list-item-selected-text-shadow-color);
+}
+
+tr.filename-list-item:not(.selected):hover > td.filename-list-item-data {
+  background-color: var(--list-item-hover-background-color);
+}
+
+tr.filename-list-item:hover > td.filename-list-item-data {
+  background-image: var(--list-item-hover-background-image);
+  border-color:     var(--list-item-hover-border-color) transparent;
+  color:            var(--list-item-hover-color);
+  text-shadow:      1px 1px var(--list-item-hover-text-shadow-color);
+}
+
+
+
+#idmIdentityImportCriteriaSelector {
+  height: 100%;
+  margin: 0.8em auto;
+  width:  100%; /* MABXXX -- WHY DOESN'T THIS MAKE THE DIV AS WIDE AS THE PAGE??? */
+
+  /* grid layout */
+
+  display:    grid;
+  column-gap: 2px;
+  row-gap:    0px;
+  grid-template-areas:
+    "nav           nav             nav"
+    "file-name     file-name       file-name"
+    "title         title           title"
+    "instructions  instructions    instructions"
+    "left-spacer   selection-panel right-spacer"
+    "left-spacer   list-wrapper    right-spacer"
+    "left-spacer   controls-panel  right-spacer"
+    "bottom-spacer bottom-spacer   bottom-spacer";
+
+  grid-template-columns: min-content max-content min-content;
+  grid-template-rows:    min-content min-content min-content min-content min-content auto min-content min-content;
+
+  & #idmIdentityImportCriteriaSelectorNavWrapper {
+    grid-area: nav;
+  }
+
+  & #idmIdentityImportCriteriaSelectorFileNamePanel {
+    grid-area: file-name;
+  }
+
+  & #idmIdentityImportCriteriaSelectorTitle {
+    grid-area: title;
+  }
+
+  & #idmIdentityImportCriteriaInstructionsPanel {
+    grid-area: instructions;
+  }
+
+  & #idmIdentityImportCriteriaSelectionPanel {
+    grid-area: selection-panel
+  }
+
+  & #idmIdentityImportCriteriaDataListWrapper {
+    grid-area: list-wrapper;
+  }
+
+  & #idmIdentityImportCriteriaControlsPanel {
+    grid-area: controls-panel
+  }
+
+  & #idmIdentityImportCriteriaLeftSpacer {
+    grid-area: left-spacer;
+  }
+
+  & #idmIdentityImportCriteriaRightSpacer {
+    grid-area: right-spacer;
+  }
+
+  & #idmIdentityImportCriteriaBottomSpacer {
+    grid-area:  bottom-spacer;
+  }
+}
+
+#idmIdentityImportCriteriaSelectorNavWrapper {
+}
+
+#idmIdentityImportCriteriaSelectorNav {
+}
+
+#idmIdentityImportCriteriaSelectorTitle {
+}
+
+#idmIdentityImportCriteriaSelectorFileNamePanel {
+}
+
+#idmIdentityImportCriteriaInstructionsPanel {
+  background-color: var(--instructions-background-color);
+  border:           1px solid var(--instructions-border-color);
+  border-radius:    var(--instructions-border-radius);
+  color:            var(--instructions-color);
+  font-size:        var(--instructions-font-size);
+  font-weight:      var(--instructions-font-weight);
+/*margin-top:       1.0em; */
+  margin-left:      1.0em;
+}
+
+#idmIdentityImportCriteriaInstructions {
+}
+
+#idmIdentityImportCriteriaSelectionPanel {
+  background-color: var(--panel-background-color);
+  border:           1px solid var(--panel-border-color);
+  border-radius:    10px;
+  margin:           12px;
+  overflow-x:       hidden;
+  overflow-y:       auto;
+  padding:          0.5em 1.0em 0.5em 1.0em;
+}
+
+.criteria-selection-control {
+  border:     1px solid transparent;
+  text-align: left;
+}
+
+.criteria-selection-control-label {
+  border:     1px solid transparent;
+  text-align: right;
+}
+
+#idmIdentityImportCriteriaDataListWrapper { /* this is a <DIV> */
+  background-color: var(--panel-background-color);
+  border:           1px solid var(--panel-border-color);
+  border-radius:    10px;
+  margin:           12px;
+  overflow-x:       hidden;
+  overflow-y:       auto;
+/*padding:          0.5em 1.0em 0.5em 1.0em;*/
+  padding:          0.25em 0.5em 0.25em 0.5em;
+}
+
+#idmIdentityImportCriteriaDataList { /* this is a <TABLE> */
+  border-radius:    10px;
+  border-spacing:   1px 0.5em;
+  margin-right:     20px;
+  overflow-x:       hidden;
+  overflow-y:       auto;
+  width:            100%;
+  -moz-appearance:  NONE;
+}
+
+#idmIdentityImportCriteriaControlsPanel {
+  margin-left: 3.0em;
+}
+
+.import-criteria-error {
+  display: NONE;
+}
+
+.import-criteria-error[error="true"] {
+  background-color: var(--error-background-color);
+  border:           var(--error-border);
+  display:          flex;
+  flex-direction:   row;
+}
+
+.import-criteria-error-icon-large {
+  height:         16px;
+  max-height:     16px;
+  max-width:      16px;
+  vertical-align: middle;
+  width:          16px;
+}
+
+.import-criteria-error-icon {
+  height:         8px;
+  max-height:     8px;
+  max-width:      8px;
+  vertical-align: middle;
+  width:          8px;
+}
+
+.import-criteria-error-text {
+  color:          var(--error-text-color);
+  font:           var(--error-text-font);
+  font-size:      var(--error-text-font-size);
+  font-weight:    var(--error-text-font-weight);
+  margin-left:    0.25em;
+}
+
+.sheet-header-row { /* this is a <TR> */
+}
+
+.sheet-header-col { /* this is a <TH> */
+  background-color: var(--list-header-item-background-color);
+  border-bottom:    1px solid var(--list-header-item-border-color);
+  border-top:       1px solid var(--list-header-item-border-color);
+  color:            var(--list-header-item-color);
+  font-weight       var(--list-header-item-font-weight);
+  text-shadow:      1px 1px var(--list-header-item-shadow-color);
+}
+
+tr.sheet-header-row > :first-child { /* this is a <TH> */
+  border-bottom-left-radius: 5px;
+  border-left:               1px solid var(--list-header-item-border-color);
+  border-top-left-radius:    5px;
+}
+
+tr.sheet-header-row > :last-child { /* this is a <TH> */
+  border-bottom-right-radius: 5px;
+  border-right:               1px solid var(--list-header-item-border-color);
+  border-top-right-radius:    5px;
+}
+
+.sheet-data-row {
+}
+.sheet-data-col {
+}
+
+.sheet-data-row { /* this is a <TR> */
+  background-color: transparent !important;
+
+  border:           NONE !important;
+
+  font:             var(--list-item-font);
+  font-size:        var(--list-item-font-size);
+  padding:          0.75rem 1.1rem;
+  text-align:       left;
+  text-decoration:  NONE;
+  text-shadow:      NONE;
+  white-space:      nowrap;
+  width:            100%;
+  -moz-appearance:  NONE;
+}
+
+.sheet-data-col { /* this is a <TD> */
+  background-color: var(--list-item-background-color);
+  border:           1px solid transparent;
+  border-color:     var(--list-item-border-color) transparent;
+  border-bottom-left-radius: 5px;
+  color:            var(--list-item-color);
+  margin:           0 0.5em;
+  padding:          0.1em 0.25em;
+  text-decoration:  var(--list-item-text-decoration);
+  white-space:      nowrap;
+  -moz-appearance:  NONE;
+}
+
+tr.sheet-data-row > :first-child { /* MABXXX SELECTED??? HOVER??? */
+  border-bottom-left-radius: 5px;
+  border-left:               1px solid var(--list-item-border-color);
+  border-top-left-radius:    5px;
+}
+
+tr.sheet-data-row > :last-child { /* MABXXX SELECTED??? HOVER??? */
+  border-bottom-right-radius: 5px;
+  border-right:               1px solid var(--list-item-border-color);
+  border-top-right-radius:    5px;
+}
+
+tr.sheet-data-row.selected > td.sheet-data-col { /* SELECTION IS NOT SUPPORTED */
+  background-color: var(--list-item-selected-background-color);
+  border-color:     var(--list-item-selected-border-color) transparent;
+  color:            var(--list-item-selected-color);
+  text-decoration:  var(--list-item-selected-text-decoration);
+  text-shadow:      1px 1px var(--list-item-selected-text-shadow-color);
+}
+
+tr.sheet-data-row:not(.selected):hover > td.sheet-data-col { /* SELECTION IS NOT SUPPORTED */
+  background-color: var(--list-item-hover-background-color);
+}
+
+tr.sheet-data-row:hover > td.sheet-data-col {
+  background-image: var(--list-item-hover-background-image);
+  border-color:     var(--list-item-hover-border-color) transparent;
+  color:            var(--list-item-hover-color);
+  text-shadow:      1px 1px var(--list-item-hover-text-shadow-color);
+}
+
+
+
+
+#idmIdentityImportIdentitiesSelector {
+  height: 100%;
+  margin: 0.8em auto;
+  width:  100%; /* MABXXX -- WHY DOESN'T THIS MAKE THE DIV AS WIDE AS THE PAGE??? */
+
+  /* grid layout */
+
+  display:    grid;
+  column-gap: 2px;
+  row-gap:    0px;
+  grid-template-areas:
+    "nav           nav             nav"
+    "file-name     file-name       file-name"
+    "title         title           title"
+    "instructions  instructions    instructions"
+    "left-spacer   actions-wrapper right-spacer"
+    "left-spacer   list-wrapper    right-spacer"
+    "left-spacer   controls-panel  right-spacer"
+    "bottom-spacer bottom-spacer   bottom-spacer";
+
+  grid-template-columns: min-content max-content min-content;
+  grid-template-rows:    min-content min-content min-content min-content min-content auto min-content min-content;
+
+  & #idmIdentityImportIdentitiesSelectorNavWrapper {
+    grid-area: nav;
+  }
+
+  & #idmIdentityImportIdentitiesSelectorFileNamePanel {
+    grid-area: file-name;
+  }
+
+  & #idmIdentityImportIdentitiesSelectorTitle {
+    grid-area: title;
+  }
+
+  & #idmIdentityImportIdentitiesSelectorInstructionsPanel {
+    grid-area: instructions;
+  }
+
+  & #idmIdentityImportIdentitiesSelectorActionsWrapper {
+    grid-area: actions-wrapper;
+  }
+
+  & #idmIdentityImportIdentitiesSelectorIdentityListWrapper {
+    grid-area: list-wrapper;
+  }
+
+  & #idmIdentityImportIdentitiesSelectorControlsPanel {
+    grid-area: controls-panel
+  }
+
+  & #idmIdentityImportIdentitiesSelectorLeftSpacer {
+    grid-area: left-spacer;
+  }
+
+  & #idmIdentityImportIdentitiesSelectorRightSpacer {
+    grid-area: right-spacer;
+  }
+
+  & #idmIdentityImportIdentitiesSelectorBottomSpacer {
+    grid-area:  bottom-spacer;
+  }
+}
+
+#idmIdentityImportIdentitiesSelectorNavWrapper {
+}
+
+#idmIdentityImportIdentitiesSelectorNav {
+}
+
+#idmIdentityImportIdentitiesSelectorTitle {
+}
+
+#idmIdentityImportIdentitiesSelectorFileNamePanel {
+}
+
+#idmIdentityImportIdentitiesSelectorInstructionsPanel {
+  background-color: var(--instructions-background-color);
+  border:           1px solid var(--instructions-border-color);
+  border-radius:    var(--instructions-border-radius);
+  color:            var(--instructions-color);
+  font-size:        var(--instructions-font-size);
+  font-weight:      var(--instructions-font-weight);
+/*margin-top:       1.0em; */
+  margin-left:      1.0em;
+}
+
+#idmIdentityImportIdentitiesSelectorInstructions {
+}
+
+#idmIdentityImportIdentitiesSelectorActionsWrapper {
+  display:               grid;
+  grid-template-areas:   "actions spacer-right";
+  grid-template-columns: max-content auto;
+
+  & #idmIdentityImportIdentitiesSelectorActionsPanel {
+    grid-area: actions;
+  }
+
+  & #idmIdentityImportIdentitiesSelectorActionsSpacerRight {
+    grid-area: spacer-right;
+  }
+}
+
+#idmIdentityImportIdentitiesSelectorActionsPanel {
+  background-color: var(--panel-background-color);
+  border:           1px solid var(--panel-border-color);
+  border-radius:    10px;
+  margin:           12px;
+  padding:          0.5em 1.0em 0.5em 1.0em;
+}
+
+#idmIdentityImportIdentitiesSelectorActionsTitle {
+  color:            var(--title-color);
+  font-weight:      BOLD;
+  text-shadow:      1px 1px var(--title-shadow-color);
+}
+
+#idmIdentityImportIdentitiesSelectorActionsSetDataPanel { /* this is a <DIV> */
+  border:           1px solid var(--panel-border-color);
+  border-radius:    10px;
+  padding:          0.5em;
+}
+
+#idmIdentityImportIdentitiesSelectorActionsSetDataPanelTitle { /* this is a <DIV> */
+  color:            var(--title-color);
+  text-shadow:      1px 1px var(--title-shadow-color);
+}
+
+#idmIdentityImportIdentitiesSelectorSetDataList { /* this is a <TABLE> */
+  border-spacing:   0.25em;
+  margin-left:      1.0em;
+  margin-top:       0.5em;
+}
+
+.identity-action-label { /* this is a <TD> */
+  text-align:       right;
+  vertical-align:   top;
+  white-space:      nowrap;
+}
+
+.identity-set-data-label { /* this is a <TD> */
+  text-align:       right;
+  vertical-align:   top;
+  white-space:      nowrap;
+}
+
+.identity-set-data-value { /* this is a <TD> */
+  text-align:       left;
+  min-width:        25em;
+  width:            100%;
+  -moz-appearance:  NONE;
+}
+
+.identity-set-data-value > input[type="text"] {
+  width: 100%;
+}
+
+.identity-set-data-checkbox-panel {
+  background-color: var(--list-header-item-background-color);
+  border:           1px solid var(--list-header-item-border-color);
+  border-radius:    2px;
+  padding:          0.05em 0.25em;
+}
+
+.identity-set-data-checkbox-spacer {
+  display:   inline-block;
+  min-width: 2.0em;
+  width:     2.0em;
+}
+
+
+
+#idmIdentityImportIdentitiesSelectorIdentityListWrapper { /* this is a <DIV> */
+  background-color: var(--panel-background-color);
+  border:           1px solid var(--panel-border-color);
+  border-radius:    10px;
+  margin:           12px;
+  overflow-x:       hidden;
+  overflow-y:       auto;
+/*padding:          0.5em 1.0em 0.5em 1.0em;*/
+  padding:          0.25em 0.5em 0.25em 0.5em;
+}
+
+#idmIdentityImportIdentitiesSelectorIdentityList { /* this is a <TABLE> */
+  border-radius:    10px;
+  border-spacing:   1px 0.5em;
+  margin-right:     20px;
+  overflow-x:       hidden;
+  overflow-y:       auto;
+  width:            100%;
+  -moz-appearance:  NONE;
+}
+
+#idmIdentityImportIdentitiesSelectorActionsSetDataButtonPanel {
+  margin-top:       0.25em;
+}
+
+#idmIdentityImportIdentitiesSelectorControlsPanel {
+}
+
+.import-data-error { /* this is a <DIV> */
+  display: NONE;
+}
+
+.import-data-error[error="true"] {
+  background-color: var(--error-background-color);
+  border:           var(--error-border);
+  display:          flex;
+  flex-direction:   row;
+}
+
+.import-data-error-icon-large { /* this is an <IMG> */
+  height:         16px;
+  max-height:     16px;
+  max-width:      16px;
+  vertical-align: middle;
+  width:          16px;
+}
+
+.import-data-error-icon { /* this is an <IMG> */
+  height:         8px;
+  max-height:     8px;
+  max-width:      8px;
+  vertical-align: middle;
+  width:          8px;
+}
+
+.import-data-error-text { /* this is a <LABEL> */
+  color:          var(--error-text-color);
+  font:           var(--error-text-font);
+  font-size:      var(--error-text-font-size);
+  font-weight:    var(--error-text-font-weight);
+  margin-left:    0.25em;
+}
+
+.identity-list-header { /* this is a <TR> */
+}
+
+.identity-list-header-text { /* this is a <TH> */
+  background-color: var(--list-header-item-background-color);
+  border-bottom:    1px solid var(--list-header-item-border-color);
+  border-top:       1px solid var(--list-header-item-border-color);
+  color:            var(--list-header-item-color);
+  font-weight       var(--list-header-item-font-weight);
+  text-shadow:      1px 1px var(--list-header-item-shadow-color);
+}
+
+tr.identity-list-header > :first-child { /* this is a <TH> */
+  border-bottom-left-radius: 5px;
+  border-left:               1px solid var(--list-header-item-border-color);
+  border-top-left-radius:    5px;
+}
+
+tr.identity-list-header > :last-child { /* this is a <TH> */
+  border-bottom-right-radius: 5px;
+  border-right:               1px solid var(--list-header-item-border-color);
+  border-top-right-radius:    5px;
+}
+
+.identity-list-item { /* this is a <TR> */
+  background-color: transparent !important;
+  border:           NONE !important;
+  display:          table-row;
+  font:             var(--identity-font);
+  font-size:        var(--identity-font-size);
+  padding:          0.75rem 1.1rem;
+  text-align:       left;
+  text-decoration:  NONE;
+  text-shadow:      NONE;
+  white-space:      nowrap;
+  width:            100%;
+  -moz-appearance:  NONE;
+}
+
+/* filtered identities */
+tr.identity-list-item.identity-filtered {
+  display:          none;
+}
+
+/* hidden identities */
+tr.identity-list-item.identity-hidden {
+  display:          none;
+}
+
+.identity-list-item-data { /* this is a <TD> */
+  background-color: var(--identity-background-color);
+  border:           1px solid transparent;
+  border-color:     var(--identity-border-color) transparent;
+  color:            var(--identity-color);
+  margin:           0 0.5em;
+  padding:          0.1em 0.25em;
+  text-decoration:  var(--identity-text-decoration);
+  white-space:      nowrap;
+  -moz-appearance:  NONE;
+}
+
+.identity-list-item-data > input[type="text"] {
+  width: 100%;
+}
+
+/* colors for identitys (already) Configured */
+tr.identity-list-item.identity-configured > td.identity-list-item-data {
+  background-color: var(--identity-configured-background-color);
+  border-color:     var(--identity-configured-border-color) transparent;
+  color:            var(--identity-configured-color);
+}
+
+/* colors for disabled identities - THERE IS NO CONCEPT OF "disabled" right now */
+tr.identity-list-item.identity-disabled > td.identity-list-item-data {
+  background-color: var(--identity-disabled-background-color);
+  border-color:     var(--identity-disabled-border-color) transparent;
+  color:            var(--identity-disabled-color);
+  text-shadow:      1px 1px var(--identity-disabled-text-shadow-color);
+}
+
+tr.identity-list-item > :first-child { /* MABXXX SELECTED??? HOVER??? */
+  border-bottom-left-radius: 5px;
+  border-left:               1px solid var(--identity-border-color);
+  border-top-left-radius:    5px;
+}
+
+tr.identity-list-item.identity-configured > :first-child {
+  border-left-color:         var(--identity-configured-border-color);
+}
+
+tr.identity-list-item.identity-disabled > :first-child { /* MABXXX THERE IS NO CONCEPT OF "disabled" right now */
+  border-left-color:         var(--identity-disabled-border-color);
+}
+
+tr.identity-list-item > :last-child { /* MABXXX SELECTED??? HOVER??? */
+  border-bottom-right-radius: 5px;
+  border-right:               1px solid var(--identity-border-color);
+  border-top-right-radius:    5px;
+}
+
+tr.identity-list-item.identity-configured > :last-child {
+  border-right-color:         var(--identity-configured-border-color);
+}
+
+tr.identity-list-item.identity-disabled > :last-child { /* THERE IS NO CONCEPT OF "disabled" right now */
+  border-right-color:         var(--identity-disabled-border-color);
+}
+
+.identity-list-item-data {
+}
+
+#idmIdentityImporter .identity-list-item-select {
+}
+
+#idmIdentityImporter .identity-list-item-text, /* Thunderbird Inspector SAYS these are the colors, but they are not */
+#idmIdentityImporter .identity-set-data-text,
+#idmIdentityImporter input[type="text"]
+{
+  background-color: var(--input-background-color) !important;
+  background-image: NONE !important;
+  color:            var(--input-color) !important;
+  -moz-appearance:  NONE;
+}
+
+#idmIdentityImporter .identity-list-item-check {
+}
+
+tr.identity-list-item > td.identity-list-item-status { /* this is a <TD> */
+  max-width:        16px;
+  width:            16px;
+}
+
+tr.identity-list-item > td.identity-list-item-status > .identity-list-item-status-dot { /* this is a <SPAN> */
+  background-color: var(--identity-status-dot-color);
+  border:           var(--identity-status-dot-border);
+  border-radius:    var(--identity-status-dot-border-radius);
+  display:          inline-block;
+  height:           var(--identity-status-dot-height);
+/*margin-right:     0.1em;*/
+  width:            var(--identity-status-dot-width);
+}
+
+tr.identity-list-item:not(.identity-configured) > td.identity-list-item-status > .identity-list-item-status-dot {
+  background-color: var(--identity-not-configured-status-dot-color);
+  border:           var(--identity-not-configured-status-dot-border);
+}
+tr.identity-list-item.identity-configured > td.identity-list-item-status > .identity-list-item-status-dot {
+  background-color: var(--identity-configured-status-dot-color);
+  border:           var(--identity-configured-status-dot-border);
+}
+
+.identity-list-item-account { /* .identitys-list-item > .identitys-list-item-account - this is a <TD> */
+/*width: 100%;*/
+}
+
+.identity-list-item-email { /* .identitys-list-item > .identitys-list-item-email - this is a <TD> */
+/*width: 100%;*/
+}
+
+.identity-list-item-name { /* .identitys-list-item > .identitys-list-item-name - this is a <TD> */
+/*width: 100%;*/
+}
+
+.identity-list-item-label { /* .identitys-list-item > .identitys-list-item-label - this is a <TD> */
+/*width: 100%;*/
+}
+
+.identity-list-item-replyTo { /* .identitys-list-item > .identitys-list-item-replyTo - this is a <TD> */
+/*width: 100%;*/
+}
+
+.identity-list-item-organization { /* .identitys-list-item > .identitys-list-item-organization - this is a <TD> */
+/*width: 100%;*/
+}
+
+.identity-list-item-composeHtml { /* .identitys-list-item > .identitys-list-item-composeHtml - this is a <TD> */
+/*width: 100%;*/
+}
+
+.identity-list-item-signature { /* .identitys-list-item > .identitys-list-item-signature - this is a <TD> */
+/*width: 100%;*/
+}
+
+.identity-list-item-signatureIsHtml { /* .identitys-list-item > .identitys-list-item-signatureIsHtml - this is a <TD> */
+/*width: 100%;*/
+}
+
+tr.identity-list-item.selected:not(.identity-configured) > td.identity-list-item-data {
+  background-color: var(--identity-selected-background-color);
+  border-color:     var(--identity-selected-border-color) transparent;
+}
+
+tr.identity-list-item.selected:not(.identity-disabled, .identity-configured) > td.identity-list-item-data { /* THERE IS NO CONCEPT OF "disabled" right now */
+  color:            var(--identity-selected-color);
+  text-shadow:      1px 1px var(--identity-selected-text-shadow-color);
+}
+
+tr.identity-list-item:not(.selected, .identity-configured):hover > td.identity-list-item-data {
+  background-color: var(--identity-hover-background-color);
+}
+tr.identity-list-item:not(.identity-configured):hover > td.identity-list-item-data {
+  background-image: var(--identity-hover-background-image);
+  border-color:     var(--identity-hover-border-color) transparent;
+}
+
+tr.identity-list-item:not(.identity-disabled, .identity-configured):hover > td.identity-list-item-data { /* THERE IS NO CONCEPT OF "disabled" right now */
+  color:            var(--identity-hover-color);
+  text-shadow:      1px 1px var(--identity-hover-text-shadow-color);
+}
+
+
+
+/* the status dot is sufficient *
+tr.identity-list-item.identity-configured > td.identity-list-item-data { /-* configured *-/
+  text-decoration:  var(--identity-configured-text-decoration);
+}
+*/
+
+/* the status dot is sufficient *
+tr.identity-list-item:not(.identity-configured) > td.identity-list-item-data { /-* not configured *-/
+  text-decoration:  var(--identity-not-configured-text-decoration);
+}
+*/
+
+tr.identity-list-item.selected:not(.identity-configured) > td.identity-list-item-data { /* selected & not configured */
+  text-decoration:  var(--identity-selected-text-decoration);
+}
+
+/* color change and border are sufficient *
+tr.identity-list-item:not(.identity-configured):hover > td.identity-list-item-data { /-* hover & not configured *-/
+  text-decoration:  var(--identity-hover-text-decoration);
+}
+*/
+
+tr.identity-list-item.identity-disabled:not(.selected) > td.identity-list-item-data { /* disabled & not selected THERE IS NO CONCEPT OF "disabled" right now */
+  text-decoration:  var(--identity-disabled-text-decoration);
+}
+
+tr.identity-list-item.selected.identity-disabled { /* disabled & selected THERE IS NO CONCEPT OF "disabled" right now */
+  text-decoration:  var(--identity-selected-text-decoration);
+  & > td.identity-list-item-data {
+    text-decoration:  var(--identity-disabled-text-decoration);
+  }
+}
+
+tr.identity-list-item:.identity-configured)[created="true"] { /* configured && created="true" */
+  border-color: GREEN !important; /* MABXXX USE A VARIABLE!!! BACKGROUND-COLOR INSTEAD??? */
+}
+
+tr.identity-list-item:not(.identity-configured)[error="true"] { /* not configured && error="true" */
+  border: var(--error-border); /* MABXXX BACKGROUND-COLOR INSTEAD??? */
+}
+
+tr.identity-list-item:not(.identity-configured) > td.identity-list-item-data[error="true"] { /* not configured && error="true" */
+  border: var(--error-border);
+}
+
+
+
+#idmIdentityImportIdentitiesSelectorControlsPanel {
+  /* grid layout */
+
+  display:               grid;
+  column-gap:            4px;
+  grid-template-areas:   "left-spacer controls-panel right-spacer";
+  grid-template-columns: auto max-content auto;
+
+  & #idmIdentityImportIdentitiesSelectorControlsPanelSpacerLeft {
+    grid-area: left-spacer;
+  }
+  & #idmIdentityImportIdentitiesSelectorControlsButtonPanel {
+    grid-area: controls-panel;
+  }
+  & #idmIdentityImportIdentitiesSelectorControlsPanelSpacerRight {
+    grid-area: right-spacer;
+  }
+}
+
+#idmIdentityImportIdentitiesSelectorControlsPanel {
+  margin-top:   5px;
+  margin-left:  20px;
+  margin-right: 20px;
+  width:        100%;
+}
+
+#idmIdentityImportIdentitiesSelectorControlsButtonPanel {
+}
+
+#idmIdentityImportIdentitiesSelectorBottomSpacer {
+  height:     40px;
+  min-height: 40px;
+}
+
+
+
+/* Anything done with non-specific selectors can be influenced
+ * by outsiders, e.g. userChrome.css, userContent.css
+ *
+ * BUT IF THINGS IN THERE ARE !important THEN THIS DOESN'T HELP
+ */
+#idmIdentityImporter button {
+  background-image: NONE !important;
+  border:           1px solid transparent;
+  border-radius:    0.5em;
+  font:             var(--menu-font);
+  font-size:        var(--menu-font-size);
+  font-size:        1rem;
+  height:           1.5rem;
+  margin:           0;
+  padding:          0.8rem 1.1rem;
+  text-align:       left;
+  text-decoration:  NONE;
+  text-shadow:      NONE;
+  -moz-appearance:  NONE;
+}
+
+#idmIdentityImporter button:not([disabled]) {
+  background-color: var(--button-background-color);
+  border-color:     var(--button-border-color);
+  color:            var(--button-color);
+  cursor:           pointer;
+}
+
+#idmIdentityImporter button[disabled] {
+  background-color: var(--button-disabled-background-color);
+  border-color:     var(--button-disabled-border-color);
+  color:            var(--button-disabled-color);
+  cursor:           not-allowed;
+}
+
+#idmIdentityImporter button > label {
+  cursor:           inherit;
+}
+
+#idmIdentityImporter button:not([disabled]):hover {
+  background-color: var(--button-hover-background-color);
+  background-image: NONE !important;
+  border-color:     var(--button-hover-border-color);
+  color:            var(--button-hover-color);
+  text-shadow:      1px 1px var(--button-hover-text-shadow-color);
+}
+
+
+
+#idmIdentityImporter button.cancel-button:not([disabled]) {
+  background-color: var(--button-cancel-background-color);
+  color:            var(--button-cancel-color);
+}
+
+#idmIdentityImporter button.cancel-button[disabled] {
+  background-color: var(--button-cancel-disabled-background-color);
+  color:            var(--button-cancel-disabled-color);
+}
+
+#idmIdentityImporter button.cancel-button:not([disabled]):hover {
+  background-color: var(--button-cancel-hover-background-color);
+  background-image: NONE !important;
+  border-color:     var(--button-cancel-hover-color);
+  color:            var(--button-cancel-hover-color);
+}
+
+
+
+#idmIdentityImporter input[type="checkbox"]:not([disabled]) {
+  cursor:           pointer;
+}
+
+#idmIdentityImporter input[type="checkbox",disabled] {
+  cursor:           not-allowed;
+}
+
+
+
+#idmIdentityImporter button.ok-button:not([disabled]) {
+  background-color: var(--button-save-background-color);
+  color:            var(--button-save-color);
+}
+
+#idmIdentityImporter button.ok-button[disabled] {
+  background-color: var(--button-save-disabled-background-color);
+  color:            var(--button-save-disabled-color);
+}
+
+#idmIdentityImporter button.ok-button:not([disabled]):hover {
+  background-color: var(--button-save-hover-background-color);
+  background-image: NONE !important;
+  border-color:     var(--button-save-hover-color);
+  color:            var(--button-sav e-hover-color);
+}
+
+#idmIdentityImporter :is(button, input, select, th, tr, td, table, input[type="checkbox"] ~ label):-moz-window-inactive {
+  opacity: var(--window-inactive-opacity);
+}

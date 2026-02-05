@@ -1,0 +1,53 @@
+{
+  "extensionName": {
+  "message": "Identity Chooser"
+  },
+  "extensionDescription": {
+    "message": "Identity Chooser hilft, die richtige Absendeadresse für das Schreiben, Antworten oder Weiterleiten einer Email auszuwählen."
+  },
+  "options_optionsPageTitle": {
+    "message": "Identity Chooser -- Einstellungen"
+  },
+  "options_generalOptionsTitle": {
+    "message": "Allgemein"
+  },
+  "options_icEnableComposeMessage.label": {
+    "message": "Zeige die Liste der Absendeadressen beim Verfassen einer neuen Email"
+  },
+  "options_icEnableReplayMessage.label": {
+    "message": "Zeige die Liste der Absendeadressen beim Antworten auf eine Email"
+  },
+  "options_icEnableForwardMessage.label": {
+    "message": "Zeige die Liste der Absendeadressen bei Weiterleiten einer Email"
+  },
+  "options_icEnableDraftMessage.label": {
+    "message": "Zeige die Liste der Absendeadressen beim Öffnen eines Entwurfs an"
+  },
+  "options_restart.hint": {
+    "message": "Hinweis: Eventuell muss Thunderbird neugestartet werden, wenn eine der obigen Optionen geändert wurde."
+  },
+  "options_sortOptionsTitle": {
+    "message": "Sortierung"
+  },
+  "options_sortOrder.hint": {
+    "message": "Die Reihenfolge der Absender kann hier mittels Drag and Drop geändert werden. Der Absender wird beim Verfassen/Antworten/Weiterleiten ausgeblendet, wenn das Häkchen hier entfernt wird:"
+  },
+  "options_icWarnColorsTitle": {
+    "message": "Warnfarben"
+  },
+  "options_icWarnColorsHint": {
+    "message": "<p>Um den Hintergrund des \"+ Neue Nachricht\"-Fensters für unterschiedliche Absendeadressen einzufärben, empfehle ich das Addon <a href='https://addons.thunderbird.net/addon/bordercolors-d/'>Border Colors D</a>[1]. Identity Chooser erkennt, wenn Border Colors D installiert ist, und integriert sich intelligent. </p><p style='margin-left:1em'>[1] <a href='https://addons.thunderbird.net/addon/bordercolors-d/'>https://addons.thunderbird.net/addon/bordercolors-d/</a></p>"
+  },
+  "identitiesPopup_identitiesPopupTitle": {
+    "message": "Identity Chooser"
+  },
+  "identitiesPopup_instructions": {
+    "message": "Bitte Absenderadresse auswählen:"
+  },
+  "identitiesPopup_defaultButton": {
+    "message": "Standard verwenden"
+  },
+  "identitiesPopup_cancelButton": {
+    "message": "Abbrechen"
+  }
+}

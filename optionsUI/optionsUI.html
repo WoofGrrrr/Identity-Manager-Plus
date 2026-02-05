@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title data-l10n-id="options_optionsPageTitle">Identity Manager Plus</title>
+    <script src="../modules/Sortable.js" defer></script>
+    <script type="module" src="optionsUI.js" defer></script>
+    <script src="../modules/SheetJS/xlsx.core.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./optionsUI.css"/>
+  </head>
+
+  <body>
+
+    <div id="idmOptionsWrapper">
+
+      <div id="idmExtensionOptionsPanel">
+        <div class="options-panel" id="idmExtensionOptions">
+
+          <div id="idmExtensionOptionsTitle" class="panel-title" data-l10n-id="options_identityManagerPlusOptionsTitle">
+            options_identityManagerPlusOptionsTitle
+          </div>
+
+          <div class="option">
+            <input id="idmCollectFromAddresses" class="idmGeneralOption" type="checkbox"
+                   tooltip-l10n-id="options_idmCollectFromAddressesCheck.tooltip"/>
+            <label for="idmCollectFromAddresses"
+                   data-l10n-id="options_idmCollectFromAddressesCheck.label"
+                   tooltip-l10n-id="options_idmCollectFromAddressesCheck.tooltip">
+              options_idmCollectFromAddressesCheck.label
+            </label>
+          </div>
+
+          <div id="idmCollectFromAddressAlertCheckPanel" class="option">
+            <input id="idmCollectFromAddressAlert" class="idmGeneralOption" type="checkbox"
+                   tooltip-l10n-id="options_idmCollectFromAddressAlertCheck.tooltip"/>
+            <label for="idmCollectFromAddressAlert"
+                   data-l10n-id="options_idmCollectFromAddressAlertCheck.label"
+                   tooltip-l10n-id="options_idmCollectFromAddressAlertCheck.tooltip">
+              options_idmCollectFromAddressesAlertCheck.label
+            </label>
+          </div>
+
+          <div id="idmExtensionOptionsButtonPanel" class="option">
+            <button id="idmShowBackupManagerButton">
+              <label for="idmShowBackupManagerButton"
+                     data-l10n-id="options_idmExtensionOptionsButtonBackupManager.label"
+                     tooltip-l10n-id="options_idmExtensionOptionsButtonBackupManager.tooltip">
+                options_idmExtensionOptionsButtonBackupManager.label
+              </label>
+            </button>
+          </div>
+
+          <div class="hint" id="idmRestartHint" data-l10n-id="options_restart.hint">Hint: Changing some of these options may require you to restart Thunderbird</div>
+
+        </div>
+
+        <div id="idmExtensionOptionsPanelSpacer"></div>
+
+      </div> <!-- END OF <div id="idmExtensionOptionsPanel"> -->
+
+      <div id="idmIdentityChooserOptionsWrapper">
+
+        <div id="idmIdentityChooserOptions">
+
+          <div class="panel" id="idmIdentityChooserControls">
+            <div id="idmIdentityChooserTitle">
+              <label class="panel-title" data-l10n-id="options_IdentityChooserOptionsTitle">Identity Chooser Options</label>
+            </div>
+
+            <div id="idmPopupOptionsPanel">
+              <div class="subpanel-title">
+                <input id="idmShowPopupOptions" type="checkbox" class="idmGeneralOption open-close-check"/>
+                <label for="idmShowPopupOptions"></label>
+                <label for="idmShowPopupOptions" data-l10n-id="options_IdentityChooserPopupOptionsTitle">
+                  Popup Options
+                </label>
+              </div>
+
+              <div class="options-open-close-panel" id="idmPopupOptions">
+                <div class="option">
+                  <input id="idmEnableComposeMessage" class="idmGeneralOption" type="checkbox"
+                         tooltip-l10n-id="options_idmEnableComposeMessageCheck.tooltip"/>
+                  <label for="idmEnableComposeMessage"
+                         data-l10n-id="options_idmEnableComposeMessageCheck.label"
+                         tooltip-l10n-id="options_idmEnableComposeMessageCheck.tooltip">
+                    options_idmEnableComposeMessageCheck.label
+                  </label>
+                </div>
+
+                <div class="option">
+                  <input id="idmEnableReplyMessage" class="idmGeneralOption" type="checkbox"
+                         tooltip-l10n-id="options_idmEnableReplyMessageCheck.tooltip"/>
+                  <label for="idmEnableReplyMessage"
+                         data-l10n-id="options_idmEnableReplyMessageCheck.label"
+                         tooltip-l10n-id="options_idmEnableReplyMessageCheck.tooltip">
+                    options_idmEnableReplyMessageCheck.label
+                  </label>
+                </div>
+
+                <div class="option">
+                  <input id="idmEnableForwardMessage" class="idmGeneralOption" type="checkbox"
+                         tooltip-l10n-id="options_idmEnableForwardMessageCheck.tooltip"/>
+                  <label for="idmEnableForwardMessage"
+                         data-l10n-id="options_idmEnableForwardMessageCheck.label"
+                         tooltip-l10n-id="options_idmEnableForwardMessageCheck.tooltip">
+                    options_idmEnableForwardMessageCheck.label
+                  </label>
+                </div>
+
+                <div class="option">
+                  <input id="idmEnableDraftMessage" class="idmGeneralOption" type="checkbox"
+                         tooltip-l10n-id="options_idmEnableDraftMessageCheck.tooltip"/>
+                  <label for="idmEnableDraftMessage"
+                         data-l10n-id="options_idmEnableDraftMessageCheck.label"
+                         tooltip-l10n-id="options_idmEnableDraftMessageCheck.tooltip">
+                    options_idmEnableDraftMessageCheck.label
+                  </label>
+                </div>
+
+                <div id="idmEnableKeepComposeOnCloseWrapper" class="option">
+                  <input id="idmEnableKeepComposeOnClose" class="idmGeneralOption" type="checkbox"
+                         tooltip-l10n-id="options_idmEnableKeepComposeOnCloseCheck.tooltip"/>
+                  <label for="idmEnableKeepComposeOnClose" 
+                         data-l10n-id="options_idmEnableKeepComposeOnCloseCheck.label"
+                         tooltip-l10n-id="options_idmEnableKeepComposeOnCloseCheck.tooltip">
+                    options_idmEnableKeepComposeOnCloseCheck.label
+                  </label>
+                </div>
+              </div> <!-- END OF <div class="options-panel options-open-close-panel" id="idmPopupOptions"> -->
+            </div> <!-- END OF <div id="idmPopupOptionsPanel"> -->
+
+            <div id="idmDisplayOrderTitlePanel">
+              <label id="idmDisplayOrderTitle" class="panel-title" data-l10n-id="options_displayOrderTitle">Display Order</label>
+            </div>
+
+            <div id="idmDisplayOrderHintsPanel">
+              <div>
+                <input id="idmShowDisplayOrderHints" type="checkbox" class="idmGeneralOption open-close-check"/>
+                <label for="idmShowDisplayOrderHints"></label>
+                <label for="idmShowDisplayOrderHints" data-l10n-id="options_idmDisplayOrderHints.label">
+                  Hints
+                </label>
+              </div>
+
+              <div class="options-open-close-panel" id="idmDisplayOrderHints">
+                <ul class="compact-list">
+                  <li class="hint" data-l10n-id="options_sortOrder.hint">Re-order Identities using Drag and Drop</li>
+                  <li class="hint" data-l10n-id="options_sortOrder.hint2">To Hide an Identity from the Identity Chooser, un-check it</li>
+                  <li class="hint" data-l10n-id="options_sortOrder.hint3">Sort the Identities using the Sort Controls</li>
+                  <li class="hint" data-l10n-id="options_sortOrder.hint4">To Lock an Identity in its position, click the Lock idmon</li>
+                </ul>
+              </div> <!-- END OF <div id="idmDisplayOrderHints"> -->
+            </div> <!-- END OF <div id="idmDisplayOrderHintsPanel"> -->
+
+            <div class="options-panel" id="idmDisplayOrderControlsPanel">
+
+              <table class="grid-button-panel">
+                <tr class="grid-button-panel-row">
+                  <td colspan="2">
+                    <div id="idmDisplayOrderControlsTitlePanel" class="subpanel-title">
+                      <input id="idmShowDisplayOrderActions" type="checkbox" class="idmGeneralOption open-close-check"/>
+                      <label for="idmShowDisplayOrderActions"></label>
+                      <label for="idmShowDisplayOrderActions" data-l10n-id="options_idmDisplayOrderActionsTitle">
+                        Actions
+                      </label>
+                    </div>
+                  </td>
+                  <td>
+                    <button class="grid-button-panel-button" id="idmRefreshListButton" class="idmButton">
+                      <label id="idmRefreshListButtonLabel"
+                             data-l10n-id="options_idmRefreshListButton.label"
+                             tooltip-l10n-id="options_idmRefreshListButton.tooltip">
+                        options_idmRefreshListButton.label
+                      </label>
+                    </button>
+                  </td>
+                </tr>
+
+                <tr class="grid-button-panel-row open-close-action" id="idmSelectDeselectAllButtonPanel">
+                  <td>
+                    <label class="grid-button-panel-label" id="idmSelectDeselectAllButtonsLabel" data-l10n-id="options_idmSelectDeselectAllButtonsLabel">
+                      options_options_idmSelectDeselectAllButtonsLabel
+                    </label
+                  </td>
+                  <td>
+                    <button class="grid-button-panel-button" id="idmSelectAllButton" class="idmButton">
+                      <label id="idmSelectAllButtonLabel"
+                             data-l10n-id="options_idmSelectAllButton.label"
+                             tooltip-l10n-id="options_idmSelectAllButton.tooltip">
+                        options_idmSelectAllButton.label
+                      </label>
+                    </button>
+                  </td>
+                  <td>
+                    <button class="grid-button-panel-button" id="idmDeselectAllButton" class="idmButton">
+                      <label id="idmDeselectAllButtonLabel"
+                             data-l10n-id="options_idmDeselectAllButton.label"
+                             tooltip-l10n-id="options_idmDeselectAllButton.tooltip">
+                        options_idmDeselectAllButton.label
+                      </label>
+                    </button>
+                  </td>
+                </tr>
+
+                <tr class="grid-button-panel-row open-close-action" id="idmShowHideControlsPanel">
+                  <td>
+                    <label class="grid-button-panel-label" id="idmShowHideButtonsLabel" data-l10n-id="options_idmShowHideButtonsLabel">
+                      options_idmShowHideButtonsLabel
+                    </label
+                  </td>
+
+                  <td>
+                    <button class="grid-button-panel-button" id="idmShowSelectedButton" class="idmButton">
+                      <label id="idmShowSelectedButtonLabel"
+                             data-l10n-id="options_idmShowSelectedButton.label"
+                             tooltip-l10n-id="options_idmShowSelectedButton.tooltip">
+                        options_idmShowSelectedButton.label
+                      </label>
+                    </button>
+                  </td>
+                  <td>
+                    <button class="grid-button-panel-button" id="idmHideSelectedButton" class="idmButton">
+                      <label id="idmHideSelectedButtonLabel"
+                             data-l10n-id="options_idmHideSelectedButton.label"
+                             tooltip-l10n-id="options_idmHideSelectedButton.tooltip">
+                        options_idmHideSelectedButton.label
+                      </label>
+                    </button>
+                  </td>
+                  <td>
+                    <button class="grid-button-panel-button" id="idmShowAllButton" class="idmButton">
+                      <label id="idmShowAllButtonLabel"
+                             data-l10n-id="options_idmShowAllButton.label"
+                             tooltip-l10n-id="options_idmShowAllButton.tooltip">
+                        options_idmShowAllButton.label
+                      </label>
+                    </button>
+                  </td>
+                  <td>
+                    <button class="grid-button-panel-button" id="idmHideAllButton" class="idmButton">
+                      <label id="idmHideAllButtonLabel"
+                             data-l10n-id="options_idmHideAllButton.label"
+                             tooltip-l10n-id="options_idmHideAllButton.tooltip">
+                        options_idmHideAllButton.label
+                      </label>
+                    </button>
+                  </td>
+                </tr>
+
+                <tr class="grid-button-panel-row open-close-action" id="idmLockUnlockButtonPanel">
+                  <td>
+                    <label class="grid-button-panel-label" id="idmLockUnlockButtonsLabel" data-l10n-id="options_idmLockUnlockButtonsLabel">
+                      options_idmLockUnlockButtonsLabel
+                    </label
+                  </td>
+
+                  <td>
+                    <button class="grid-button-panel-button" id="idmLockSelectedButton" class="idmButton">
+                      <label id="idmLockSelectedButtonLabel"
+                             data-l10n-id="options_idmLockSelectedButton.label"
+                             tooltip-l10n-id="options_idmLockSelectedButton.tooltip">
+                        options_idmLockSelectedButton.label
+                      </label>
+                    </button>
+                  </td>
+                  <td>
+                    <button class="grid-button-panel-button" id="idmUnlockSelectedButton" class="idmButton">
+                      <label id="idmUnlockSelectedButtonLabel"
+                             data-l10n-id="options_idmUnlockSelectedButton.label"
+                             tooltip-l10n-id="options_idmUnlockSelectedButton.tooltip">
+                        options_idmUnlockSelectedButton.label
+                      </label>
+                    </button>
+                  </td>
+                  <td>
+                    <button class="grid-button-panel-button" id="idmLockAllButton" class="idmButton">
+                      <label id="idmLockAllButtonLabel"
+                             data-l10n-id="options_idmLockAllButton.label"
+                             tooltip-l10n-id="options_idmLockAllButton.tooltip">
+                        options_idmLockAllButton.label
+                      </label>
+                    </button>
+                  </td>
+                  <td>
+                    <button class="grid-button-panel-button" id="idmUnlockAllButton" class="idmButton">
+                      <label id="idmUnlockAllButtonLabel"
+                             data-l10n-id="options_idmUnlockAllButton.label"
+                             tooltip-l10n-id="options_idmUnlockAllButton.tooltip">
+                        options_idmUnlockAllButton.label
+                      </label>
+                    </button>
+                  </td>
+                </tr>
+
+                <tr class="grid-button-panel-row open-close-action" id="idmMoveSelectedButtonPanel">
+                  <td>
+                    <label class="grid-button-panel-label" id="idmMoveSelectedButtonsLabel" data-l10n-id="options_idmMoveSelectedButtonsLabel">
+                      options_idmMoveSelectedButtonsLabel
+                    </label
+                  </td>
+                  <td>
+                    <button class="grid-button-panel-button" id="idmMoveSelectedToTopButton" class="idmButton" disabled disabled="">
+                      <label id="idmMoveSelectedToTopButtonLabel"
+                             data-l10n-id="options_idmMoveSelectedToTopButton.label"
+                             tooltip-l10n-id="options_idmMoveSelectedToTopButton.tooltip">
+                        options_idmMoveSelectedToTopButton.label
+                      </label>
+                    </button>
+                  </td>
+                  <td>
+                    <button class="grid-button-panel-button" id="idmMoveSelectedToBottomButton" class="idmButton" disabled disabled="">
+                      <label id="idmMoveSelectedToBottomButtonLabel"
+                             data-l10n-id="options_idmMoveSelectedToBottomButton.label"
+                             tooltip-l10n-id="options_idmMoveSelectedToBottomButton.tooltip">
+                        options_idmMoveSelectedToBottomButton.label
+                      </label>
+                    </button>
+                  </td>
+                </tr>
+
+                <tr class="grid-button-panel-row open-close-action" id="idmImportIdentitiesButtonPanel">
+                  <td>
+                    <label class="grid-button-panel-label" id="idmImportIdentitiesButtonsLabel" data-l10n-id="options_idmImportIdentitiesButtonsLabel">
+                      options_idmImportIdentitiesButtonsLabel
+                    </label
+                  </td>
+                  <td>
+                    <button class="grid-button-panel-button" id="idmImportIdentitiesButton" class="idmButton">
+                      <label id="idmImportIdentitiesButtonLabel"
+                             data-l10n-id="options_idmImportIdentitiesButton.label"
+                             tooltip-l10n-id="options_idmImportIdentitiesButton.tooltip">
+                        options_idmImportIdentitiesButton.label
+                      </label>
+                    </button>
+                  </td>
+                  <td>
+                  </td>
+                </tr>
+
+                <tr class="grid-button-panel-row open-close-action" id="idmCreateIdentityButtonPanel">
+                  <td>
+                    <label class="grid-button-panel-label" id="idmCreateIdentityButtonsLabel" data-l10n-id="options_idmCreateIdentityButtonsLabel">
+                      options_idmCreateIdentityButtonsLabel
+                    </label>
+                  </td>
+                  <td>
+                    <button class="grid-button-panel-button" id="idmCreateIdentityButton" class="idmButton">
+                      <label id="idmCreateIdentityButtonLabel"
+                             data-l10n-id="options_idmCreateIdentityButton.label"
+                             tooltip-l10n-id="options_idmCreateIdentityButton.tooltip">
+                        options_idmCreateIdentityButton.label
+                      </label>
+                    </button>
+                  </td>
+                  <td>
+                  </td>
+                </tr>
+              </table>
+
+            </div> <!-- END OF <div class="options-panel" id="idmDisplayOrderControlsPanel"> -->
+
+            <div id="idmIdentityChooserControlsSpacer"></div>
+
+          </div> <!-- END OF <div id="idmIdentityChooserControls"> -->
+
+          <div id="idmIdentityChooserOptionsSpacer"></div>
+
+
+
+          <div id="idmIdentityDisplayOrderListWrapper">
+
+            <div id="idmDisplayOrderFiltersPanel">
+              <table id="idmDisplayOrderFilters">
+                <tr>
+                  <td></td>
+                  <td colspan="4">
+                    <span id="idmDisplayOrderFiltersPanelErrors"></span>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td id="idmDisplayOrderFiltersPanelTitlePanel">
+                    <label id="idmDisplayOrderFiltersPanelTitle"
+                           for="idmDisplayOrderFiltersPanel"
+                           data-l10n-id="options_idmDisplayOrderFiltersPanel.title"
+                           tooltip-l10n-id="options_idmDisplayOrderFiltersPanel.tooltip">
+                      Filter:
+                    </label>
+                  </td>
+
+                  <td>
+                    <table>
+                      <tr class="identity-filter-control" id="idmDisplayOrderFilterByAccountPanel">
+                        <td>
+                          <label id="idmDisplayOrderFilterByAccountPanelLabel"
+                                 for="idmDisplayOrderFilterByAccountPanel"
+                                 data-l10n-id="options_idmDisplayOrderFilterByAccountPanel.label"
+                                 tooltip-l10n-id="options_idmDisplayOrderFilterByAccountPanel.tooltip">
+                            by Account
+                          </label>
+                        </td>
+                        <td>
+                          <select id="idmDisplayOrderFilterByAccountSelect">
+                          </select>
+                        </td>
+                        <td>
+                          <button id="idmDisplayOrderFilterByAccountResetButton">
+                            <label id="idmDisplayOrderFilterByAccountResetButtonLabel"
+                                   for="idmDisplayOrderFilterByAccountResetButton"
+                                   data-l10n-id="options_idmDisplayOrderFilterByAccountResetButton.label"
+                                   tooltip-l10n-id="options_idmDisplayOrderFilterByAccountResetButton.tooltip">
+                            </label>
+                          </button>
+                        </td>
+                      </tr>
+
+                      <tr class="identity-filter-control" id="idmDisplayOrderFilterByImportedPanel">
+                        <td>
+                          <label id="idmDisplayOrderFilterByImportedPanelLabel"
+                                 for="idmDisplayOrderFilterByImportedPanel"
+                                 data-l10n-id="options_idmDisplayOrderFilterByImportedPanel.label"
+                                 tooltip-l10n-id="options_idmDisplayOrderFilterByImportedPanel.tooltip">
+                            by Imported
+                          </label>
+                        </td>
+                        <td>
+                          <select id="idmDisplayOrderFilterByImportedSelect">
+                          </select>
+                        </td>
+                        <td>
+                          <button id="idmDisplayOrderFilterByImportedResetButton">
+                            <label id="idmDisplayOrderFilterByImportedResetButtonLabel"
+                                   for="idmDisplayOrderFilterByImportedResetButton"
+                                   data-l10n-id="options_idmDisplayOrderFilterByImportedResetButton.label"
+                                   tooltip-l10n-id="options_idmDisplayOrderFilterByImportedResetButton.tooltip">
+                            </label>
+                          </button>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+
+                  <td>
+                    <table>
+                      <tr class="identity-filter-control can-mark-error" id="idmDisplayOrderFilterByLabelPanel">
+                        <td class="can-mark-error">
+                          <label id="idmDisplayOrderFilterByLabelPanelLabel"
+                                 for="idmDisplayOrderFilterByLabelPanel"
+                                 data-l10n-id="options_idmDisplayOrderFilterByLabelPanel.label"
+                                 tooltip-l10n-id="options_idmDisplayOrderFilterByLabelPanel.tooltip">
+                            by Name+Label
+                          </label>
+                        </td>
+                        <td  class="can-mark-error">
+                          <input type="text" id="idmDisplayOrderFilterByLabelRegexText"/>
+                        </td>
+                        <td>
+                          <button id="idmDisplayOrderFilterByLabelResetButton">
+                            <label id="idmDisplayOrderFilterByLabelResetButtonLabel"
+                                   for="idmDisplayOrderFilterByLabelResetButton"
+                                   data-l10n-id="options_idmDisplayOrderFilterByLabelResetButton.label"
+                                   tooltip-l10n-id="options_idmDisplayOrderFilterByLabelResetButton.tooltip">
+                            </label>
+                          </button>
+                        </td>
+                      </tr>
+
+                      <tr class="identity-filter-control" id="idmDisplayOrderFilterByCollectedPanel">
+                        <td>
+                          <label id="idmDisplayOrderFilterByCollectedPanelLabel"
+                                 for="idmDisplayOrderFilterByCollectedPanel"
+                                 data-l10n-id="options_idmDisplayOrderFilterByCollectedPanel.label"
+                                 tooltip-l10n-id="options_idmDisplayOrderFilterByCollectedPanel.tooltip">
+                            by Collected
+                          </label>
+                        </td>
+                        <td>
+                          <select id="idmDisplayOrderFilterByCollectedSelect">
+                          </select>
+                        </td>
+                        <td>
+                          <button id="idmDisplayOrderFilterByCollectedResetButton">
+                            <label id="idmDisplayOrderFilterByCollectedResetButtonLabel"
+                                   for="idmDisplayOrderFilterByCollectedResetButton"
+                                   data-l10n-id="options_idmDisplayOrderFilterByCollectedResetButton.label"
+                                   tooltip-l10n-id="options_idmDisplayOrderFilterByCollectedResetButton.tooltip">
+                            </label>
+                          </button>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+
+                  <td>
+                    <table>
+                      <tr class="identity-filter-control can-mark-error" id="idmDisplayOrderFilterByEmailPanel">
+                        <td class="can-mark-error">
+                          <label id="idmDisplayOrderFilterByEmailPanelLabel"
+                                 for="idmDisplayOrderFilterByEmailPanel"
+                                 data-l10n-id="options_idmDisplayOrderFilterByEmailPanel.label"
+                                 tooltip-l10n-id="options_idmDisplayOrderFilterByEmailPanel.tooltip">
+                            by Email
+                          </label>
+                        </td>
+                        <td class="can-mark-error">
+                          <input type="text" id="idmDisplayOrderFilterByEmailRegexText"/>
+                        </td>
+                        <td>
+                          <button id="idmDisplayOrderFilterByEmailResetButton">
+                            <label id="idmDisplayOrderFilterByEmailResetButtonLabel"
+                                   for="idmDisplayOrderFilterByEmailResetButton"
+                                   data-l10n-id="options_idmDisplayOrderFilterByEmailResetButton.label"
+                                   tooltip-l10n-id="options_idmDisplayOrderFilterByEmailResetButton.tooltip">
+                            </label>
+                          </button>
+                        </td>
+                      </tr>
+
+                      <tr class="identity-filter-control" id="idmDisplayOrderFilterByShowInMenuPanel">
+                        <td>
+                          <label id="idmDisplayOrderFilterByShowInMenuPanelLabel"
+                                 for="idmDisplayOrderFilterByShowInMenuPanel"
+                                 data-l10n-id="options_idmDisplayOrderFilterByShowInMenuPanel.label"
+                                 tooltip-l10n-id="options_idmDisplayOrderFilterByShowInMenuPanel.tooltip">
+                            by ShowInMenu
+                          </label>
+                        </td>
+                        <td>
+                          <select id="idmDisplayOrderFilterByShowInMenuSelect">
+                          </select>
+                        </td>
+                        <td>
+                          <button id="idmDisplayOrderFilterByShowInMenuResetButton">
+                            <label id="idmDisplayOrderFilterByShowInMenuResetButtonLabel"
+                                   for="idmDisplayOrderFilterByShowInMenuResetButton"
+                                   data-l10n-id="options_idmDisplayOrderFilterByShowInMenuResetButton.label"
+                                   tooltip-l10n-id="options_idmDisplayOrderFilterByShowInMenuResetButton.tooltip">
+                            </label>
+                          </button>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+
+                  <td>
+                    <span class="identity-filter-control" id="idmDisplayOrderFilterButtonPanel">
+                      <button id="idmDisplayOrderFilterResetAllButton" class="idmButton">
+                        <label id="idmDisplayOrderFilterResetAllButtonLabel"
+                               for="idmDisplayOrderFilterResetAllButton"
+                               data-l10n-id="options_idmDisplayOrderFilterResetAllButton.label"
+                               tooltip-l10n-id="options_idmDisplayOrderFilterResetAllButton.tooltip">
+                        </label>
+                      </button>
+                    </span>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td></td>
+                  <td colspan="4">
+                    <div id="idmDisplayOrderFiltersPanelHints">
+                      <div id="idmDisplayOrderFiltersPanelHint1" data-l10n-id="options_idmDisplayOrderFiltersPanel.hint1">
+                        options_idmDisplayOrderFiltersPanel.hint1
+                      </div>
+                      <span id="idmDisplayOrderFiltersPanelMessages"></span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </div> <!-- END OF <div class="options-panel" id="idmDisplayOrderFiltersPanel"> -->
+
+            <div id="idmAutoSortControlsPanel">
+              <table  id="idmAutoSortControls">
+                <tr>
+                  <td>
+                    <span data-l10n-id="options_idmAutoSortControlsTitle">options_idmAutoSortControlsTitle</span>
+                  </td>
+
+                  <td>
+                    <span class="identity-sort-control" id="idmAutoSortByPanel">
+                        <label for="idmAutoSortBySelect" data-l10n-id="options_idmAutoSortBySelect.label">
+                          options_idmAutoSortBySelect.label
+                        </label>
+                        <select id="idmAutoSortBySelect" class="idmGeneralOption">
+                        </select>
+                    </span>
+                  </td>
+
+                  <td>
+                    <span class="identity-sort-control" id="idmAutoSortDirectionPanel">
+                      <label for="idmAutoSortDirectionSelect" data-l10n-id="options_idmAutoSortDirectionSelect.labelBefore">
+                        options_idmAutoSortDirectionSelect.labelBefore
+                      </label>
+                      <select id="idmAutoSortDirectionSelect" class="idmGeneralOption">
+                      </select>
+                      <label for="idmAutoSortDirectionSelect" data-l10n-id="options_idmAutoSortDirectionSelect.labelAfter">
+                        options_idmAutoSortDirectionSelect.labelAfter
+                      </label>
+                    </span>
+                  </td>
+
+                  <td>
+                    <span class="identity-sort-control" class="option button-panel" id="idmAutoSortButtonPanel">
+                      <button id="idmAutoSortButton" class="idmButton">
+                        <label id="idmAutoSortButtonLabel"
+                               data-l10n-id="options_idmAutoSortListButton.label"
+                               tooltip-l10n-id="options_idmAutoSortListButton.tooltip">
+                          options_idmAutoSortListButton.label
+                        </label>
+                      </button>
+                    </span>
+                  </td>
+                </tr>
+              </table>
+            </div> <!-- END OF <div class="options-panel" id="idmAutoSortControls"> -->
+
+            <table id="idmIdentityDisplayOrderList" class="">
+
+<!-- EXAMPLE identity-item <TR>:
+              <- CLASSES AND ATTRIBUTES FOR <TR>:
+
+                 - need .identity-item-draggable for Sortable.js !!!
+                 - selected="true"/"false"
+                 - .not-show-in-menu & showInMenu="true"/"false" 
+                 - .account-default
+                 - .collected-identity
+                 - .imported-identity
+                 - .lock-in-menu & lockInMenu="true"/"false"
+                 - .filter-by-account
+                 - .filter-by-label
+                 - .filter-by-email
+                 - .filter-by-imported
+                 - .filter-by-collected
+                 - .filter-by-showInMenu
+              ->
+
+              <tr class="identity-item identity-item-draggable lock-in-menu not-show-in-menu" identityId="id001" showInMenu="true" lockInMenu="false" selected="false">
+                <td class="identity-item-controls-left">
+                  <input type="checkbox" class="identity-item-check show-in-menu-check" identityId="id001"/>
+                </td>
+
+                <td class="identity-item-border-color identity-item-data">
+                  <span class="identity-item-border-color-dot"></span>
+                </td>
+
+                <td class="identity-item-label identity-item-data">
+                  <span class="identity-item-text identity-item-label-text">
+                    Ex Ample Label 1
+                  </span>
+                  <span class="identity-item-markers">                      <- optional ->
+                    <span class="identity-item-marker marker-default"/>     <- optional - uses background image ->
+                    <span class="identity-item-marker marker-collected"/>   <- optional - uses background image ->
+                    <span class="identity-item-marker marker-imported"/>    <- optional - uses background image ->
+                  </span>
+                </td>
+
+                <td class="identity-item-email identity-item-data">
+                  ex1@ample.com
+                </td>
+
+                <td class="identity-item-pos identity-item-data">  <- optional ->
+                  0
+                </td>
+
+                <td class="identity-item-index identity-item-data">  <- optional ->
+                  0
+                </td>
+
+                <td class="identity-item-id identity-item-data">  <- optional ->
+                  id001
+                </td>
+
+                <td class="identity-item-controls-right">
+                  <span class="lock-in-menu-controls"> 
+                    <input type="checkbox" class="lock-in-menu-check" id="lockInMenu_id001" identityId="id001"/>
+                    <label for="lockInMenu_id001" class="lock-in-menu-label"></label>
+                  </span>
+                  <div class="identity-controls-panel move-up-down-controls">
+                    <button class="identity-item-button move-identity-up" identityId="id001"></button>
+                    <button class="identity-item-button move-identity-down" identityId="id001"></button>
+                  </div>
+                  <div class="identity-controls-panel move-to-top-bottom-controls">
+                    <button class="identity-item-button move-identity-to-top" identityId="id001"></button>
+                    <button class="identity-item-button move-identity-to-bottom" identityId="id001"></button>
+                  </div>
+                  <div class="identity-controls-panel edit-controls">
+                    <button class="identity-item-button edit-identity" identityId="id001"></button>
+                    <button class="identity-item-button delete-identity" identityId="id001"></button>
+                  </div>
+                </td>
+              </tr>
+-- END OF EXAMPLE identity-item <TR> -->
+
+            </table>
+
+            <div id="idmIdentityDisplayOrderListWrapperSpacer"></div>
+
+          </div> <!-- END OF <div id="idmIdentityDisplayOrderListWrapper"> -->
+
+        </div> <!-- END OF <div id="idmIdentityChooserOptions"> -->
+
+        <div id="idmChooserOptionsWrapperSpacer"></div>
+
+      </div> <!-- END OF <div id="idmIdentityChooserOptionsWrapper"> -->
+
+      <div class="panel" id="idmBorderColors_D">
+        <div class="subpanel-title" data-l10n-id="options_idmWarnColorsTitle">Warnfarben</div>
+
+        <div data-html-l10n-id="options_idmWarnColorsHint">Hint</div>
+      </div>
+
+    </div> <!-- END OF <div id="idmOptionsWrapper"> -->
+
+  </body>
+</html>

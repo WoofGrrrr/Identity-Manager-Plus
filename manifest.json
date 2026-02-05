@@ -1,0 +1,71 @@
+{
+  "manifest_version": 2,
+  "name": "__MSG_extensionName__",
+  "description": "__MSG_extensionDescription__",
+  "version": "2025.8.26",
+  "author": "WoofGrrrr",
+  "default_locale": "en",
+  "applications": {
+    "gecko": {
+      "id": "identity_manager_plus@localmotive.com",
+      "strict_min_version": "115.0"
+    }
+  },
+  "experiment_apis": {
+    "FileSystemExp": {
+      "schema": "apis/FileSystemExp/schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "paths": [["FileSystemExp"]],
+        "script": "apis/FileSystemExp/implementation.js"
+      }
+    }
+  },
+  "permissions": [
+    "accountsIdentities",
+    "accountsRead",
+    "addressBooks",
+    "compose",
+    "menus",
+    "messagesRead",
+    "storage"
+  ],
+  "optional_permissions": [
+    "sensitiveDataUpload"
+  ],
+  "background": {
+    "page": "idm-background.html"
+  },
+  "options_ui": {
+    "page": "optionsUI/optionsUI.html",
+    "browser_style": false,
+    "open_in_tab": true
+  },
+  "compose_action": {
+    "default_title": "__MSG_composeActionLabel__",
+    "default_icon": {
+      "16": "images/icons/head_blue_32x32.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [ "https://*/*" ],
+      "js": [
+        "ical.js",
+        "utilities.js",
+        "FileSystemBroker/filesystem_broker_api.js",
+        "papaparse/papaparse.min-bundle.js",
+        "parse-domain/build/main.js",
+        "parse-domain/node_modules/is-ip/index.js",
+        "parse-domain/node_modules/ip-regex/index.js",
+        "parse-domain/node_modules/super-regex/index.js",
+        "parse-domain/node_modules/function-timeout/browser.js",
+        "parse-domain/node_modules/time-span/index.js",
+        "parse-domain/node_modules/clone-regexp/index.js",
+        "parse-domain/node_modules/convert-hrtime/index.js",
+        "psl/psl.bundle.js"
+      ]
+    }
+  ]
+}
+
