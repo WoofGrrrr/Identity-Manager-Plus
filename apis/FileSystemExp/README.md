@@ -35,7 +35,7 @@ Your `manifest.json` needs an entry like this:
 The API uses the following folder for file access:
 
 ```
-<profile-folder>/ileSystem/<extension-id>/
+<profile-folder>/FileSystemExp/<extension-id>/
 ```
 Where:
   + \<profile-folder\> is the user's profile folder

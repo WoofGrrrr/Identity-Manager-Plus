@@ -60,7 +60,7 @@ Identity Chooser Pop-Up Window when composing a new email:
     these Identities.
 
     (Because of the way that drag-and-drop works, it does not prevent you\
-    from moving a Locked Identity when you move a different Identityi using\
+    from moving a Locked Identity when you move a different Identity using\
     drag-and-drop. I am looking for a solution to this.)
 
   + You can **Create** NEW Identity
