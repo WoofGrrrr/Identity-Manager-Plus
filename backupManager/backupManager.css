@@ -109,6 +109,16 @@ body {
   -moz-appearance:  none;
 }
 
+.file-list-header { /* <TR> */
+  & > .list-header-text { /* <TH> */
+    background-color: var(--list-header-item-background-color);
+    border:           1px solid var(--list-header-item-border-color);
+    color:            var(--list-header-item-color);
+    font-weight:      var(--list-header-item-font-weight);
+    text-shadow:      1px 1px var(--list-header-item-shadow-color);
+  }
+}
+
 .backup-error {
   display: NONE;
 }
@@ -140,7 +150,7 @@ body {
 }
 
 
-.filename-list-item { /* this is a <TR> */
+.file-list-item { /* this is a <TR> */
   background-color: transparent !important;
 
   border:           none !important;
@@ -156,19 +166,19 @@ body {
   -moz-appearance:  none;
 }
 
-.filename-list-item > :first-child {
+.file-list-item > :first-child {
   border-bottom-left-radius: 5px;
   border-left:               1px solid; /* var(--list-item-border-color) !important; */
   border-top-left-radius:    5px;
 }
 
-.filename-list-item > :last-child {
+.file-list-item > :last-child {
   border-bottom-right-radius: 5px;
   border-right:               1px solid; /* var(--list-item-border-color) !important; */
   border-top-right-radius:    5px;
 }
 
-.filename-list-item-data { /* this is a <TD> */
+.file-list-item-data { /* this is a <TD> */
   background-color: var(--list-item-background-color);
   border-bottom:    1px solid;
   border-top:       1px solid;
@@ -181,27 +191,27 @@ body {
   -moz-appearance:  none;
 }
 
-.filename-list-item-filename { /* .filename-list-item > .filename-list-item-filename - this is a <TD> */
+.file-list-item-filename { /* .file-list-item > .file-list-item-filename - this is a <TD> */
   width: auto;
 }
 
-.filename-list-item-time-creation { /* .filename-list-item > .filename-list-item-time-creation - this is a <TD> */
+.file-list-item-time-creation { /* .file-list-item > .file-list-item-time-creation - this is a <TD> */
   width: auto;
 }
 
-.filename-list-item-filesize { /* .filename-list-item > .filename-list-item-filesize - this is a <TD> */
+.file-list-item-filesize { /* .file-list-item > .file-list-item-filesize - this is a <TD> */
   width:      auto;
   text-align: right;
 }
 
-tr.filename-list-item.selected > td.filename-list-item-data {
+tr.file-list-item.selected > td.file-list-item-data {
   background-color: var(--list-item-selected-background-color);
   border-color:     var(--list-item-selected-border-color);
   color:            var(--list-item-selected-color);
   text-shadow:      1px 1px var(--list-item-selected-text-shadow-color);
 }
 
-tr.filename-list-item:hover > td.filename-list-item-data {
+tr.file-list-item:hover > td.file-list-item-data {
   background-color: var(--list-item-hover-background-color);
   background-image: var(--list-item-hover-background-image);
   border-color:     var(--list-item-hover-border-color);
@@ -211,7 +221,7 @@ tr.filename-list-item:hover > td.filename-list-item-data {
 
 
 
-tr.filename-list-item.selected > td.filename-list-item-data { /* selected & not configured */
+tr.file-list-item.selected > td.file-list-item-data { /* selected & not configured */
   text-decoration:  var(--list-item-selected-text-decoration);
 }
 

@@ -18,6 +18,11 @@ class BackupManager {
 
   #canceled      = false;
 
+  #fileListHdr_text_fileName          = getI18nMsg("idmBackupManager_fileListHdr_text_fileName");
+  #fileListHdr_text_creationTime      = getI18nMsg("idmBackupManager_fileListHdr_text_creationTime");
+  #fileListHdr_text_fileSizeFormatted = getI18nMsg("idmBackupManager_fileListHdr_text_fileSizeFormatted");
+  #fileListHdr_text_fileSizeBytes     = getI18nMsg("idmBackupManager_fileListHdr_text_fileSizeBytes");
+
 
 
   constructor() {
@@ -73,35 +78,35 @@ class BackupManager {
     this.debug("-- begin");
 
     ////window.onbeforeunload = (e) => this.windowUnloading(e);
-    window.addEventListener("beforeunload", (e) => this.windowUnloading(e));
+    window.addEventListener("beforeunload", (e) => this.#windowUnloading(e));
 
-    await this.updateBackupFilesDirectoryUI();
-    await this.localizePage();
-    await this.buildFileNameListUI();
-    this.setupEventListeners();
+    await this.#updateBackupFilesDirectoryUI();
+    await this.#localizePage();
+    await this.#buildFileNameListUI();
+    this.#setupEventListeners();
 
     this.debug("-- end");
   }
 
 
 
-  setupEventListeners() {
+  #setupEventListeners() {
     const backupBtn = document.getElementById("idmBackupManagerBackupButton");
-    backupBtn.addEventListener("click", (e) => this.backupButtonClicked(e));
+    backupBtn.addEventListener("click", (e) => this.#backupButtonClicked(e));
 
     const restoreBtn = document.getElementById("idmBackupManagerRestoreButton");
-    restoreBtn.addEventListener("click", (e) => this.restoreButtonClicked(e));
+    restoreBtn.addEventListener("click", (e) => this.#restoreButtonClicked(e));
 
     const deleteBtn = document.getElementById("idmBackupManagerDeleteButton");
-    deleteBtn.addEventListener("click", (e) => this.deleteButtonClicked(e));
+    deleteBtn.addEventListener("click", (e) => this.#deleteButtonClicked(e));
 
     const doneBtn = document.getElementById("idmBackupManagerDoneButton");
-    doneBtn.addEventListener("click", (e) => this.doneButtonClicked(e));
+    doneBtn.addEventListener("click", (e) => this.#doneButtonClicked(e));
   }
 
 
 
-  async localizePage() {
+  async #localizePage() {
     this.debug("-- start");
 
     for (const el of document.querySelectorAll("[data-l10n-id]")) {
@@ -127,7 +132,7 @@ class BackupManager {
   
 
 
-  async updateBackupFilesDirectoryUI() {
+  async #updateBackupFilesDirectoryUI() {
     const backupFilesDirectoryPathNameLabel = document.getElementById("idmBackupFilesDirectoryPathName");
     const fsBrokerApi                       = new FileSystemBrokerAPI();
     const response                          = await fsBrokerApi.getFullPathName(); // MABXXX perhaps this should come from idmOptionsApi???
@@ -141,7 +146,7 @@ class BackupManager {
   
 
 
-  async windowUnloading(e) {
+  async #windowUnloading(e) {
     if (this.#DEBUG) this.debugAlways( "--- Window Unloading ---"
                                        + `\n- window.screenTop=${window.screenTop}`
                                        + `\n- window.screenLeft=${window.screenLeft}`
@@ -175,7 +180,7 @@ class BackupManager {
 
 
 
-  async buildFileNameListUI() {
+  async #buildFileNameListUI() {
     const domFileNameList = document.getElementById("idmBackupManagerFileNameList");
     if (! domFileNameList) {
       this.debug("-- failed to get domFileNameList");
@@ -184,7 +189,7 @@ class BackupManager {
     }
 
     domFileNameList.innerHTML = '';
-    this.updateUIOnSelectionChanged();
+    this.#updateUIOnSelectionChanged();
 
     const i18nMessage = getI18nMsg("idmBackupManager_message_fileNamesLoading", "...");
     const loadingTR = document.createElement("tr");
@@ -192,7 +197,7 @@ class BackupManager {
     loadingTR.appendChild( document.createTextNode(i18nMessage) ); // you can put a text node in a TR ???
     domFileNameList.appendChild(loadingTR);
 
-    const backupFileInfo = await this.getBackupFileInfo();
+    const backupFileInfo = await this.#getBackupFileInfo();
 
     domFileNameList.innerHTML = '';
 
@@ -201,8 +206,11 @@ class BackupManager {
     } else if (backupFileInfo.length < 1) {
       // MABXXX
     } else {
+      const listHeaderUI = this.#buildFileListHeaderUI();
+      domFileNameList.append(listHeaderUI);
+
       for (const fileInfo of backupFileInfo) {
-        const listItemUI = this.buildFileNameListItemUI(fileInfo);
+        const listItemUI = await this.#buildFileListItemUI(fileInfo);
         domFileNameList.append(listItemUI);
       }
     }
@@ -210,7 +218,41 @@ class BackupManager {
 
 
 
-  buildFileNameListItemUI(fileInfo) {
+  #buildFileListHeaderUI() {
+    const fileListHeaderTR = document.createElement("tr");
+      fileListHeaderTR.classList.add("file-list-header");         // file-list-header
+
+      // Create FileName element and add it to the row
+      const fileNameTH = document.createElement("th");
+        fileNameTH.classList.add("list-header-text");             // file-list-header > list-header-text
+        fileNameTH.appendChild( document.createTextNode( this.#fileListHdr_text_fileName ) );
+      fileListHeaderTR.appendChild(fileNameTH);
+
+      // Create Creation Date/Time element and add it to the row
+      const creationTimeTH = document.createElement("th");
+        creationTimeTH.classList.add("list-header-text");         // file-list-header > list-header-text
+        creationTimeTH.appendChild( document.createTextNode( this.#fileListHdr_text_creationTime ) );
+      fileListHeaderTR.appendChild(creationTimeTH);
+
+      // Create file size (formatted) element and add it to the row
+      const fileSizeFmtTH = document.createElement("th");
+        fileSizeFmtTH.classList.add("list-header-text");          // file-list-header >  list-header-text
+        fileSizeFmtTH.appendChild( document.createTextNode( this.#fileListHdr_text_fileSizeFormatted ) );
+      fileListHeaderTR.appendChild(fileSizeFmtTH);
+
+      // Create file size (bytes) element and add it to the row
+      const fileSizeBytesTH = document.createElement("th");
+        fileSizeBytesTH.classList.add("list-header-text");        // file-list-header > list-header-text
+        fileSizeBytesTH.appendChild( document.createTextNode( this.#fileListHdr_text_fileSizeBytes ) );
+      fileListHeaderTR.appendChild(fileSizeBytesTH);
+
+    return fileListHeaderTR;
+  }
+
+
+
+  // async because of messenger.messengerUtilities.formatFileSize()
+  async #buildFileListItemUI(fileInfo) {
 /*  FileInfo has these values:
     - fileName: the fileName
     - path: the full pathName
@@ -224,38 +266,45 @@ class BackupManager {
 
     this.debug(`-- BUILD LIST ITEM UI: -- fileInfo.path="${fileInfo.path}" fileName="${fileInfo.fileName}"`);
 
-    const fileNameItemTR = document.createElement("tr");
-      fileNameItemTR.classList.add("filename-list-item");             // filename-list-item
-      fileNameItemTR.setAttribute("fileName", fileInfo.fileName);
-      fileNameItemTR.addEventListener("click", (e) => this.backupFilenameClicked(e));
+    const fileListItemTR = document.createElement("tr");
+      fileListItemTR.classList.add("file-list-item");             // file-list-item
+      fileListItemTR.setAttribute("fileName", fileInfo.fileName);
+      fileListItemTR.addEventListener("click", (e) => this.#backupFileClicked(e));
 
       // Create FileName element and add it to the row
       const fileNameTD = document.createElement("td");
-        fileNameTD.classList.add("filename-list-item-data");          // filename-list-item > filename-list-item-data
-        fileNameTD.classList.add("filename-list-item-filename");      // filename-list-item > filename-list-item-filename
+        fileNameTD.classList.add("file-list-item-data");          // file-list-item > file-list-item-data
+        fileNameTD.classList.add("file-list-item-filename");      // file-list-item > file-list-item-filename
         fileNameTD.appendChild(document.createTextNode(fileInfo.fileName));
-      fileNameItemTR.appendChild(fileNameTD);
+      fileListItemTR.appendChild(fileNameTD);
 
       // Create Creation Date/Time element and add it to the row
       const creationTimeTD = document.createElement("td");
-        creationTimeTD.classList.add("filename-list-item-data");          // filename-list-item > filename-list-item-data
-        creationTimeTD.classList.add("filename-list-item-time-creation"); // filename-list-item > filename-list-item-time-creation
+        creationTimeTD.classList.add("file-list-item-data");          // file-list-item > file-list-item-data
+        creationTimeTD.classList.add("file-list-item-time-creation"); // file-list-item > file-list-item-time-creation
         creationTimeTD.appendChild( document.createTextNode( formatMsToDateTime24HR(fileInfo.creationTime) ) );
-      fileNameItemTR.appendChild(creationTimeTD);
+      fileListItemTR.appendChild(creationTimeTD);
 
-      // Create file size element and add it to the row
-      const fileSizeTD = document.createElement("td");
-        fileSizeTD.classList.add("filename-list-item-data");          // filename-list-item > filename-list-item-data
-        fileSizeTD.classList.add("filename-list-item-filesize");      // filename-list-item > filename-list-item-filesize
-        fileSizeTD.appendChild( document.createTextNode(fileInfo.size) );
-      fileNameItemTR.appendChild(fileSizeTD);
+      // Create file size (formatted) element and add it to the row
+      const fileSizeFmtTD = document.createElement("td");
+        fileSizeFmtTD.classList.add("file-list-item-data");          // file-list-item > file-list-item-data
+        fileSizeFmtTD.classList.add("file-list-item-filesize");      // file-list-item > file-list-item-filesize
+        fileSizeFmtTD.appendChild( document.createTextNode( await messenger.messengerUtilities.formatFileSize( fileInfo.size) ) );
+      fileListItemTR.appendChild(fileSizeFmtTD);
 
-    return fileNameItemTR;
+      // Create file size (bytes) element and add it to the row
+      const fileSizeBytesTD = document.createElement("td");
+        fileSizeBytesTD.classList.add("file-list-item-data");          // file-list-item > file-list-item-data
+        fileSizeBytesTD.classList.add("file-list-item-filesize");      // file-list-item > file-list-item-filesize
+        fileSizeBytesTD.appendChild( document.createTextNode(fileInfo.size) );
+      fileListItemTR.appendChild(fileSizeBytesTD);
+
+    return fileListItemTR;
   }  
 
 
 
-  async getBackupFileInfo() {
+  async #getBackupFileInfo() {
     let listBackupFileInfoResponse;
     try {
       listBackupFileInfoResponse = await this.#idmOptionsApi.listBackupFileInfo();
@@ -276,12 +325,14 @@ class BackupManager {
     }
   }
 
-  updateUIOnSelectionChanged() {
+
+
+  #updateUIOnSelectionChanged() {
 ////const backupBtn  = document.getElementById("idmBackupManagerBackupButton");
     const restoreBtn = document.getElementById("idmBackupManagerRestoreButton");
     const deleteBtn  = document.getElementById("idmBackupManagerDeleteButton");
 ////const doneBtn    = document.getElementById("idmBackupManagerDoneButton");
-    const selectedCount = this.getSelectedDomFileNameListItemCount();
+    const selectedCount = this.#getSelectedDomFileNameListItemCount();
 
     if (selectedCount == 0) {
       restoreBtn.disabled = true;
@@ -297,8 +348,8 @@ class BackupManager {
 
 
 
-  // and filename-list-item (TR or TD) was clicked
-  async backupFilenameClicked(e) {
+  // and file-list-item (TR or TD) was clicked
+  async #backupFileClicked(e) {
     if (! e) return;
 
 ////e.stopPropagation();
@@ -319,9 +370,9 @@ class BackupManager {
 
       } else {
         this.debug(  "-- Got our TR --"
-                    + ` filename-list-item? ${trElement.classList.contains("filename-list-item")}`
+                    + ` file-list-item? ${trElement.classList.contains("file-list-item")}`
                   );
-        if (trElement.classList.contains("filename-list-item")) {
+        if (trElement.classList.contains("file-list-item")) {
           const fileName = trElement.getAttribute("fileName");
           const wasSelected = trElement.classList.contains('selected');
       
@@ -333,13 +384,15 @@ class BackupManager {
             trElement.classList.remove('selected');
           }
 
-          this.updateUIOnSelectionChanged();
+          this.#updateUIOnSelectionChanged();
         }
       }
     }
   }
 
-  deselectAllFileNames() {
+
+
+  #deselectAllFileNames() {
     const domFileNameList = document.getElementById("idmBackupManagerFileNameList");
     if (! domFileNameList) {
       this.debug("-- failed to get domFileNameList");
@@ -348,14 +401,14 @@ class BackupManager {
         listItem.classList.remove('selected');
       }
 
-      this.updateUIOnSelectionChanged();
+      this.#updateUIOnSelectionChanged();
     }
   }
 
 
 
   // get only the FIRST!!!
-  getSelectedDomFileNameListItem() {
+  #getSelectedDomFileNameListItem() {
     const domFileNameList = document.getElementById("idmBackupManagerFileNameList");
     if (! domFileNameList) {
       this.debug("-- failed to get domFileNameList");
@@ -368,7 +421,7 @@ class BackupManager {
     }
   }
 
-  getSelectedDomFileNameListItems() {
+  #getSelectedDomFileNameListItems() {
     const domFileNameList = document.getElementById("idmBackupManagerFileNameList");
     if (! domFileNameList) {
       this.debug("-- failed to get domFileNameList");
@@ -383,7 +436,7 @@ class BackupManager {
     }
   }
 
-  getSelectedDomFileNameListItemCount() {
+  #getSelectedDomFileNameListItemCount() {
     let   count           = 0;
     const domFileNameList = document.getElementById("idmBackupManagerFileNameList");
 
@@ -402,7 +455,7 @@ class BackupManager {
 
 
 
-  async backupButtonClicked(e) {
+  async #backupButtonClicked(e) {
     this.debug(`-- e.target.tagName="${e.target.tagName}"`);
 
     e.preventDefault();
@@ -432,7 +485,7 @@ class BackupManager {
       ++errors;
     } else {
       this.debug(`-- backupFileName="${response.fileName}" bytesWritten=${response.bytesWritten}`);
-      await this.buildFileNameListUI();
+      await this.#buildFileNameListUI();
     }
 
     if (errors) {
@@ -446,7 +499,7 @@ class BackupManager {
 
 
 
-  async restoreButtonClicked(e) {
+  async #restoreButtonClicked(e) {
     this.debug(`-- e.target.tagName="${e.target.tagName}"`);
 
     e.preventDefault();
@@ -454,7 +507,7 @@ class BackupManager {
     const restoreBtn = document.getElementById("idmBackupManagerRestoreButton");
     restoreBtn.disabled = true;
 
-    const domSelectedFileNameItemTR = this.getSelectedDomFileNameListItem();
+    const domSelectedFileNameItemTR = this.#getSelectedDomFileNameListItem();
     let errors = 0;
 
     if (! domSelectedFileNameItemTR) {
@@ -526,7 +579,7 @@ class BackupManager {
 
 
 
-  async deleteButtonClicked(e) {
+  async #deleteButtonClicked(e) {
     this.debug(`-- e.target.tagName="${e.target.tagName}"`);
 
     e.preventDefault();
@@ -534,7 +587,7 @@ class BackupManager {
     const deleteBtn = document.getElementById("idmBackupManagerDeleteButton");
     deleteBtn.disabled = true;
 
-    const domSelectedFileNameItemTRs = this.getSelectedDomFileNameListItems();
+    const domSelectedFileNameItemTRs = this.#getSelectedDomFileNameListItems();
     let errors = 0;
 
     if (! domSelectedFileNameItemTRs) {
@@ -597,14 +650,14 @@ class BackupManager {
     } else {
     }
 
-    this.updateUIOnSelectionChanged();
+    this.#updateUIOnSelectionChanged();
 
     deleteBtn.disabled = false;
   }
 
 
 
-  resetErrors() {
+  #resetErrors() {
     let errorDivs = document.querySelectorAll("div.backup-error");
     if (errorDivs) {
       for (let errorDiv of errorDivs) {
@@ -621,7 +674,7 @@ class BackupManager {
     }
   }
 
-  setErrorFor(elementId, msgId) {
+  #setErrorFor(elementId, msgId) {
     if (elementId && msgId) {
       let errorDiv = document.querySelector("div.backup-error[error-for='" + elementId + "']");
       if (errorDiv) {
@@ -638,7 +691,7 @@ class BackupManager {
 
 
 
-  async doneButtonClicked(e) {
+  async #doneButtonClicked(e) {
     this.debug(`-- e.target.tagName="${e.target.tagName}"`);
 
     e.preventDefault();

@@ -1058,6 +1058,18 @@
   "idmBackupManager_message_fileNamesLoading": {
     "message": "...loading backup filenames..."
   },
+  "idmBackupManager_fileListHdr_text_fileName": {
+    "message": "File Name"
+  },
+  "idmBackupManager_fileListHdr_text_creationTime": {
+    "message": "Creation Time"
+  },
+  "idmBackupManager_fileListHdr_text_fileSizeFormatted": {
+    "message": "Size"
+  },
+  "idmBackupManager_fileListHdr_text_fileSizeBytes": {
+    "message": "(bytes)"
+  },
   "idmBackupManager_doneButton": {
     "message": "Done"
   },
