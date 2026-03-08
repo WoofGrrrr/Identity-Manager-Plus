@@ -7,25 +7,26 @@ import { logProps, getExtensionId, getExtensionName, getI18nMsg, formatNowToDate
 export class IdmOptions {
   #CLASS_NAME = this.constructor.name;
 
-  #extId     = getExtensionId();
-  #extName   = getExtensionName();
 
-  #LOG   = false;
-  #DEBUG = false;
-  #WARN  = false;
+  #extId      = getExtensionId();
+  #extName    = getExtensionName();
+
+  #LOG        = false;
+  #DEBUG      = false;
+  #WARN       = false;
 
   static #BACKUP_FILENAME_EXTENSION  = ".idmbackup";
   static #BACKUP_FILENAME_MATCH_GLOB = "*.idmbackup";
 
-  static #IDENTITY_AUTO_SORT_BY_VALUE_NONE              = "NONE";
-  static #IDENTITY_AUTO_SORT_BY_VALUE_NAME              = "NAME";
-  static #IDENTITY_AUTO_SORT_BY_VALUE_EMAIL             = "EMAIL";
-  static #IDENTITY_AUTO_SORT_BY_VALUE_DOMAIN            = "DOMAIN";
-  static #IDENTITY_AUTO_SORT_BY_VALUE_HOST              = "HOST";
+  static IDENTITY_AUTO_SORT_BY_VALUE_NONE              = "NONE";           // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
+  static IDENTITY_AUTO_SORT_BY_VALUE_NAME              = "NAME";           // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
+  static IDENTITY_AUTO_SORT_BY_VALUE_EMAIL             = "EMAIL";          // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
+  static IDENTITY_AUTO_SORT_BY_VALUE_DOMAIN            = "DOMAIN";         // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
+  static IDENTITY_AUTO_SORT_BY_VALUE_HOST              = "HOST";           // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
 
-  static #IDENTITY_AUTO_SORT_DIRECTION_VALUE_NONE       = "NONE";
-  static #IDENTITY_AUTO_SORT_DIRECTION_VALUE_ASCENDING  = "ASCENDING";
-  static #IDENTITY_AUTO_SORT_DIRECTION_VALUE_DESCENDING = "DESCENDING";
+  static IDENTITY_AUTO_SORT_DIRECTION_VALUE_NONE       = "NONE";           // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
+  static IDENTITY_AUTO_SORT_DIRECTION_VALUE_ASCENDING  = "ASCENDING";      // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
+  static IDENTITY_AUTO_SORT_DIRECTION_VALUE_DESCENDING = "DESCENDING";     // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
 
   static #DEFAULT_OPTION_KEYS = [
     'idmEnableComposeMessage',
@@ -57,8 +58,8 @@ export class IdmOptions {
     'idmEnableForwardMessage':                              true,
     'idmEnableDraftMessage':                                false,
     'idmEnableKeepComposeOnClose':                          false,
-    'idmAutoSortBySelect':                                  this.#IDENTITY_AUTO_SORT_BY_VALUE_EMAIL,
-    'idmAutoSortDirectionSelect':                           this.#IDENTITY_AUTO_SORT_DIRECTION_VALUE_ASCENDING,
+    'idmAutoSortBySelect':                                  IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_EMAIL,              // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
+    'idmAutoSortDirectionSelect':                           IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_ASCENDING,   // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
     'idmCollectFromAddresses':                              false,
     'idmCollectFromAddressAlert':                           false,
     'idmSkipOnboarding':                                    false,
@@ -228,35 +229,35 @@ export class IdmOptions {
   }
 
   async isAutoSortByNone() {
-    return this.isSelectedOption("idmAutoSortBySelect", IdmOptions.#IDENTITY_AUTO_SORT_BY_VALUE_NONE, true);
+    return this.isSelectedOption("idmAutoSortBySelect", IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_NONE, true);                      // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
   }
 
   async isAutoSortByName() {
-    return this.isSelectedOption("idmAutoSortBySelect", IdmOptions.#IDENTITY_AUTO_SORT_BY_VALUE_NAME, false);
+    return this.isSelectedOption("idmAutoSortBySelect", IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_NAME, false);                     // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
   }
 
   async isAutoSortByEmail() {
-    return this.isSelectedOption("idmAutoSortBySelect", IdmOptions.#IDENTITY_AUTO_SORT_BY_VALUE_EMAIL, false);
+    return this.isSelectedOption("idmAutoSortBySelect", IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_EMAIL, false);                    // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
   }
 
   async isAutoSortByDomain() {
-    return this.isSelectedOption("idmAutoSortBySelect", IdmOptions.#IDENTITY_AUTO_SORT_BY_VALUE_DOMAIN, false);
+    return this.isSelectedOption("idmAutoSortBySelect", IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_DOMAIN, false);                   // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
   }
 
   async isAutoSortByHost() {
-    return this.isSelectedOption("idmAutoSortBySelect", IdmOptions.#IDENTITY_AUTO_SORT_BY_VALUE_HOST, false);
+    return this.isSelectedOption("idmAutoSortBySelect", IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_HOST, false);                     // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
   }
 
   async isAutoSortDirectionNone() {
-    return this.isSelectedOption("idmAutoSortDirectionSelect", IdmOptions.#IDENTITY_AUTO_SORT_DIRECTION_VALUE_NONE, true);
+    return this.isSelectedOption("idmAutoSortDirectionSelect", IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_NONE, true);        // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
   }
 
   async isAutoSortDirectionAscending() {
-    return this.isSelectedOption("idmAutoSortDirectionSelect", IdmOptions.#IDENTITY_AUTO_SORT_DIRECTION_VALUE_ASCENDING, false);
+    return this.isSelectedOption("idmAutoSortDirectionSelect", IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_ASCENDING, false);  // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
   }
 
   async isAutoSortDirectionDescending() {
-    return this.isEnabledOption("idmAutoSortDirectionSelect", IdmOptions.#IDENTITY_AUTO_SORT_DIRECTION_VALUE_DESCENDING, false);
+    return this.isEnabledOption("idmAutoSortDirectionSelect", IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_DESCENDING, false);  // MABXXX WE NEED A BETTER WAY TO DO THIS!!!
   }
 
   async isEnabledCollectFromAddresses() {

@@ -148,9 +148,11 @@
   --list-item-disabled-border-color:             rgb(  20,  20,  24 );
   --list-item-disabled-color:                    rgb( 170, 190, 200 );
   --list-item-disabled-text-decoration-color:    rgb(   0,   0,   0 );
-  --list-item-disabled-text-decoration-style:    solid;
   --list-item-disabled-text-decoration-line:     line-through;
-  --list-item-disabled-text-decoration:          var(--list-item-disabled-text-decoration-line) var(--list-item-disabled-text-decoration-style) var(--list-item-disabled-text-decoration-color);
+  --list-item-disabled-text-decoration-style:    solid;
+  --list-item-disabled-text-decoration:          var(--list-item-disabled-text-decoration-line)
+                                                 var(--list-item-disabled-text-decoration-style)
+                                                 var(--list-item-disabled-text-decoration-color);
 
 
 
@@ -160,18 +162,34 @@
   --identity-font:                               var(--list-item-font);
   --identity-font-size:                          var(--list-item-font-size);
 
-  --identity-lock-in-menu-background-color:      rgb( 130,  90,  90 );
-  --identity-lock-in-menu-border-color:          rgb( 101,  16,  16 );
-  --identity-lock-in-menu-color:                 rgb( 120,   0,   0 );
-/*--identity-lock-in-menu-color:                 rgb( 179,  26,  30 ); */
+  --identity-lock-in-menu-background-color:          rgb( 136, 121,  98 ); /* different shades of the yellow lock icon rgb(243,159,37) */
+  --identity-lock-in-menu-border-color:              rgb(  94,  79,  55 );
+  --identity-lock-in-menu-color:                     rgb( 247, 192, 111 );
+  --identity-lock-in-menu-text-shadow:               1px 1px rgb(0,0,0), -1px 1px rgb(0,0,0), -1px -1px rgb(0,0,0), 1px -1px rgb(0,0,0);
+  --identity-lock-in-menu-text-decoration-color:     rgb( 191, 119,  11 );
+  --identity-lock-in-menu-text-decoration-line:      underline;
+  --identity-lock-in-menu-text-decoration-style:     wavy;
+  --identity-lock-in-menu-text-decoration-thickness: 1px;
+  --identity-lock-in-menu-text-decoration:           var(--identity-lock-in-menu-text-decoration-thickness)
+                                                     var(--identity-lock-in-menu-text-decoration-line)
+                                                     var(--identity-lock-in-menu-text-decoration-style)
+                                                     var(--identity-lock-in-menu-text-decoration-color);
 
-  --identity-not-show-in-menu-background-color:  var(--list-item-disabled-background-color);
-  --identity-not-show-in-menu-border-color:      var(--list-item-disabled-border-color);
-  --identity-not-show-in-menu-color:             var(--list-item-disabled-color);
-  --identity-not-show-in-menu-text-decoration-color: var(--list-item-disabled-text-decoration-color);
-  --identity-not-show-in-menu-text-decoration-line:  var(--list-item-disabled-text-decoration-line);
-  --identity-not-show-in-menu-text-decoration-style: var(--list-item-disabled-text-decoration-style);
-  --identity-not-show-in-menu-text-decoration:   var(--list-item-disabled-text-decoration);
+
+
+  --identity-not-show-in-menu-background-color:          rgb( 130,  90,  90 );
+  --identity-not-show-in-menu-border-color:              rgb( 101,  16,  16 );
+  --identity-not-show-in-menu-color:                     rgb( 230,   0,   9 ); /* rgb( 120,   0,   0 ); */
+  --identity-not-show-in-menu-text-decoration-color:     rgb(   0,   0,   0 );
+  --identity-not-show-in-menu-text-decoration-line:      line-through;
+  --identity-not-show-in-menu-text-decoration-style:     dotted;
+  --identity-not-show-in-menu-text-decoration-thickness: 2px;
+  --identity-not-show-in-menu-text-decoration:           var(--identity-not-show-in-menu-text-decoration-thickness)
+                                                         var(--identity-not-show-in-menu-text-decoration-line)
+                                                         var(--identity-not-show-in-menu-text-decoration-style)
+                                                         var(--identity-not-show-in-menu-text-decoration-color);
+  --identity-not-show-in-menu-text-shadow-color:         rgb(   0,   0,   0 );
+  --identity-not-show-in-menu-text-shadow:               1px 1px var(--identity-not-show-in-menu-text-shadow-color);
 
   --identity-selected-background-color:          var(--list-item-selected-background-color);
   --identity-selected-border-color:              var(--list-item-selected-border-color);
@@ -318,10 +336,14 @@
     --identity-lock-in-menu-background-color:      rgb( 175, 175, 177 );
     --identity-lock-in-menu-border-color:          rgb(  90,  90,  90 );
     --identity-lock-in-menu-color:                 rgb(  90,  90,  90 );
+    --identity-lock-in-menu-text-shadow-color:     rgb(   0,   0,   0 );
+    --identity-lock-in-menu-text-shadow:           1px 1px var(--identity-lock-in-menu-text-shadow-color);
 
     --identity-not-show-in-menu-background-color:  rgb( 175, 175, 177 );
     --identity-not-show-in-menu-border-color:      rgb(  90,  90,  90 );
     --identity-not-show-in-menu-color:             rgb(  90,  90,  90 );
+    --identity-not-show-in-menu-text-shadow-color: rgb(   0,   0,   0 );
+    --identity-not-show-in-menu-text-shadow:       1px 1px var(--identity-not-show-in-menu-text-shadow-color);
 
     --identity-selected-background-color:          rgb(  77, 116, 159 );
     --identity-selected-border-color:              rgb( 200, 200, 200 );

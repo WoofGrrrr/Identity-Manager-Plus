@@ -17,6 +17,8 @@ class IdentityManagerPlus {
   #activeIdentityChooserWindows    = [];
   #composeWindowInitialIdentityIds = [];
 
+  #toolsMenuItemId;
+
 
 
   constructor() {
@@ -113,20 +115,29 @@ class IdentityManagerPlus {
     // MABXXX this should be a function...
     try {
       const browserInfo = await browser.runtime.getBrowserInfo();
-      const major       = parseInt(browserInfo.version.split(".").shift());
-      if (major > 114) {
-        const menuId = await messenger.menus.create(
+      const version     = browserInfo.version;
+      const versionInfo = version.split('.');
+      const major       = Number(versionInfo[0]);
+      if (! isNaN(major) && Number.isInteger(major) && major > 114) {
+        this.#toolsMenuItemId = await messenger.menus.create(
           {
-            id:       "showIdentityChooser",
-            contexts: ["tools_menu"],
-            onclick:  (onClicked, tab) => this.composeMenuItemClicked(onClicked, tab),
-            title:    messenger.i18n.getMessage("idmComposeWindow_menuItem_identityChooser"),
-            icons:    { "32": "images/icons/head_blue_32x32.png" }
+            'contexts': [ "tools_menu" ],
+            'enabled':  true,
+            'icons':    { 
+                          "24": "/images/icons/people/3_people_blue_24x24.png",
+                          "32": "/images/icons/people/3_people_blue_32x32.png",
+                          "64": "/images/icons/people/3_people_blue_64x64.png",
+                        },
+            'id':       "idmShowIdentityChooser",
+            'onclick':  (onClicked, tab) => this.composeMenuItemClicked(onClicked, tab),
+            'title':    getI18nMsg("idmComposeWindow_menuItem_identityChooser", "Choose and Identity"),
+            'type':     "normal",
+            'visible':  false,
           }
         );
       }
     } catch (error) {
-      this.caught(error, "-- Adding showIdentityChooser to compose_action_menu");
+      this.caught(error, "-- Adding menu item \"idmShowIdentityChooser\" to menu context \"tools_menu\"");
     }
   }
 
@@ -295,9 +306,15 @@ class IdentityManagerPlus {
 
 
   async composeMenuItemClicked(onClicked, tab) {
-    this.debug(`-- tab.id="${tab.id}" tab.windowId="${tab.windowId}" onClicked.menuItemId="${onClicked.menuItemId}" onClicked.button="${onClicked.button}" onClicked.modifiers:`, onClicked.modifiers);
+    this.debug( `\n---Menu Item Clicked:`,
+                `\n- tab.id="${tab.id}"`,
+                `\n- tab.windowId="${tab.windowId}"`,
+                `\n- onClicked.menuItemId="${onClicked.menuItemId}"`,
+                `\n- onClicked.button="${onClicked.button}"`,
+                `\n- onClicked.modifiers:`, onClicked.modifiers,
+              );
 
-    if (onClicked.menuItemId === 'showIdentityChooser') {
+    if (onClicked.menuItemId === this.#toolsMenuItemId) {
       await this.showIdentityChooser(tab);
     }
   }
@@ -309,7 +326,7 @@ class IdentityManagerPlus {
   async onMenuShown(onShowData, tab) {
     const visible = (tab.type === 'messageCompose');
     this.debug(`-- Setting showIdentityChooser menuItem visible=${visible}`);
-    messenger.menus.update("showIdentityChooser", { 'visible': visible } );
+    messenger.menus.update(this.#toolsMenuItemId, { 'visible': visible } );
     messenger.menus.refresh();
   }
 

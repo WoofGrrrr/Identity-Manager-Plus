@@ -254,6 +254,7 @@
   "options_idmDisplayOrderFilterByAccountResetButton.tooltip": {
     "message": "Reset the \"by Account\" Filter"
   },
+
   "options_idmDisplayOrderFilterByImportedPanel.label": {
     "message": "by Imported"
   },
@@ -275,6 +276,51 @@
   "options_idmDisplayOrderFilterByImportedResetButton.tooltip": {
     "message": "Reset the \"by Imported\" Filter"
   },
+
+  "options_idmDisplayOrderFilterByLockedPanel.label": {
+    "message": "by Locked"
+  },
+  "options_idmDisplayOrderFilterByLockedPanel.tooltip": {
+    "message": "List only Identities that match the selected Locked status"
+  },
+  "options_idmDisplayOrderFilterByLockedSelect_any": {
+    "message": "--- any ---"
+  },
+  "options_idmDisplayOrderFilterByLockedSelect_locked": {
+    "message": "Locked"
+  },
+  "options_idmDisplayOrderFilterByLockedSelect_notLocked": {
+    "message": "Not Locked"
+  },
+  "options_idmDisplayOrderFilterByLockedResetButton.label": {
+    "message": "Reset"
+  },
+  "options_idmDisplayOrderFilterByLockedResetButton.tooltip": {
+    "message": "Reset the \"by Locked\" Filter"
+  },
+
+  "options_idmDisplayOrderFilterByAccountDefaultPanel.label": {
+    "message": "by Account Default"
+  },
+  "options_idmDisplayOrderFilterByAccountDefaultPanel.tooltip": {
+    "message": "List only Identities that match the selected AccountDefault status"
+  },
+  "options_idmDisplayOrderFilterByAccountDefaultSelect_any": {
+    "message": "--- any ---"
+  },
+  "options_idmDisplayOrderFilterByAccountDefaultSelect_accountDefault": {
+    "message": "Default"
+  },
+  "options_idmDisplayOrderFilterByAccountDefaultSelect_notAccountDefault": {
+    "message": "Not Default"
+  },
+  "options_idmDisplayOrderFilterByAccountDefaultResetButton.label": {
+    "message": "Reset"
+  },
+  "options_idmDisplayOrderFilterByAccountDefaultResetButton.tooltip": {
+    "message": "Reset the \"by Account Default\" Filter"
+  },
+
   "options_idmDisplayOrderFilterByLabelPanel.label": {
     "message": "by Name+Label"
   },
@@ -347,6 +393,72 @@
   "options_idmDisplayOrderFilterResetAllButton.tooltip": {
     "message": "Reset ALL Identity Filters"
   },
+
+  "options_idmDisplayOrder_listHeader_text_controlsLeft": {
+    "message": ""
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_controlsLeft": {
+    "message": ""
+  },
+  "options_idmDisplayOrder_listHeader_text_identityColor": {
+    "message": ""
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_identityColor": {
+    "message": "The borderColors-D Color for the Identity"
+  },
+  "options_idmDisplayOrder_listHeader_text_account": {
+    "message": "Account"
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_account": {
+    "message": "The Account to which the Identity belongs"
+  },
+  "options_idmDisplayOrder_listHeader_text_nameAndLabel": {
+    "message": "Name+Label"
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_nameAndLabel": {
+    "message": "The Name plus the (Label) for the Identity"
+  },
+  "options_idmDisplayOrder_listHeader_text_email": {
+    "message": "Email"
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_email": {
+    "message": "The Email Adddress for the Identity"
+  },
+  "options_idmDisplayOrder_listHeader_text_pos": {
+    "message": "pos"
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_pos": {
+    "message": "The position of the Identity in the list"
+  },
+  "options_idmDisplayOrder_listHeader_text_id": {
+    "message": "ID"
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_id": {
+    "message": "The Identity ID"
+  },
+  "options_idmDisplayOrder_listHeader_text_index": {
+    "message": "idx"
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_index": {
+    "message": "The Index of the Identity in the list"
+  },
+  "options_idmDisplayOrder_listHeader_text_controlsRight": {
+    "message": ""
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_controlsRight": {
+    "message": ""
+  },
+
+  "options_listItemMarker_accountDefault.tooltip": {
+    "message": "This is the Default Identity for the Account"
+  },
+  "options_listItemMarker_collected.tooltip": {
+    "message": "This Identity has been \"Collected\""
+  },
+  "options_listItemMarker_imported.tooltip": {
+    "message": "This Identity was Imported"
+  },
+
   "options_idmDisplayOrderFilterError_labelRegexInvalid": {
     "message": "Invalid Regular Expression for Name+Label"
   },

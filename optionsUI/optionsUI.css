@@ -102,11 +102,11 @@ input[type="checkbox"].open-close-check + label {
 }
 
 input[type="checkbox"].open-close-check:checked + label {
-  background-image:  url("../images/icons/light-gray-triangle-outline-down_10x10.png") !important;
+  background-image:  url("../images/icons/triangle/light-gray-triangle-outline-down_10x10.png") !important;
 }
 
 input[type="checkbox"].open-close-check:not(checked) + label {
-  background-image:  url("../images/icons/light-gray-triangle-outline-right_10x10.png") !important;
+  background-image:  url("../images/icons/triangle/light-gray-triangle-outline-right_10x10.png") !important;
 }
 
 .options-open-close-panel {
@@ -544,7 +544,16 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
   -moz-appearance:  none;
 }
 
-.identity-item:is(.filter-by-account, .filter-by-label, .filter-by-email, .filter-by-imported, .filter-by-collected, .filter-by-showInMenu) { /* <TR>  Identity list row */
+.identity-item:is( .filter-by-account,
+                   .filter-by-label,
+                   .filter-by-email,
+                   .filter-by-imported,
+                   .filter-by-locked,
+                   .filter-by-default,
+                   .filter-by-collected,
+                   .filter-by-showInMenu
+                 )
+{ /* <TR>  Identity list row */
   display:          NONE;
 }
 
@@ -578,8 +587,20 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
   padding-right: 0.25em;
 }
 
-.identity-item-check { /* any checkbox */
-  cursor: pointer !important;
+.identity-item-check, /* any checkbox */
+.identity-item-button /* any button */
+{
+  &:not(.dummy-icon,[disabled]) { /* not disabled */
+    cursor: pointer !important;
+  }
+
+  &:not(.dummy-icon)[disabled] { /* disabled */
+    cursor: not-allowed !important;
+  }
+
+  &.dummy-icon {
+    cursor: default;
+  }
 }
 
 /* those items that show actual Identity data: label, email, id, etc */
@@ -613,9 +634,15 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
 }
 
 /* colors for lock-in-menu identities */
+.identity-item.lock-in-menu > .identity-item-data {
+  text-shadow:         var(--identity-lock-in-menu-text-shadow);
+}
 .identity-item.lock-in-menu:not(.not-show-in-menu) > .identity-item-data {
   background-color:    var(--identity-lock-in-menu-background-color);
   border-color:        var(--identity-lock-in-menu-border-color);
+}
+.identity-item.lock-in-menu:not(.not-show-in-menu, .account-default) > .identity-item-data {
+  text-decoration:     var(--identity-lock-in-menu-text-decoration);
 }
 .identity-item.lock-in-menu:not(.not-show-in-menu, .account-default, .collected-identity, .imported-identity) > .identity-item-data {
   color:               var(--identity-lock-in-menu-color);
@@ -629,6 +656,9 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
 }
 .identity-item.not-show-in-menu:not(.account-default, .collected-identity, .imported-identity) > .identity-item-data {
   color:               var(--identity-not-show-in-menu-color);
+}
+.identity-item.not-show-in-menu:not(.lock-in-menu, .account-default, .collected-identity, .imported-identity) > .identity-item-data {
+  text-shadow:         var(--identity-not-show-in-menu-text-shadow);
 }
 
 /*** IDENTITY ITEM SHOW-IN-MENU CHECKBOXES ***/
@@ -645,8 +675,9 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
 
 /* the actual dot to display the color from BorderColors D */
 .identity-item-border-color-dot { /* .identity-item > .identity-item-border-color > .identity-item-border-color-dot */
-  background-color: var(--bullet-color, TRANSPARENT);
-  border:              1px var(--bullet-border-style, dotted) #404040;   /* MABXXX Maybe use variables for default style and for color??? Maybe background-image */
+  /* MABXXX Maybe use variables for defaults: TRANSPARENT DOTTED #404040 */
+  background-color:    var(--bullet-color, TRANSPARENT);
+  border:              1px var(--bullet-border-style, DOTTED) var(--bullet-border-color, #404040);
   border-radius:       50%;
   display:             inline-block; 
   height:              1em;
@@ -681,6 +712,7 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
   background-position: center;
   background-repeat:   no-repeat;
   background-size:     cover;
+  cursor:              default;
   display:             inline-block;
   height:              16px;
   min-height:          16px;
@@ -690,17 +722,17 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
 
 /* tr.identity-item > td.identity-item-label > span.identity-item-markers > .identity-item-marker.marker-default */
 .identity-item-marker.marker-default {
-  background-image:    url("../images/icons/crown_gold_16x16.png");
+  background-image:    url("../images/icons/marker/crown_gold_16x16.png");
 }
 
 /* tr.identity-item > td.identity-item-label > span.identity-item-markers > .identity-item-marker.marker-collected */
 .identity-item.collected-identity .identity-item-marker.marker-collected {
-  background-image:    url("../images/icons/sun_yellow_16x16.png");
+  background-image:    url("../images/icons/marker/sun_yellow_16x16.png");
 }
 
 /* tr.identity-item > td.identity-item-label > span.identity-item-markers > .identity-item-marker.marker-imported */
 .identity-item.imported-identity .identity-item-marker.marker-imported {
-  background-image:    url("../images/icons/into_right-left_dark-blue_16x16.png");
+  background-image:    url("../images/icons/marker/into_right-left_dark-blue_16x16.png");
 }
 
 .identity-item-email { /* .identity-item > .identity-item-email */
@@ -748,7 +780,7 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
   background-image:    var(--identity-hover-background-image);
 }
 
-.identity-item-controls-right {
+.header-controls-right, .identity-item-controls-right {
   height:              100%;
   padding:             0;
   padding-left:        0.5em;
@@ -760,16 +792,16 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
   grid-template-areas:   "lock-in-menu move-up-down move-top-bottom edit";
   grid-template-columns: min-content min-content min-content min-content;
 
-  .lock-in-menu-controls {
+  & .lock-in-menu-controls {
     grid-area: lock-in-menu;
   }
-  .move-up-down-controls {
+  & .move-up-down-controls {
     grid-area: move-up-down;
   }
-  .move-to-top-bottom-controls {
+  & .move-to-top-bottom-controls {
     grid-area: move-top-bottom;
   }
-  .edit-controls {
+  & .edit-controls {
     grid-area: edit;
   }
 }
@@ -794,21 +826,33 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
 }
 
 .lock-in-menu-check + label {
-  background-color: transparent; /* <==================== MABXXX REPLACE THIS WITH A BACKGROUND IMAGE */
-  border:           1px solid #202020; /* <-------------------- MABXXX ------------------------<<< */
-  cursor:           pointer !important;
-  height:           16px;
-  width:            16px;
-  display:          inline-block;
-  margin-top:       0.5em;
-  padding:          0px;
-/*vertical-align:   middle;*/
+  background-repeat: no-repeat;
+  height:            24px;
+  width:             24px;
+  display:           inline-block;
+/*margin-top:        0.5em;*/
+  padding:           0px;
+/*vertical-align:    middle;*/
 }
 
-.lock-in-menu-check:checked + label {
-  background-color: red; /* <==================== MABXXX REPLACE THIS WITH A BACKGROUND IMAGE */
-  border:           NONE;
-  padding:          0px;
+.lock-in-menu-check:not(:checked,:hover,[disabled]) + label {
+  background-image: url("../images/icons/padlock/padlock-green-open-more_24x24.png") !important;
+}
+
+.lock-in-menu-check:not(:checked,[disabled]):hover + label {
+  background-image: url("../images/icons/padlock/padlock-light-green-open_24x24.png") !important;
+}
+
+.lock-in-menu-check:checked:not(:hover,[disabled]) + label {
+  background-image: url("../images/icons/padlock/padlock-yellow_24x24.png") !important;
+}
+
+.lock-in-menu-check:checked:hover:not([disabled]):hover + label {
+  background-image: url("../images/icons/padlock/padlock-light-yellow-open-more_24x24.png") !important;
+}
+
+.lock-in-menu-check[disabled] + label {
+  background-image: url("../images/icons/padlock/padlock-gray_24x24.png") !important;
 }
 
 .identity-controls-panel {
@@ -836,11 +880,11 @@ tr.lock-in-menu div:is(.move-up-down-controls, .move-to-controls) {
 /*** IDENTITY ITEM MOVE UP/DOWN/TO-TOP/TO-BOTTOM BUTTON PANELS ***/
 
 .identity-item .identity-controls-panel.move-up-down-controls {
-  min-width:  24px;   /* buttons are 12px high x 24px wide */
+  min-width:  15px;   /* buttons are 12px high x 24px wide */
   min-height: 24px;   /* buttons are 12px high x 24px wide */
 }
 .identity-item .identity-controls-panel.move-to-top-bottom-controls {
-  min-width:  24px;   /* buttons are 12px high x 24px wide */
+  min-width:  15px;   /* buttons are 12px high x 24px wide */
   min-height: 24px;   /* buttons are 12px high x 24px wide */
 }
 
@@ -858,6 +902,8 @@ tr.lock-in-menu div:is(.move-up-down-controls, .move-to-controls) {
 /*font-size:       110%; */
   font-weight:     bold;
   text-decoration: var(--collected-identity-text-decoration);
+}
+.identity-item.collected-identity:not(.account-default,.lock-in-menu) > .identity-item-data {
   text-shadow:     1px 1px var(--collected-identity-text-shadow-color);
 }
 .identity-item.imported-identity:not(.account-default) > .identity-item-data {
@@ -865,6 +911,8 @@ tr.lock-in-menu div:is(.move-up-down-controls, .move-to-controls) {
 /*font-size:       110%; */
   font-weight:     bold;
   text-decoration: var(--imported-identity-text-decoration);
+}
+.identity-item.imported-identity:not(.account-default,.lock-in-menu) > .identity-item-data {
   text-shadow:     1px 1px var(--imported-identity-text-shadow-color);
 }
 .identity-item.account-default > .identity-item-data {
@@ -872,9 +920,11 @@ tr.lock-in-menu div:is(.move-up-down-controls, .move-to-controls) {
 /*font-size:       110%; */
   font-weight:     bold;
   text-decoration: var(--default-identity-text-decoration);
+}
+.identity-item.account-default:not(.lock-in-menu) > .identity-item-data {
   text-shadow:     1px 1px var(--default-identity-text-shadow-color);
 }
-.identity-item.account-default.identity-item.not-show-in-menu > .identity-item-data {
+.identity-item.account-default.not-show-in-menu > .identity-item-data {
   text-decoration-color: var(--identity-not-show-in-menu-text-decoration-color);
   text-decoration-line:  var(--default-identity-text-decoration-line) var(--identity-not-show-in-menu-text-decoration-line);
   text-decoration-style: var(--identity-not-show-in-menu-text-decoration-style);
@@ -895,7 +945,6 @@ tr.lock-in-menu div:is(.move-up-down-controls, .move-to-controls) {
   background-repeat:   no-repeat;
   background-size:     cover;
   border:              1px solid transparent;
-  cursor:              pointer;
   display:             block;
   height:              10px;
   min-height:          10px;
@@ -913,52 +962,86 @@ tr.lock-in-menu div:is(.move-up-down-controls, .move-to-controls) {
 
 
 /* ICON BUTTONS IN GENERAL */
-#idmOptionsWrapper button.edit-identity {
-  height:     24px;
-  min-height: 24px;
-  min-width:  24px;
-  width:      24px;
+#idmOptionsWrapper {
+  & .icon-button {
+    &.icon-only {
+      background-position: center;
+      background-repeat:   no-repeat;
+      background-size:     cover;
+
+      &:not(.stacked-icon) {
+        height:     24px;
+        min-height: 24px;
+        min-width:  24px;
+        width:      24px;
+      }
+      &.stacked-icon {
+        height:     10px;
+        width:      15px;
+      }
+    }
+  }
 }
-#idmOptionsWrapper button.delete-identity {
-  height:     24px;
-  min-height: 24px;
-  min-width:  24px;
-  width:      24px;
+
+/* DUMMY ICON BUTTONS .dummy-icon */
+#idmOptionsWrapper button.move-identity-up.dummy-icon {
+  background-image:    url("../images/icons/triangle/triangle-up-med-gray-outline-gray_15x10.png") !important;
 }
-#idmOptionsWrapper button.move-identity-button {
-  height:     10px;
-  width:      24px;
+#idmOptionsWrapper button.move-identity-down.dummy-icon {
+  background-image:    url("../images/icons/triangle/triangle-down-med-gray-outline-gray_15x10.png") !important;
+}
+#idmOptionsWrapper button.move-identity-to-top.dummy-icon {
+  background-image:    url("../images/icons/triangle/triangle-up-line-med-gray-outline-gray_15x10.png") !important;
+}
+#idmOptionsWrapper button.move-identity-to-bottom.dummy-icon {
+  background-image:    url("../images/icons/triangle/triangle-down-line-med-gray-outline-gray_15x10.png") !important;
+}
+#idmOptionsWrapper button.edit-identity.dummy-icon) {
+  background-image:    url("../images/icons/edit/edit_medium_gray_32x32.png") !important;
+}
+#idmOptionsWrapper button.create-identity.dummy-icon {
+  background-image:    url("../images/icons/edit/create_medium_gray_32x32.png") !important;
+}
+#idmOptionsWrapper button.delete-identity.dummy-icon {
+  background-image:    url("../images/icons/trashcan/trashcan-gray-24x24.png") !important;
 }
 
 /* ICON BUTTONS WHEN DISABLED */
-#idmOptionsWrapper button.edit-identity[disabled] {
-  background-image:    url("../idmages/icons/edit_medium_gray.png") !important;
+/* Move Icons aren't displayed at all when disabled */
+#idmOptionsWrapper button.edit-identity:not(.dummy-icon)[disabled] {
+  background-image:    url("../images/icons/edit/edit_medium_gray.png") !important;
 }
-#idmOptionsWrapper button.delete-identity[disabled] {
-  background-image:    url("../images/icons/trashcan-gray-24x24.png") !important;
+#idmOptionsWrapper button.create-identity:not(.dummy-icon)[disabled] {
+  background-image:    url("../images/icons/edit/create_medium_gray_32x32.png") !important;
 }
-tr.account-default button.delete-identity {
-  background-image:    url("../images/icons/trashcan-gray-24x24.png") !important;
+#idmOptionsWrapper button.delete-identity:not(.dummy-icon)[disabled] {
+  background-image:    url("../images/icons/trashcan/trashcan-gray-24x24.png") !important;
+}
+tr.account-default button.delete-identity { /* MABXXX  <-----------DEFAULT ACCOUNT SHOULD ALWAYS BE DISABLED-------------------<<<<< */
+  background-image:    url("../images/icons/trashcan/trashcan-gray-24x24.png") !important;
 }
 
-/* ICON BUTTONS WHEN NOT DISABLED */
-#idmOptionsWrapper button.move-identity-up:not([disabled]) { /* MABXXX WHAT IF IT *IS* DISABLED??? */
-  background-image:    url("../images/icons/triangle-up-small-medium-blue_10x24.png") !important;
+/* ICON BUTTONS WHEN NOT DISABLED or .dummy-icon */
+#idmOptionsWrapper button.move-identity-up:not([disabled],.dummy-icon) { /* ICON ONLY IF IT IS *NOT* DISABLED, otherwise nothing */
+  background-image:    url("../images/icons/triangle/triangle-up-med-blue-white-outline_15x10.png") !important;
 }
-#idmOptionsWrapper button.move-identity-down:not([disabled]) { /* MABXXX WHAT IF IT *IS* DISABLED??? */
-  background-image:    url("../images/icons/triangle-down-small-medium-blue_10x24.png") !important;
+#idmOptionsWrapper button.move-identity-down:not([disabled],.dummy-icon) { /* ICON ONLY IF IT IS *NOT* DISABLED, otherwise nothing */
+  background-image:    url("../images/icons/triangle/triangle-down-med-blue-white-outline_15x10.png") !important;
 }
-#idmOptionsWrapper button.move-identity-to-top:not([disabled]) { /* MABXXX WHAT IF IT *IS* DISABLED??? */
-  background-image:    url("../images/icons/triangle-line-up-small-medium-blue_10x24.png") !important;
+#idmOptionsWrapper button.move-identity-to-top:not([disabled],.dummy-icon) { /* ICON ONLY IF IT IS *NOT* DISABLED, otherwise nothing */
+  background-image:    url("../images/icons/triangle/triangle-up-line-med-blue-white-outline_15x10.png") !important;
 }
-#idmOptionsWrapper button.move-identity-to-bottom:not([disabled]) { /* MABXXX WHAT IF IT *IS* DISABLED??? */
-  background-image:    url("../images/icons/triangle-line-down-small-medium-blue_10x24.png") !important;
+#idmOptionsWrapper button.move-identity-to-bottom:not([disabled],.dummy-icon) { /* ICON ONLY IF IT IS *NOT* DISABLED, otherwise nothing */
+  background-image:    url("../images/icons/triangle/triangle-down-line-med-blue-white-outline_15x10.png") !important;
 }
-#idmOptionsWrapper button.edit-identity:not([disabled]) {
-  background-image:    url("../images/icons/edit_light_gray_32x32.png") !important;
+#idmOptionsWrapper button.edit-identity:not(.dummy-icon,[disabled]) {
+  background-image:    url("../images/icons/edit/edit_light_gray_32x32.png") !important;
 }
-#idmOptionsWrapper button.delete-identity:not([disabled]) {
-  background-image:    url("../images/icons/trashcan-red-24x24.png") !important;
+#idmOptionsWrapper button.create-identity:not(.dummy-icon,[disabled]) {
+  background-image:    url("../images/icons/edit/create_light_gray_32x32.png") !important;
+}
+#idmOptionsWrapper button.delete-identity:not(.dummy-icon,[disabled]) {
+  background-image:    url("../images/icons/trashcan/trashcan-red-24x24.png") !important;
 }
 
 /* ICON BUTTONS WHEN HOVERING */
@@ -968,26 +1051,30 @@ tr.account-default button.delete-identity {
 }
 */
 
-#idmOptionsWrapper button.move-identity-up:not([disabled]):hover {
-  background-image:    url("../images/icons/triangle-up-small-light-blue_outlined_10x24.png") !important;
+#idmOptionsWrapper button.move-identity-up:not([disabled],.dummy-icon):hover { /* ICON ONLY IF IT IS *NOT* DISABLED, otherwise nothing */
+  background-image:    url("../images/icons/triangle/triangle-up-llight-blue-white-outline_15x10.png") !important;
 }
-#idmOptionsWrapper button.move-identity-down:not([disabled]):hover {
-  background-image:    url("../images/icons/triangle-down-small-light-blue_outlined_10x24.png") !important;
+#idmOptionsWrapper button.move-identity-down:not([disabled],.dummy-icon):hover { /* ICON ONLY IF IT IS *NOT* DISABLED, otherwise nothing */
+  background-image:    url("../images/icons/triangle/triangle-down-llight-blue-white-outline_15x10.png") !important;
 }
-#idmOptionsWrapper button.move-identity-to-top:not([disabled]):hover {
-  background-image:    url("../images/icons/triangle-line-up-small-light-blue_outlined_10x24.png") !important;
+#idmOptionsWrapper button.move-identity-to-top:not([disabled],.dummy-icon):hover { /* ICON ONLY IF IT IS *NOT* DISABLED, otherwise nothing */
+  background-image:    url("../images/icons/triangle/triangle-up-line-llight-blue-white-outline_15x10.png") !important;
 }
-#idmOptionsWrapper button.move-identity-to-bottom:not([disabled]):hover {
-  background-image:    url("../images/icons/triangle-line-down-small-light-blue_outlined_10x24.png") !important;
+#idmOptionsWrapper button.move-identity-to-bottom:not([disabled],.dummy-icon):hover { /* ICON ONLY IF IT IS *NOT* DISABLED, otherwise nothing */
+  background-image:    url("../images/icons/triangle/triangle-down-line-llight-blue-white-outline_15x10.png") !important;
 }
-#idmOptionsWrapper button.edit-identity:not([disabled]):hover {
-  background-image:    url("../images/icons/edit_white_32x32.png") !important;
+#idmOptionsWrapper button.edit-identity:not(.dummy-icon,[disabled]):hover {
+  background-image:    url("../images/icons/edit/edit_white_32x32.png") !important;
 }
-#idmOptionsWrapper button.delete-identity:not([disabled]):hover {
-  background-image:    url("../images/icons/trashcan-red-lighter-24x24.png") !important;
+#idmOptionsWrapper button.create-identity:not(.dummy-icon,[disabled]):hover {
+  background-image:    url("../images/icons/edit/create_white_32x32.png") !important;
+}
+#idmOptionsWrapper button.delete-identity:not(.dummy-icon,[disabled]):hover {
+  background-image:    url("../images/icons/trashcan/trashcan-red-lighter-24x24.png") !important;
 }
 
-#idmOptionsWrapper button.identity-item-button[disabled]:not(.edit-identity, .delete-identity) { /* edit & delete have their own diabled icons */
+/* edit, create & delete have their own diabled icons - AND Move Icons aren't displayed at all when disabled */
+#idmOptionsWrapper button.identity-item-button[disabled]:not(.edit-identity, .create-identity, .delete-identity) {
   opacity: 0.7; /* MABXXX SHOULD USE A DIFFERENT backgrond-image INSTEAD */
 }
 
@@ -1037,11 +1124,11 @@ tr.account-default button.delete-identity {
   text-shadow:      1px 1px rgb(20, 20, 20);
 }
 
-#idmOptionsWrapper button:not(.identity-item-marker, [disabled]) {
+#idmOptionsWrapper button:not(.identity-item-marker,[disabled],.dummy-icon) {
   cursor:           pointer;
 }
 
-#idmOptionsWrapper button:not(.identity-item-marker)[disabled] {
+#idmOptionsWrapper button:not(.identity-item-marker,.dummy-icon)[disabled] {
   cursor:           not-allowed;
 }
 

@@ -44,7 +44,10 @@
   "compose_action": {
     "default_title": "__MSG_composeActionLabel__",
     "default_icon": {
-      "16": "images/icons/head_blue_32x32.png"
+      "24": "images/icons/people/3_people_blue_24x24.png",
+      "32": "images/icons/people/3_people_blue_32x32.png",
+      "64": "images/icons/people/3_people_blue_64x64.png",
+      "128": "images/icons/people/3_people_blue_128x128.png"
     }
   },
   "content_scripts": [
@@ -66,6 +69,12 @@
         "psl/psl.bundle.js"
       ]
     }
-  ]
+  ],
+  "icons": {
+    "24": "images/icons/people/3_people_blue_24x24.png",
+    "32": "images/icons/people/3_people_blue_32x32.png",
+    "64": "images/icons/people/3_people_blue_64x64.png",
+    "128": "images/icons/people/3_people_blue_128x128.png"
+  }
 }
 

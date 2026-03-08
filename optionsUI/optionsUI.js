@@ -1,4 +1,5 @@
 import { BorderColorsApi               } from '../modules/bordercolorsapi.js';
+
 import { FileSystemBrokerAPI           } from '../modules/FileSystemBroker/filesystem_broker_api.js';
 import { IdmIdentities                 } from '../modules/identities.js';
 import { Logger                        } from '../modules/logger.js';
@@ -15,6 +16,9 @@ class OptionsUI {
 
   #LOG                       = false;
   #DEBUG                     = false;
+  #DEBUG_OPTION_CHANGED      = false;
+  #DEBUG_ACTIION_CLICKED     = true;
+  #DEBUG_IDENTITY_CONTROL    = true;
   #WARN                      = false;
 
   #PARSE_CSV_TEST_VERBOSE    = false;
@@ -45,17 +49,41 @@ class OptionsUI {
 
   // gather i18n messages for tooltips in the Display Order List
   // - these calls to getI18nMsg will return "" - NOT the message ID - if no message is configured
-  #tooltip_check_showInMenu      = getI18nMsg( "options_check_showInMenu.tooltip",                     "" );
-  #tooltip_check_lockInMenu      = getI18nMsg( "options_check_lockInMenu.tooltip",                     "" );
-  #tooltip_button_moveUp         = getI18nMsg( "options_button_moveIdentityUp.tooltip",                "" );
-  #tooltip_button_moveDown       = getI18nMsg( "options_button_moveIdentityDown.tooltip",              "" );
-  #tooltip_button_moveToTop      = getI18nMsg( "options_button_moveIdentityToTop.tooltip",             "" );
-  #tooltip_button_moveToBottom   = getI18nMsg( "options_button_moveIdentityToBottom.tooltip",          "" );
-  #tooltip_button_edit           = getI18nMsg( "options_button_editIdentity.tooltip",                  "" );
-  #tooltip_button_delete         = getI18nMsg( "options_button_deleteIdentity.tooltip",                "" );
 
-  #error_invalidLabeLFilterRegex = getI18nMsg( "options_idmDisplayOrderFilterError_labelRegexInvalid", "Invalid Regular Expression for Name+Label" );
-  #error_invalidEmaiLFilterRegex = getI18nMsg( "options_idmDisplayOrderFilterError_emailRegexInvalid", "Invalid Regular Expression for Email"      );
+  #listHeader_text_controlsLeft           = getI18nMsg( "options_idmDisplayOrder_listHeader_text_controlsLeft",     ""               );
+  #listHeader_tooltip_controlsLeft        = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_controlsLeft",  ""               );
+  #listHeader_text_identityColor          = getI18nMsg( "options_idmDisplayOrder_listHeader_text_identityColor",    ""               );
+  #listHeader_tooltip_identityColor       = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_identityColor", "Color"          );
+  #listHeader_text_account                = getI18nMsg( "options_idmDisplayOrder_listHeader_text_account",          "Account"        );
+  #listHeader_tooltip_account             = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_account",       "Account"        );
+  #listHeader_text_nameAndLabel           = getI18nMsg( "options_idmDisplayOrder_listHeader_text_nameAndLabel",     "Name+Label"     );
+  #listHeader_tooltip_nameAndLabel        = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_nameAndLabel",  "Name + (Label)" );
+  #listHeader_text_email                  = getI18nMsg( "options_idmDisplayOrder_listHeader_text_email",            "Email"          );
+  #listHeader_tooltip_email               = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_email",         "Email"          );
+  #listHeader_text_pos                    = getI18nMsg( "options_idmDisplayOrder_listHeader_text_pos",              "pos"            );
+  #listHeader_tooltip_pos                 = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_pos",           "pos"            );
+  #listHeader_text_id                     = getI18nMsg( "options_idmDisplayOrder_listHeader_text_id",               "ID"             );
+  #listHeader_tooltip_id                  = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_id",            "ID"             );
+  #listHeader_text_index                  = getI18nMsg( "options_idmDisplayOrder_listHeader_text_index",            "Index"          );
+  #listHeader_tooltip_index               = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_index",         "Index"          );
+  #listHeader_text_controlsRight          = getI18nMsg( "options_idmDisplayOrder_listHeader_text_controlsRight",    ""               );
+  #listHeader_tooltip_controlsRight       = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_controlsRight", ""               );
+
+  #tooltip_check_showInMenu               = getI18nMsg( "options_check_showInMenu.tooltip",                         ""               );
+  #tooltip_check_lockInMenu               = getI18nMsg( "options_check_lockInMenu.tooltip",                         ""               );
+  #tooltip_button_moveUp                  = getI18nMsg( "options_button_moveIdentityUp.tooltip",                    ""               );
+  #tooltip_button_moveDown                = getI18nMsg( "options_button_moveIdentityDown.tooltip",                  ""               );
+  #tooltip_button_moveToTop               = getI18nMsg( "options_button_moveIdentityToTop.tooltip",                 ""               );
+  #tooltip_button_moveToBottom            = getI18nMsg( "options_button_moveIdentityToBottom.tooltip",              ""               );
+  #tooltip_button_edit                    = getI18nMsg( "options_button_editIdentity.tooltip",                      ""               );
+  #tooltip_button_delete                  = getI18nMsg( "options_button_deleteIdentity.tooltip",                    ""               );
+
+  #tooltip_listItemMarker_account_default = getI18nMsg( "options_listItemMarker_accountDefault.tooltip",            ""               );
+  #tooltip_listItemMarker_collected       = getI18nMsg( "options_listItemMarker_collected.tooltip",                 ""               );
+  #tooltip_listItemMarker_imported        = getI18nMsg( "options_listItemMarker_imported.tooltip",                  ""               );
+
+  #error_invalidLabeLFilterRegex          = getI18nMsg( "options_idmDisplayOrderFilterError_labelRegexInvalid",     "Invalid Regular Expression for Name+Label" );
+  #error_invalidEmaiLFilterRegex          = getI18nMsg( "options_idmDisplayOrderFilterError_emailRegexInvalid",     "Invalid Regular Expression for Email"      );
 
 
 
@@ -73,6 +101,18 @@ class OptionsUI {
 
   debug(...info) {
     if (this.#DEBUG) this.#logger.debug(this.#CLASS_NAME, ...info);
+  }
+
+  debugOptionChanged(...info) {
+    if (this.#DEBUG_OPTION_CHANGED) this.#logger.debug(this.#CLASS_NAME, ...info);
+  }
+
+  debugActionClicked(...info) {
+    if (this.#DEBUG_ACTIION_CLICKED) this.#logger.debug(this.#CLASS_NAME, ...info);
+  }
+
+  debugIdentityControl(...info) {
+    if (this.#DEBUG_IDENTITY_CONTROL) this.#logger.debug(this.#CLASS_NAME, ...info);
   }
 
   debugAlways(...info) {
@@ -140,12 +180,12 @@ class OptionsUI {
 
 
   async windowUnloading(e) {
-    if (this.#DEBUG) this.debugAlways( "--- WINDOW UNLOADING ---"
-                                       + `\n- this.#popupWindowMode=${this.#popupWindowMode}`
-                                       + `\n- window.screenTop=${window.screenTop}`
-                                       + `\n- window.screenLeft=${window.screenLeft}`
-                                       + `\n- window.outerWidth=${window.outerWidth}`
-                                       + `\n- window.outerHeight=${window.outerHeight}`
+    if (this.#DEBUG) this.debugAlways( "--- WINDOW UNLOADING ---",
+                                       `\n- this.#popupWindowMode=${this.#popupWindowMode}`,
+                                       `\n- window.screenTop=${window.screenTop}`,
+                                       `\n- window.screenLeft=${window.screenLeft}`,
+                                       `\n- window.outerWidth=${window.outerWidth}`,
+                                       `\n- window.outerHeight=${window.outerHeight}`,
                                      );
 
     if (this.#popupWindowMode) { // we should NOT have been called unless popupWindowMode===true, otherwise we would NOT have been added as a listnener
@@ -159,11 +199,11 @@ class OptionsUI {
         } else if (typeof bounds !== 'object') {
           this.error(`--- WINDOW UNLOADING --- PREVIOUS WINDOW BOUNDS "optionsWindowBounds" IS NOT AN OBJECT: typeof='${typeof bounds}' ---`);
         } else {
-          this.debugAlways( "---"
-                            + `\n- bounds.top:    ${bounds.top}`
-                            + `\n- bounds.left:   ${bounds.left}`
-                            + `\n- bounds.width:  ${bounds.width}`
-                            + `\n- bounds.height: ${bounds.height}`
+          this.debugAlways( "---",
+                            `\n- bounds.top:    ${bounds.top}`,
+                            `\n- bounds.left:   ${bounds.left}`,
+                            `\n- bounds.width:  ${bounds.width}`,
+                            `\n- bounds.height: ${bounds.height}`,
                           );
         }
       }
@@ -213,9 +253,9 @@ class OptionsUI {
 
 
   async setupEventListeners() {
-    document.addEventListener( 'change', (e) => this.optionChanged(e) );         // One of the checkboxes or radio buttons was clicked
-
-    document.addEventListener( 'click',  (e) => this.actionClicked(e) );   // An Actions button or the Sort Button was clicked (or the extension options title DIV)
+    // MABXXX NOTE: These two listeners are set ON THE DOCUMENT!!!  I inherited this.  I should change it.
+    document.addEventListener( 'change', (e) => this.optionChanged(e) );   // One of the input items changed - input checkbox/radio/text, select, etc
+    document.addEventListener( 'click',  (e) => this.actionClicked(e) );   // Something - anything - in the I was clicked
 
     const extensionOptionsTitleDIV = document.getElementById("idmExtensionOptionsTitle");
     if (extensionOptionsTitleDIV) {
@@ -234,6 +274,18 @@ class OptionsUI {
     const filterIdentitiesByImportedResetBtn = document.getElementById("idmDisplayOrderFilterByImportedResetButton");
     filterIdentitiesByImportedResetBtn.setAttribute("data", "reset-imported-filter");
     filterIdentitiesByImportedResetBtn.addEventListener('click', (e) => this.filterIdentitiesByImportedResetButtonClicked(e));
+
+    const filterIdentitiesByLockedSelect = document.getElementById("idmDisplayOrderFilterByLockedSelect");
+    filterIdentitiesByLockedSelect.addEventListener('change', (e) => this.filterIdentitiesByLockedSelectChanged(e));
+    const filterIdentitiesByLockedResetBtn = document.getElementById("idmDisplayOrderFilterByLockedResetButton");
+    filterIdentitiesByLockedResetBtn.setAttribute("data", "reset-locked-filter");
+    filterIdentitiesByLockedResetBtn.addEventListener('click', (e) => this.filterIdentitiesByLockedResetButtonClicked(e));
+
+    const filterIdentitiesByAccountDefaultSelect = document.getElementById("idmDisplayOrderFilterByAccountDefaultSelect");
+    filterIdentitiesByAccountDefaultSelect.addEventListener('change', (e) => this.filterIdentitiesByAccountDefaultSelectChanged(e));
+    const filterIdentitiesByAccountDefaultResetBtn = document.getElementById("idmDisplayOrderFilterByAccountDefaultResetButton");
+    filterIdentitiesByAccountDefaultResetBtn.setAttribute("data", "reset-account-default-filter");
+    filterIdentitiesByAccountDefaultResetBtn.addEventListener('click', (e) => this.filterIdentitiesByAccountDefaultResetButtonClicked(e));
 
     const filterIdentitiesByCollectedSelect = document.getElementById("idmDisplayOrderFilterByCollectedSelect");
     filterIdentitiesByCollectedSelect.addEventListener('change', (e) => this.filterIdentitiesByCollectedSelectChanged(e));
@@ -383,6 +435,8 @@ class OptionsUI {
     this.populateAutoSortDirectionSelectUI();
     this.populateFilterByAccountSelectUI();
     this.populateFilterByImportedSelectUI();
+    this.populateFilterByLockedSelectUI();
+    this.populateFilterByAccountDefaultSelectUI();
     this.populateFilterByCollectedSelectUI();
     this.populateFilterByShowInMenuSelectUI();
   } 
@@ -396,27 +450,27 @@ class OptionsUI {
 
     } else {
       const optionNone = document.createElement('option');
-      optionNone.setAttribute('value',  this.#idmOptionsApi.IDENTITY_AUTO_SORT_BY_VALUE_NONE);
+      optionNone.setAttribute('value',  IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_NONE);
       optionNone.appendChild( document.createTextNode( getI18nMsg("options_idmAutoSortBySelectOption_none") ) );
       select.appendChild(optionNone);
 
       const option1 = document.createElement('option');
-      option1.setAttribute('value', this.#idmOptionsApi.IDENTITY_AUTO_SORT_BY_VALUE_NAME);
+      option1.setAttribute('value', IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_NAME);
       option1.appendChild( document.createTextNode( getI18nMsg("options_idmAutoSortBySelectOption_name") ) );
       select.appendChild(option1);
 
       const option2 = document.createElement('option');
-      option2.setAttribute('value', this.#idmOptionsApi.IDENTITY_AUTO_SORT_BY_VALUE_EMAIL);
+      option2.setAttribute('value', IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_EMAIL);
       option2.appendChild( document.createTextNode( getI18nMsg("options_idmAutoSortBySelectOption_emailAddress") ) );
       select.appendChild(option2);
 
       const option3 = document.createElement('option');
-      option3.setAttribute('value', this.#idmOptionsApi.IDENTITY_AUTO_SORT_BY_VALUE_DOMAIN);
+      option3.setAttribute('value', IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_DOMAIN);
       option3.appendChild( document.createTextNode( getI18nMsg("options_idmAutoSortBySelectOption_emailDomain") ) );
       select.appendChild(option3);
 
       const option4 = document.createElement('option');
-      option4.setAttribute('value', this.#idmOptionsApi.IDENTITY_AUTO_SORT_BY_VALUE_HOST);
+      option4.setAttribute('value', IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_HOST);
       option4.appendChild( document.createTextNode( getI18nMsg("options_idmAutoSortBySelectOption_emailHost") ) );
       select.appendChild(option4);
     }
@@ -430,17 +484,17 @@ class OptionsUI {
       this.error("-- Failed to find Select id='idmAutoSortDirectionSelect'");
     } else {
       const optionNone = document.createElement('option');
-      optionNone.setAttribute('value', this.#idmOptionsApi.IDENTITY_AUTO_SORT_DIRECTION_VALUE_NONE);
+      optionNone.setAttribute('value', IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_NONE);
       optionNone.appendChild( document.createTextNode( getI18nMsg("options_idmAutoSortDirectionSelectOption_none") ) );
       select.appendChild(optionNone);
 
       const option1 = document.createElement('option');
-      option1.setAttribute('value', this.#idmOptionsApi.IDENTITY_AUTO_SORT_DIRECTION_VALUE_ASCENDING);
+      option1.setAttribute('value', IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_ASCENDING);
       option1.appendChild( document.createTextNode( getI18nMsg("options_idmAutoSortDirectionSelectOption_ascending") ) );
       select.appendChild(option1);
 
       const option2 = document.createElement('option');
-      option2.setAttribute('value', this.#idmOptionsApi.IDENTITY_AUTO_SORT_DIRECTION_VALUE_DESCENDING);
+      option2.setAttribute('value', IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_DESCENDING);
       option2.appendChild( document.createTextNode( getI18nMsg("options_idmAutoSortDirectionSelectOption_descending") ) );
       select.appendChild(option2);
 
@@ -492,6 +546,56 @@ class OptionsUI {
     notImportedOption.setAttribute('value', "NOT_IMPORTED");
     notImportedOption.appendChild( document.createTextNode(notImportedOptionText) );
     filterIdentitiesByImportedSelect.appendChild(notImportedOption);
+  }
+
+
+
+  populateFilterByLockedSelectUI() {
+    const filterIdentitiesByLockedSelect = document.getElementById("idmDisplayOrderFilterByLockedSelect");
+    filterIdentitiesByLockedSelect.innerHTML = '';
+
+    const anyLockedOption     = document.createElement('option');
+    const anyLockedOptionText = getI18nMsg("options_idmDisplayOrderFilterByLockedSelect_any");
+    anyLockedOption.setAttribute('value', "");
+    anyLockedOption.appendChild( document.createTextNode(anyLockedOptionText) );
+    filterIdentitiesByLockedSelect.appendChild(anyLockedOption);
+
+    const lockedOption     = document.createElement('option');
+    const lockedOptionText = getI18nMsg("options_idmDisplayOrderFilterByLockedSelect_locked");
+    lockedOption.setAttribute('value', "LOCKED");
+    lockedOption.appendChild( document.createTextNode(lockedOptionText) );
+    filterIdentitiesByLockedSelect.appendChild(lockedOption);
+
+    const notLockedOption     = document.createElement('option');
+    const notLockedOptionText = getI18nMsg("options_idmDisplayOrderFilterByLockedSelect_notLocked");
+    notLockedOption.setAttribute('value', "NOT_LOCKED");
+    notLockedOption.appendChild( document.createTextNode(notLockedOptionText) );
+    filterIdentitiesByLockedSelect.appendChild(notLockedOption);
+  }
+
+
+
+  populateFilterByAccountDefaultSelectUI() {
+    const filterIdentitiesByAccountDefaultSelect = document.getElementById("idmDisplayOrderFilterByAccountDefaultSelect");
+    filterIdentitiesByAccountDefaultSelect.innerHTML = '';
+
+    const anyAccountDefaultOption     = document.createElement('option');
+    const anyAccountDefaultOptionText = getI18nMsg("options_idmDisplayOrderFilterByAccountDefaultSelect_any");
+    anyAccountDefaultOption.setAttribute('value', "");
+    anyAccountDefaultOption.appendChild( document.createTextNode(anyAccountDefaultOptionText) );
+    filterIdentitiesByAccountDefaultSelect.appendChild(anyAccountDefaultOption);
+
+    const accountDefaultOption     = document.createElement('option');
+    const accountDefaultOptionText = getI18nMsg("options_idmDisplayOrderFilterByAccountDefaultSelect_accountDefault");
+    accountDefaultOption.setAttribute('value', "DEFAULT");
+    accountDefaultOption.appendChild( document.createTextNode(accountDefaultOptionText) );
+    filterIdentitiesByAccountDefaultSelect.appendChild(accountDefaultOption);
+
+    const notAccountDefaultOption     = document.createElement('option');
+    const notAccountDefaultOptionText = getI18nMsg("options_idmDisplayOrderFilterByAccountDefaultSelect_notAccountDefault");
+    notAccountDefaultOption.setAttribute('value', "NOT_DEFAULT");
+    notAccountDefaultOption.appendChild( document.createTextNode(notAccountDefaultOptionText) );
+    filterIdentitiesByAccountDefaultSelect.appendChild(notAccountDefaultOption);
   }
 
 
@@ -688,6 +792,8 @@ class OptionsUI {
 
     const headerControlsLeftTH = document.createElement('th');
       headerControlsLeftTH.classList.add("header-controls-left");           // identity-list-header > header-controls-left
+      //#listHeader_text_controlsLeft
+      headerControlsLeftTH.setAttribute("title", this.#listHeader_tooltip_controlsLeft);
     headerTR.appendChild(headerControlsLeftTH);
 
     // if we have access to borderColors, add the color dot
@@ -695,6 +801,8 @@ class OptionsUI {
       const headerBorderColorsTH = document.createElement('th');
         headerBorderColorsTH.classList.add("header-text");                  // identity-list-header > header-text
         headerBorderColorsTH.classList.add("header-border-color");          // identity-list-header > header-border-color
+        //#listHeader_text_identityColor
+        headerBorderColorsTH.setAttribute("title", this.#listHeader_tooltip_identityColor);
         const dotSPAN = document.createElement('span');
           dotSPAN.classList.add("header-border-color-dot");                 // identity-list-header > header-border-color > header-border-color-dot
         headerBorderColorsTH.appendChild(dotSPAN);
@@ -704,26 +812,30 @@ class OptionsUI {
     const headerAccountTH = document.createElement('th');
       headerAccountTH.classList.add("header-text");                           // identity-list-header > header-text
       headerAccountTH.classList.add("header-label");                          // identity-list-header > header-account
-      headerAccountTH.appendChild( document.createTextNode("Account") ); /* MABXXX L10N??? */
+      headerAccountTH.setAttribute("title", this.#listHeader_tooltip_account);
+      headerAccountTH.appendChild( document.createTextNode(this.#listHeader_text_account) );
     headerTR.appendChild(headerAccountTH);
 
     const headerLabelTH = document.createElement('th');
       headerLabelTH.classList.add("header-text");                           // identity-list-header > header-text
       headerLabelTH.classList.add("header-label");                          // identity-list-header > header-label
-      headerLabelTH.appendChild( document.createTextNode("Name+Label") ); /* MABXXX L10N??? */
+      headerLabelTH.setAttribute("title", this.#listHeader_tooltip_nameAndLabel);
+      headerLabelTH.appendChild( document.createTextNode(this.#listHeader_text_nameAndLabel) );
     headerTR.appendChild(headerLabelTH);
 
     const headerEmailTH = document.createElement('th');
       headerEmailTH.classList.add("header-text");                           // identity-list-header > header-text
       headerEmailTH.classList.add("header-email");                          // identity-list-header > header-email
-      headerEmailTH.appendChild( document.createTextNode("Email") ); /* MABXXX L10N??? */
+      headerEmailTH.setAttribute("title", this.#listHeader_tooltip_email);
+      headerEmailTH.appendChild( document.createTextNode(this.#listHeader_text_email) );
     headerTR.appendChild(headerEmailTH);
 
     if (this.#displayIdentityPosition) {
       const headerPosTH = document.createElement('th');
         headerPosTH.classList.add("header-text");                           // identity-list-header > header-text
         headerPosTH.classList.add("header-pos");                            // identity-list-header > header-pos
-        headerPosTH.appendChild( document.createTextNode("pos") ); /* MABXXX L10N??? */
+        headerPosTH.setAttribute("title", this.#listHeader_tooltip_pos);
+        headerPosTH.appendChild( document.createTextNode(this.#listHeader_text_pos) );
       headerTR.appendChild(headerPosTH);
     }
 
@@ -731,7 +843,8 @@ class OptionsUI {
       const headerIndexTH = document.createElement('th');
         headerIndexTH.classList.add("header-text");                         // identity-list-header > header-text
         headerIndexTH.classList.add("header-index");                        // identity-list-header > header-index
-        headerIndexTH.appendChild( document.createTextNode("IDX") ); /* MABXXX L10N??? */
+        headerIndexTH.setAttribute("title", this.#listHeader_tooltip_index);
+        headerIndexTH.appendChild( document.createTextNode(this.#listHeader_text_index) );
       headerTR.appendChild(headerIndexTH);
     }
 
@@ -739,13 +852,135 @@ class OptionsUI {
       const headerIdTH = document.createElement('th');
         headerIdTH.classList.add("header-text");                            // identity-list-header > header-text
         headerIdTH.classList.add("header-id");                              // identity-list-header > header-id
-        headerIdTH.appendChild( document.createTextNode("ID") ); /* MABXXX L10N??? */
+        headerIdTH.setAttribute("title", this.#listHeader_tooltip_id);
+        headerIdTH.appendChild( document.createTextNode(this.#listHeader_text_id) );
       headerTR.appendChild(headerIdTH);
     }
 
     // Create controls-right element and add it to the row
     const headerControlsRightTH = document.createElement('th');
       headerControlsRightTH.classList.add("header-controls-right");         // identity-list-header > header-controls-right
+      //#listHeader_text_controlsRight
+      headerControlsRightTH.setAttribute("title", this.#listHeader_tooltip_controlsRight);
+
+      // Create lock-in-menu checkbox AND label inside a SPAN and add it to the CELL
+      // In CSS, We set the checkbox to display:none and set a background-image for the label to make an "image checkbox"
+      // If you change classes identity-item-check or lock-in-menu, then identityOptionCheckClicked() will stop working
+      const lockInMenuControlsSPAN = document.createElement('span');
+        lockInMenuControlsSPAN.classList.add("lock-in-menu-controls"); // identity-list-header > header-controls-right > lock-in-menu-controls
+
+        const lockInMenuCheck = document.createElement('input');
+          lockInMenuCheck.setAttribute('type', 'checkbox');
+          lockInMenuCheck.classList.add("identity-item-check");        // identity-list-header > header-controls-right > lock-in-menu-controls > identity-item-check
+          lockInMenuCheck.classList.add("dummy-icon");                 // identity-list-header > header-controls-right > lock-in-menu-controls > dummy-icon
+          lockInMenuCheck.classList.add("icon-button");                // identity-list-header > header-controls-right > lock-in-menu-controls > icon-button
+          lockInMenuCheck.classList.add("icon-only");                  // identity-list-header > header-controls-right > lock-in-menu-controls > icon-only
+          lockInMenuCheck.classList.add("lock-in-menu-check");         // identity-list-header > header-controls-right > lock-in-menu-controls > lock-in-menu-check
+          lockInMenuCheck.setAttribute('id', "headerLockInMenu");
+//        lockInMenuCheck.addEventListener('change', (e) => this.identityOptionCheckClicked(e), true); // <====== NOTE: true=event "capturing" phase
+//        if (this.#tooltip_check_lockInMenu) lockInMenuCheck.setAttribute('title', this.#tooltip_check_lockInMenu);
+          lockInMenuCheck.disabled = true;
+        lockInMenuControlsSPAN.appendChild(lockInMenuCheck);
+
+        const lockInMenuLabel = document.createElement('label');
+          lockInMenuLabel.classList.add("lock-in-menu-label");         // identity-list-header > header-controls-right > lock-in-menu-controls > lock-in-menu-label
+          lockInMenuLabel.classList.add("dummy-icon");                 // identity-list-header > header-controls-right > lock-in-menu-controls > dummy-icon
+          lockInMenuLabel.setAttribute('for', "headerLockInMenu");     // IMPORTANT: the 'id' attribute for the checkbox and the 'for' attribute for the label MUST MATCH
+//        lockInMenuLabel.addEventListener('click', (e) => this.identityOptionCheckClicked(e), true); // <====== NOTE: true=event "capturing" phase
+//        if (this.#tooltip_check_lockInMenu) lockInMenuLabel.setAttribute('title', this.#tooltip_check_lockInMenu);
+        lockInMenuControlsSPAN.appendChild(lockInMenuLabel);
+      headerControlsRightTH.appendChild(lockInMenuControlsSPAN);
+
+      const moveUpDownControlsDIV = document.createElement('div');
+        moveUpDownControlsDIV.classList.add("identity-item-controls-panel"); // identity-list-header > header-controls-right > identity-item-controls-panel
+        moveUpDownControlsDIV.classList.add("move-up-down-controls");        // identity-list-header > header-controls-right > move-up-down-controls
+
+        const moveUpButton = document.createElement('button');
+          moveUpButton.classList.add("identity-item-button");          // identity-list-header > header-controls-right > move-up-down-controls > identity-item-button
+          moveUpButton.classList.add("dummy-icon");                    // identity-list-header > header-controls-right > move-up-down-controls > dummy-icon
+          moveUpButton.classList.add("icon-button");                   // identity-list-header > header-controls-right > move-up-down-controls > icon-button
+          moveUpButton.classList.add("icon-only");                     // identity-list-header > header-controls-right > move-up-down-controls > icon-only
+          moveUpButton.classList.add("stacked-icon");                  // identity-list-header > header-controls-right > move-up-down-controls > stacked-icon
+          moveUpButton.classList.add("move-identity-button");          // identity-list-header > header-controls-right > move-up-down-controls > move-identity-button
+          moveUpButton.classList.add("move-identity-up");              // identity-list-header > header-controls-right > move-up-down-controls > move-identity-up
+          moveUpButton.setAttribute("id", "headerMoveUp");
+//        moveUpButton.addEventListener('click', (e) => this.identityControlButtonClicked(e), true); // <====== NOTE: event "capturing" phase
+//        if (this.#tooltip_button_moveUp) moveUpButton.setAttribute('title', this.#tooltip_button_moveUp);
+          moveUpButton.disabled = true;
+        moveUpDownControlsDIV.appendChild(moveUpButton);
+
+        const moveDownButton = document.createElement('button');
+          moveDownButton.classList.add("identity-item-button");        // identity-list-header > header-controls-right > move-up-down-controls > identity-item-button
+          moveDownButton.classList.add("dummy-icon");                  // identity-list-header > header-controls-right > move-up-down-controls > dummy-icon
+          moveDownButton.classList.add("icon-button");                 // identity-list-header > header-controls-right > move-up-down-controls > icon-button
+          moveDownButton.classList.add("icon-only");                   // identity-list-header > header-controls-right > move-up-down-controls > icon-only
+          moveDownButton.classList.add("stacked-icon");                // identity-list-header > header-controls-right > move-up-down-controls > stacked-icon
+          moveDownButton.classList.add("move-identity-button");        // identity-list-header > header-controls-right > move-up-down-controls > move-identity-button
+          moveDownButton.classList.add("move-identity-down");          // identity-list-header > header-controls-right > move-up-down-controls > move-identity-down
+          moveDownButton.setAttribute("id", "headerMoveDown");
+//        moveDownButton.addEventListener('click', (e) => this.identityControlButtonClicked(e), true); // <====== NOTE: event "capturing" phase
+//        if (this.#tooltip_button_moveDown) moveDownButton.setAttribute('title', this.#tooltip_button_moveDown);
+          moveDownButton.disabled = true;
+        moveUpDownControlsDIV.appendChild(moveDownButton);
+      headerControlsRightTH.appendChild(moveUpDownControlsDIV);
+
+      const moveTopBottomControlsDIV = document.createElement('div');
+        moveTopBottomControlsDIV.classList.add("identity-item-controls-panel"); // identity-list-header > header-controls-right > identity-item-controls-panel
+        moveTopBottomControlsDIV.classList.add("move-to-controls");             // identity-list-header > header-controls-right > move-to-controls
+
+        const moveTopButton = document.createElement('button');
+          moveTopButton.classList.add("identity-item-button");         // identity-list-header > header-controls-right > move-top-bottom-controls > identity-item-button
+          moveTopButton.classList.add("dummy-icon");                   // identity-list-header > header-controls-right > move-top-bottom-controls > dummy-icon
+          moveTopButton.classList.add("icon-button");                  // identity-list-header > header-controls-right > move-top-bottom-controls > icon-button
+          moveTopButton.classList.add("icon-only");                    // identity-list-header > header-controls-right > move-top-bottom-controls > icon-only
+          moveTopButton.classList.add("stacked-icon");                 // identity-list-header > header-controls-right > move-up-down-controls > stacked-icon
+          moveTopButton.classList.add("move-identity-button");         // identity-list-header > header-controls-right > move-top-bottom-controls > move-identity-button
+          moveTopButton.classList.add("move-identity-to-top");         // identity-list-header > header-controls-right > move-top-bottom-controls > move-identity-to-top
+//        moveTopButton.addEventListener('click', (e) => this.identityControlButtonClicked(e));
+//        if (this.#tooltip_button_moveToTop) moveTopButton.setAttribute('title', this.#tooltip_button_moveToTop);
+          moveTopButton.disabled = true;
+        moveTopBottomControlsDIV.appendChild(moveTopButton);
+
+        const moveBottomButton = document.createElement('button');
+          moveBottomButton.classList.add("identity-item-button");      // identity-list-header > header-controls-right > move-top-bottom-controls > identity-item-button
+          moveBottomButton.classList.add("dummy-icon");                // identity-list-header > header-controls-right > move-top-bottom-controls > dummy-icon
+          moveBottomButton.classList.add("icon-button");               // identity-list-header > header-controls-right > move-top-bottom-controls > icon-button
+          moveBottomButton.classList.add("icon-only");                 // identity-list-header > header-controls-right > move-top-bottom-controls > icon-only
+          moveBottomButton.classList.add("stacked-icon");              // identity-list-header > header-controls-right > move-up-down-controls > stacked-icon
+          moveBottomButton.classList.add("move-identity-button");      // identity-list-header > header-controls-right > move-top-bottom-controls > move-identity-button
+          moveBottomButton.classList.add("move-identity-to-bottom");   // identity-list-header > header-controls-right > move-top-bottom-controls > move-identity-to-bottom
+//        moveBottomButton.addEventListener('click', (e) => this.identityControlButtonClicked(e), true); // <====== NOTE: event "capturing" phase
+//        if (this.#tooltip_button_moveToBottom) moveBottomButton.setAttribute('title', this.#tooltip_button_moveToBottom);
+          moveBottomButton.disabled = true;
+        moveTopBottomControlsDIV.appendChild(moveBottomButton);
+      headerControlsRightTH.appendChild(moveTopBottomControlsDIV);
+
+      const editControlsDIV = document.createElement('div');
+        editControlsDIV.classList.add("identity-item-controls-panel"); // identity-list-header > header-controls-right > identity-item-controls-panel
+        editControlsDIV.classList.add("edit-controls");                // identity-list-header > header-controls-right > edit-controls
+
+        const createButton = document.createElement('button');
+          createButton.classList.add("identity-item-button");          // identity-list-header > header-controls-right > edit-controls > identity-item-button
+          createButton.classList.add("dummy-icon");                    // identity-list-header > header-controls-right > edit-controls > dummy-icon
+          createButton.classList.add("icon-button");                   // identity-list-header > header-controls-right > edit-controls > icon-button
+          createButton.classList.add("icon-only");                     // identity-list-header > header-controls-right > edit-controls > icon-only
+          createButton.classList.add("create-identity");               // identity-list-header > header-controls-right > edit-controls > create-identity
+//        createButton.addEventListener('click', (e) => this.identityControlButtonClicked(e));
+//        if (this.#tooltip_button_create) createButton.setAttribute('title', this.#tooltip_button_create);
+          createButton.disabled = true;
+        editControlsDIV.appendChild(createButton);
+
+        const deleteButton = document.createElement('button');
+          deleteButton.classList.add("identity-item-button");          // identity-list-header > header-controls-right > edit-controls > identity-item-button
+          deleteButton.classList.add("dummy-icon");                    // identity-list-header > header-controls-right > edit-controls > dummy-icon
+          deleteButton.classList.add("icon-button");                   // identity-list-header > header-controls-right > edit-controls > icon-button
+          deleteButton.classList.add("icon-only");                     // identity-list-header > header-controls-right > edit-controls > icon-only
+          deleteButton.classList.add("delete-identity");               // identity-list-header > header-controls-right > edit-controls > delete-identity
+//        deleteButton.addEventListener('click', (e) => this.identityControlButtonClicked(e));
+//        if (this.#tooltip_button_delete) deleteButton.setAttribute('title', this.#tooltip_button_delete);
+          deleteButton.disabled = true;
+        editControlsDIV.appendChild(deleteButton);
+      headerControlsRightTH.appendChild(editControlsDIV);
     headerTR.appendChild(headerControlsRightTH);
 
     return headerTR;
@@ -789,6 +1024,8 @@ class OptionsUI {
    *        - .filter-by-label
    *        - .filter-by-email
    *        - .filter-by-imported
+   *        - .filter-by-locked
+   *        - .filter-by-default
    *        - .filter-by-collected
    *        - .filter-by-showInMenu
    *    -->
@@ -835,20 +1072,20 @@ class OptionsUI {
    * 
    *      <td class="identity-item-controls-right">
    *        <span class="lock-in-menu-controls"> 
-   *          <input type='checkbox' class="lock-in-menu-check" id="lockInMenu_id001" identityId="id001"/>
+   *          <input type='checkbox' class="lock-in-menu-check MABXXX??? icon-button icon-only ???MABXXX" id="lockInMenu_id001" identityId="id001"/>
    *          <label for="lockInMenu_id001" class="lock-in-menu-label"></label>
    *        </span>
    *        <div class="identity-controls-panel move-up-down-controls">
-   *          <button class="identity-item-button move-identity-button move-identity-up" identityId="id001"></button>
-   *          <button class="identity-item-button move-identity-button move-identity-down" identityId="id001"></button>
+   *          <button class="identity-item-button icon-button icon-only stacked-icon move-identity-button move-identity-up" identityId="id001"></button>
+   *          <button class="identity-item-button icon-button icon-only stacked-icon move-identity-button move-identity-down" identityId="id001"></button>
    *        </div>
    *        <div class="identity-controls-panel move-to-controls">
-   *          <button class="identity-item-button move-identity-button move-identity-to-top" identityId="id001"></button>
-   *          <button class="identity-item-button move-identity-button move-identity-to-bottom" identityId="id001"></button>
+   *          <button class="identity-item-button icon-button icon-only stacked-icon move-identity-button move-identity-to-top" identityId="id001"></button>
+   *          <button class="identity-item-button icon-button icon-only stacked-icon move-identity-button move-identity-to-bottom" identityId="id001"></button>
    *        </div>
    *        <div class="identity-controls-panel edit-controls">
-   *          <button class="identity-item-button edit-identity" identityId="id001"></button>
-   *          <button class="identity-item-button delete-identity" identityId="id001"></button>
+   *          <button class="identity-item-button icon-button icon-only edit-identity" identityId="id001"></button>
+   *          <button class="identity-item-button icon-button icon-only delete-identity" identityId="id001"></button>
    *        </div>
    *      </td>
    *    </tr>
@@ -901,6 +1138,7 @@ class OptionsUI {
         if (idmIdentity.id in borderColors && borderColors[idmIdentity.id] !== undefined) {
           identityBorderColorsTD.style.setProperty("--bullet-color", borderColors[idmIdentity.id]);
           identityBorderColorsTD.style.setProperty("--bullet-border-style", "solid");
+          identityBorderColorsTD.style.setProperty("--bullet-border-color", "black");
         }
       identityTR.appendChild(identityBorderColorsTD);
     }
@@ -928,20 +1166,28 @@ class OptionsUI {
       if (idmIdentity.accountDefault || idmIdentity.collected || idmIdentity.imported) {
         const identityLabelMarkersSPAN = document.createElement('span');
           identityLabelMarkersSPAN.classList.add("identity-item-markers");
+
           if (idmIdentity.accountDefault) {
             const identityAccountDefaultMarkerSPAN = document.createElement('span');
               identityAccountDefaultMarkerSPAN.classList.add("identity-item-marker");
               identityAccountDefaultMarkerSPAN.classList.add("marker-default");
+              identityAccountDefaultMarkerSPAN.setAttribute("title", this.#tooltip_listItemMarker_account_default);
             identityLabelMarkersSPAN.appendChild(identityAccountDefaultMarkerSPAN);
-          } else if (idmIdentity.collected) {
+          }
+
+          if (idmIdentity.collected) {
             const identityCollectedMarkerSPAN = document.createElement('span');
               identityCollectedMarkerSPAN.classList.add("identity-item-marker");
               identityCollectedMarkerSPAN.classList.add("marker-collected");
+              identityCollectedMarkerSPAN.setAttribute("title", this.#tooltip_listItemMarker_collected);
             identityLabelMarkersSPAN.appendChild(identityCollectedMarkerSPAN);
-          } else if (idmIdentity.imported) {
+          }
+
+          if (idmIdentity.imported) {
             const identityImportedMarkerSPAN = document.createElement('span');
               identityImportedMarkerSPAN.classList.add("identity-item-marker");
               identityImportedMarkerSPAN.classList.add("marker-imported");
+              identityImportedMarkerSPAN.setAttribute("title", this.#tooltip_listItemMarker_imported);
             identityLabelMarkersSPAN.appendChild(identityImportedMarkerSPAN);
           }
         identityLabelTD.appendChild(identityLabelMarkersSPAN);
@@ -1000,10 +1246,12 @@ class OptionsUI {
 
         const lockInMenuCheck = document.createElement('input');
           lockInMenuCheck.setAttribute('type', 'checkbox');
+          lockInMenuCheck.classList.add("icon-button");                // identity-item > identity-item-controls-right > lock-in-menu-controls > icon-button
+          lockInMenuCheck.classList.add("icon-only");                  // identity-item > identity-item-controls-right > lock-in-menu-controls > icon-only
           lockInMenuCheck.classList.add("identity-item-check");        // identity-item > identity-item-controls-right > lock-in-menu-controls > identity-item-check
           lockInMenuCheck.classList.add("lock-in-menu-check");         // identity-item > identity-item-controls-right > lock-in-menu-controls > lock-in-menu-check
           lockInMenuCheck.setAttribute("identityId", idmIdentity.id);
-          const lockInMenuCheckId = "lockInMenu_" + idmIdentity.id;       // <===IMPORTANT: the 'id' attribute for the checkbox and the 'for' attribute for the label MUST MATCH
+          const lockInMenuCheckId = "lockInMenu_" + idmIdentity.id;    // <===IMPORTANT: the 'id' attribute for the checkbox and the 'for' attribute for the label MUST MATCH
           lockInMenuCheck.setAttribute('id', lockInMenuCheckId);
           lockInMenuCheck.checked = idmIdentity.lockInMenu;             // <=================================================================================<<
           lockInMenuCheck.addEventListener('change', (e) => this.identityOptionCheckClicked(e), true); // <====== NOTE: true=event "capturing" phase
@@ -1026,6 +1274,9 @@ class OptionsUI {
 
         const moveUpButton = document.createElement('button');
           moveUpButton.classList.add("identity-item-button");          // identity-item > identity-item-controls-right > move-up-down-controls > identity-item-button
+          moveUpButton.classList.add("icon-button");                   // identity-item > identity-item-controls-right > move-up-down-controls > icon-button
+          moveUpButton.classList.add("icon-only");                     // identity-item > identity-item-controls-right > move-up-down-controls > icon-only
+          moveUpButton.classList.add("stacked-icon");                  // identity-item > identity-item-controls-right > move-up-down-controls > stacked-icon
           moveUpButton.classList.add("move-identity-button");          // identity-item > identity-item-controls-right > move-up-down-controls > move-identity-button
           moveUpButton.classList.add("move-identity-up");              // identity-item > identity-item-controls-right > move-up-down-controls > move-identity-up
           moveUpButton.setAttribute("identityId", idmIdentity.id);
@@ -1035,6 +1286,9 @@ class OptionsUI {
 
         const moveDownButton = document.createElement('button');
           moveDownButton.classList.add("identity-item-button");        // identity-item > identity-item-controls-right > move-up-down-controls > identity-item-button
+          moveDownButton.classList.add("icon-button");                 // identity-item > identity-item-controls-right > move-up-down-controls > icon-button
+          moveDownButton.classList.add("icon-only");                   // identity-item > identity-item-controls-right > move-up-down-controls > icon-only
+          moveDownButton.classList.add("stacked-icon");                // identity-item > identity-item-controls-right > move-up-down-controls > stacked-icon
           moveDownButton.classList.add("move-identity-button");        // identity-item > identity-item-controls-right > move-up-down-controls > move-identity-button
           moveDownButton.classList.add("move-identity-down");          // identity-item > identity-item-controls-right > move-up-down-controls > move-identity-down
           moveDownButton.setAttribute("identityId", idmIdentity.id);
@@ -1049,6 +1303,9 @@ class OptionsUI {
 
         const moveTopButton = document.createElement('button');
           moveTopButton.classList.add("identity-item-button");         // identity-item > identity-item-controls-right > move-top-bottom-controls > identity-item-button
+          moveTopButton.classList.add("icon-button");                  // identity-item > identity-item-controls-right > move-top-bottom-controls > icon-button
+          moveTopButton.classList.add("icon-only");                    // identity-item > identity-item-controls-right > move-top-bottom-controls > icon-only
+          moveTopButton.classList.add("stacked-icon");                 // identity-item > identity-item-controls-right > move-up-down-controls > stacked-icon
           moveTopButton.classList.add("move-identity-button");         // identity-item > identity-item-controls-right > move-top-bottom-controls > move-identity-button
           moveTopButton.classList.add("move-identity-to-top");         // identity-item > identity-item-controls-right > move-top-bottom-controls > move-identity-to-top
           moveTopButton.setAttribute("identityId", idmIdentity.id);
@@ -1058,6 +1315,9 @@ class OptionsUI {
 
         const moveBottomButton = document.createElement('button');
           moveBottomButton.classList.add("identity-item-button");      // identity-item > identity-item-controls-right > move-top-bottom-controls > identity-item-button
+          moveBottomButton.classList.add("icon-button");               // identity-item > identity-item-controls-right > move-top-bottom-controls > icon-button
+          moveBottomButton.classList.add("icon-only");                 // identity-item > identity-item-controls-right > move-top-bottom-controls > icon-only
+          moveBottomButton.classList.add("stacked-icon");              // identity-item > identity-item-controls-right > move-up-down-controls > stacked-icon
           moveBottomButton.classList.add("move-identity-button");      // identity-item > identity-item-controls-right > move-top-bottom-controls > move-identity-button
           moveBottomButton.classList.add("move-identity-to-bottom");   // identity-item > identity-item-controls-right > move-top-bottom-controls > move-identity-to-bottom
           moveBottomButton.setAttribute("identityId", idmIdentity.id);
@@ -1072,6 +1332,8 @@ class OptionsUI {
 
         const editButton = document.createElement('button');
           editButton.classList.add("identity-item-button");            // identity-item > identity-item-controls-right > edit-controls > identity-item-button
+          editButton.classList.add("icon-button");                     // identity-item > identity-item-controls-right > edit-controls > icon-button
+          editButton.classList.add("icon-only");                       // identity-item > identity-item-controls-right > edit-controls > icon-only
           editButton.classList.add("edit-identity");                   // identity-item > identity-item-controls-right > edit-controls > edit-identity
           editButton.setAttribute("identityId", idmIdentity.id);
           editButton.addEventListener('click', (e) => this.identityControlButtonClicked(e));
@@ -1080,6 +1342,8 @@ class OptionsUI {
 
         const deleteButton = document.createElement('button');
           deleteButton.classList.add("identity-item-button");          // identity-item > identity-item-controls-right > edit-controls > identity-item-button
+          deleteButton.classList.add("icon-button");                   // identity-item > identity-item-controls-right > edit-controls > icon-button
+          deleteButton.classList.add("icon-only");                     // identity-item > identity-item-controls-right > edit-controls > icon-only
           deleteButton.classList.add("delete-identity");               // identity-item > identity-item-controls-right > edit-controls > delete-identity
           deleteButton.setAttribute("identityId", idmIdentity.id);
           deleteButton.addEventListener('click', (e) => this.identityControlButtonClicked(e));
@@ -1197,12 +1461,12 @@ class OptionsUI {
       // e.from and e.to both appear to the the <TABLE> element
 
       this.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-      this.debug("@@@"
-                  + `\n- oldIndex=${e.oldIndex}`
-                  + `\n- newIndex=${e.newIndex}`
-                  + `\n- fromIdentityId="${fromIdentityId}"`
-                  + `\n- overIdentityId="${overIdentityId}"`
-                  + `\n- lockInMenu=${lockInMenu}`
+      this.debug("@@@",
+                  `\n- oldIndex=${e.oldIndex}`,
+                  `\n- newIndex=${e.newIndex}`,
+                  `\n- fromIdentityId="${fromIdentityId}"`,
+                  `\n- overIdentityId="${overIdentityId}"`,
+                  `\n- lockInMenu=${lockInMenu}`,
                 );
 
       if (lockInMenu) { 
@@ -1288,7 +1552,7 @@ class OptionsUI {
   async optionChanged(e) {
     if (e == null) return;
 
-    this.debug(`-- tagName="${e.target.tagName}" type="${e.target.type}" id="${e.target.id}" idmGeneralOption? ${e.target.classList.contains("idmGeneralOption")}`);
+    this.debugOptionChanged(`-- tagName="${e.target.tagName}" type="${e.target.type}" id="${e.target.id}" idmGeneralOption? ${e.target.classList.contains("idmGeneralOption")}`);
 
     if (e.target.classList.contains("idmGeneralOption")) {
       if (e.target.tagName === 'INPUT') {
@@ -1298,7 +1562,7 @@ class OptionsUI {
 
           /* if it's a radio button, set the values for all the other buttons in the group to false */
           if (e.target.type === 'radio') { // is it a radio button?
-            this.debug(`-- Radio Button Setting option ${optionName}=<${optionValue}> - group=${e.target.name}`);
+            this.debugOptionChanged(`-- Radio Button Setting option ${optionName}=<${optionValue}> - group=${e.target.name}`);
 
             // first, set this option
             await this.#idmOptionsApi.storeOption(
@@ -1310,15 +1574,15 @@ class OptionsUI {
               const radioGroupName = e.target.name;
               const radioGroup = document.querySelectorAll(`input[type='radio'][name="${radioGroupName}"]`);
               if (! radioGroup) {
-                this.debug('-- no radio group found');
+                this.debugOptionChanged('-- no radio group found');
               } else {
-                this.debug(`-- radio group members length=${radioGroup.length}`);
+                this.debugOptionChanged(`-- radio group members length=${radioGroup.length}`);
                 if (radioGroup.length < 2) {
-                  this.debug('-- no radio group members to reset (length < 2)');
+                  this.debugOptionChanged('-- no radio group members to reset (length < 2)');
                 } else {
                   for (const radio of radioGroup) {
                     if (radio.id != optionName) { // don't un-check the one that fired
-                      this.debug(`-- resetting  radio button [${radio.id}]: ${false}`);
+                      this.debugOptionChanged(`-- resetting  radio button [${radio.id}]: ${false}`);
                       await this.#idmOptionsApi.storeOption(
                         { [radio.id]: false }
                       );
@@ -1328,7 +1592,7 @@ class OptionsUI {
               }
             }
           } else { // since we already tested for it, it's got to be a checkbox
-            this.debug(`-- Checkbox Setting Option [${optionName}]: ${optionValue}]`);
+            this.debugOptionChanged(`-- Checkbox Setting Option [${optionName}]: ${optionValue}]`);
             await this.#idmOptionsApi.storeOption(
               { [optionName]: optionValue }
             );
@@ -1373,7 +1637,7 @@ class OptionsUI {
       } else if (e.target.tagName === 'SELECT') {
         const optionName  = e.target.id;
         const optionValue = e.target.value;
-        this.debug(`-- Select Setting Option [${optionName}]: "${optionValue}"]`);
+        this.debugOptionChanged(`-- Select Setting Option [${optionName}]: "${optionValue}"]`);
 
         await this.#idmOptionsApi.storeOption(
           { [optionName]: optionValue }
@@ -1404,26 +1668,26 @@ class OptionsUI {
     e.preventDefault();
     e.stopPropagation();
 
-    this.debug("-- begin");
+    this.debugIdentityControl("-- begin");
 
-    if (this.#DEBUG) this.debugAlways( "--" // don't build all this just to be denied by this.#DEBUG inside this.debug()
-                                       + `\n- tagName="${e.target.tagName}"`
-                                       + `\n- identity-item-button?=${e.target.classList.contains("identity-item-button")}`
-                                       + `\n- move-identity-up?=${e.target.classList.contains("move-identity-up")}`
-                                       + `\n- move-identity-down?=${e.target.classList.contains("move-identity-down")}`
-                                       + `\n- move-identity-to-top?=${e.target.classList.contains("move-identity-to-top")}`
-                                       + `\n- move-identity-to-bottom?=${e.target.classList.contains("move-identity-to-bottom")}`
-                                       + `\n- edit-identity?=${e.target.classList.contains("edit-identity")}`
-                                       + `\n- delete-identity?=${e.target.classList.contains("delete-identity")}`
-                                       + `\n- identityId="${e.target.getAttribute('identityId')}"`
-                                     );
+    if (this.#DEBUG_IDENTITY_CONTROL) this.debugAlways( "--", // don't build all this just to be denied by this.#DEBUG inside this.debug()
+                                                        `\n- tagName="${e.target.tagName}"`,
+                                                        `\n- identity-item-button?=${e.target.classList.contains("identity-item-button")}`,
+                                                        `\n- move-identity-up?=${e.target.classList.contains("move-identity-up")}`,
+                                                        `\n- move-identity-down?=${e.target.classList.contains("move-identity-down")}`,
+                                                        `\n- move-identity-to-top?=${e.target.classList.contains("move-identity-to-top")}`,
+                                                        `\n- move-identity-to-bottom?=${e.target.classList.contains("move-identity-to-bottom")}`,
+                                                        `\n- edit-identity?=${e.target.classList.contains("edit-identity")}`,
+                                                        `\n- delete-identity?=${e.target.classList.contains("delete-identity")}`,
+                                                        `\n- identityId="${e.target.getAttribute('identityId')}"`,
+                                                      );
 
     if (e.target.tagName === 'BUTTON' || e.target.tagName === 'LABEL') {
-      this.debug(`BUTTON OR LABEL CLICKED tagName="${e.target.tagName}" id="${e.target.id}"`);
+      this.debugIdentityControl(`BUTTON OR LABEL CLICKED tagName="${e.target.tagName}" id="${e.target.id}"`);
       
       // I thought the browser was supposed to take care of this <label> with a 'for' attribute stuff...
       if (e.target.tagName === 'LABEL' && (! e.target.parentElement || e.target.parentElement.tagName !== 'BUTTON')) {
-        this.debug(`-- LABEL CLICKED BUT PARENT ELEMENT NOT A BUTTON -- id="${e.target.id}" parent="${e.target.parentElement.tagName}"`);
+        this.debugIdentityControl(`-- LABEL CLICKED BUT PARENT ELEMENT NOT A BUTTON -- id="${e.target.id}" parent="${e.target.parentElement.tagName}"`);
       } else {
         e.preventDefault();
 
@@ -1433,7 +1697,7 @@ class OptionsUI {
         } else {
           button = e.target;
         }
-        this.debug(`-- BUTTON CLICKED id="${button.id}"`);
+        this.debugIdentityControl(`-- BUTTON CLICKED id="${button.id}"`);
 
         if (button.classList.contains("identity-item-button")) {
           if ( button.classList.contains("move-identity-up")
@@ -1445,7 +1709,7 @@ class OptionsUI {
              )
           {
             if (! button.hasAttribute("identityId")) { // if it doesn't have an identityID then we can't store in IdentitiesExtendedProps
-              this.debug("-- BUTTON HAS NO \"identitId\" ATTRIBUTE - CAN'T DO ANYTHING!!!");
+              this.debugIdentityControl("-- BUTTON HAS NO \"identitId\" ATTRIBUTE - CAN'T DO ANYTHING!!!");
 
             } else {
               const identityId = button.getAttribute("identityId");
@@ -1470,17 +1734,17 @@ class OptionsUI {
               }
             }
           } else {
-            this.debug("-- NOT OUR BUTTON -- got expected class 'identity-item-button', but button-specific class not found --"); 
+            this.debugIdentityControl("-- NOT OUR BUTTON -- got expected class 'identity-item-button', but button-specific class not found --"); 
           }
         } else {
-          this.debug("-- NOT OUR BUTTON -- expected class 'identity-item-button' not found --");
+          this.debugIdentityControl("-- NOT OUR BUTTON -- expected class 'identity-item-button' not found --");
         }
       }
     } else {
-      this.debug(`-- BUTTON NOT FOUND -- tagName="${e.target.tagName}" id="${e.target.id}"`);
+      this.debugIdentityControl(`-- BUTTON NOT FOUND -- tagName="${e.target.tagName}" id="${e.target.id}"`);
     }
 
-    this.debug("-- end");
+    this.debugIdentityControl("-- end");
   }
 
 
@@ -1488,7 +1752,7 @@ class OptionsUI {
   // Move the given Identity up ONE position in the list,
   // skipping locked and filtered-out identities
   async moveIdentityUp(e, moveIdentityId) {
-    this.debug(`-- begin -- moveIdentityId="${moveIdentityId}"`);
+    this.debugIdentityControl(`-- begin -- moveIdentityId="${moveIdentityId}"`);
 
     var identityMoved = false;
     var error         = false;
@@ -1507,24 +1771,24 @@ class OptionsUI {
         const moveLockInMenu     = (!moveIdentityProps || typeof moveIdentityProps.lockInMenu     !== 'boolean' ) ? false : moveIdentityProps.lockInMenu;
         const movePositionInMenu = (!moveIdentityProps || typeof moveIdentityProps.positionInMenu !== 'number'  ) ? -1    : moveIdentityProps.positionInMenu;
 
-        this.debug(`-- MOVE id="${moveIdentityId}" moveLockInMenu=${moveLockInMenu} movePositionInMenu=${movePositionInMenu}`);
+        this.debugIdentityControl(`-- MOVE id="${moveIdentityId}" moveLockInMenu=${moveLockInMenu} movePositionInMenu=${movePositionInMenu}`);
 
         if (! moveIdentityProps) {
           this.error(`-- CANNOT MOVE -- No Old Identity Props: id="${moveIdentityId}"`);
           error = true;
         } else if (moveLockInMenu) {
-          this.debug(`-- CANNOT MOVE - Identity is lockInMenu: id="${moveIdentityId}"`);
+          this.debugIdentityControl(`-- CANNOT MOVE - Identity is lockInMenu: id="${moveIdentityId}"`);
         } else if (movePositionInMenu < 0) {
           this.error(`-- CANNOT MOVE - Identity has no positionInMenu: id="${moveIdentityId}"`);
           error = true;
         } else if (movePositionInMenu === 0) {
-          this.debug(`-- CANNOT MOVE - Identity is at the Beginning of the list: id="${moveIdentityId}"`);
+          this.debugIdentityControl(`-- CANNOT MOVE - Identity is at the Beginning of the list: id="${moveIdentityId}"`);
         } else {
           const domIdentityDisplayOrderList = document.getElementById("idmIdentityDisplayOrderList"); // this is a <TABLE>
           const indexOfIdentityTR           = Array.from(domIdentityDisplayOrderList.children).indexOf(moveIdentityItemTR);
           var   foundEligibleSwapIdentity   = false;
 
-          this.debug(`-- movePositionInMenu=${movePositionInMenu} indexOfIdentityTR=${indexOfIdentityTR} id="${moveIdentityId}"`);
+          this.debugIdentityControl(`-- movePositionInMenu=${movePositionInMenu} indexOfIdentityTR=${indexOfIdentityTR} id="${moveIdentityId}"`);
 
           // We have to do all this just to skip over LOCKED and/or FILTERED Identities
           // children[0] is the header row
@@ -1533,7 +1797,7 @@ class OptionsUI {
             const swapIdentityId     = swapIdentityItemTR.getAttribute("identityId");
 
             if (this.isFilteredDomIdentityTR(swapIdentityItemTR)) {
-              this.debug(`-- Swap Identity is Filtered Out: id="${swapIdentityId}"`);
+              this.debugIdentityControl(`-- Swap Identity is Filtered Out: id="${swapIdentityId}"`);
 
             } else if (! swapIdentityId) {
               this.error("-- No Swap Identity Id");
@@ -1550,10 +1814,10 @@ class OptionsUI {
               } else {
                 const swapLockInMenu     = (typeof swapIdentityProps.lockInMenu     !== 'boolean') ? false : swapIdentityProps.lockInMenu;
                 const swapPositionInMenu = (typeof swapIdentityProps.positionInMenu !== 'number' ) ? -1    : swapIdentityProps.positionInMenu;
-                this.debug(`-- SWAP id="${swapIdentityId}" swapLockInMenu=${swapLockInMenu} swapPositionInMenu=${swapPositionInMenu}`);
+                this.debugIdentityControl(`-- SWAP id="${swapIdentityId}" swapLockInMenu=${swapLockInMenu} swapPositionInMenu=${swapPositionInMenu}`);
 
                 if (swapLockInMenu) {
-                  this.debug(`-- Swap Identity is lockInMenu, skipping: id="${swapIdentityId}"`);
+                  this.debugIdentityControl(`-- Swap Identity is lockInMenu, skipping: id="${swapIdentityId}"`);
                 } else {
                   foundEligibleSwapIdentity = true;
 
@@ -1569,9 +1833,9 @@ class OptionsUI {
 
                   } else {
                     // SWAP!!!
-                    this.debug( "-- CAN SWAP --"
-                                + `\n- Move Identity id="${moveIdentityId}" positionInMenu=${movePositionInMenu}`
-                                + `\n- Swap Identity id="${swapIdentityId}" positionInMenu=${swapPositionInMenu}`
+                    this.debugIdentityControl( "-- CAN SWAP --",
+                                               `\n- Move Identity id="${moveIdentityId}" positionInMenu=${movePositionInMenu}`,
+                                               `\n- Swap Identity id="${swapIdentityId}" positionInMenu=${swapPositionInMenu}`,
                               );
 
                     moveIdentityProps.positionInMenu = swapPositionInMenu;
@@ -1588,20 +1852,20 @@ class OptionsUI {
             }
           }
 
-          if (! error && ! foundEligibleSwapIdentity) this.debug(`-- FOUND NO UNLOCKED IDENTITY TO SWAP -- Identity id="${moveIdentityId}"`);
+          if (! error && ! foundEligibleSwapIdentity) this.debugIdentityControl(`-- FOUND NO UNLOCKED IDENTITY TO SWAP -- Identity id="${moveIdentityId}"`);
         }
       }
     }
 
-    if (! identityMoved) this.debug(`-- NOT MOVED -- Identity id="${moveIdentityId}"`);
+    if (! identityMoved) this.debugIdentityControl(`-- NOT MOVED -- Identity id="${moveIdentityId}"`);
 
-    this.debug("-- end");
+    this.debugIdentityControl("-- end");
   }
 
   // Move the given Identity up DOWN position in the list,
   // skipping locked and filtered-out identities
   async moveIdentityDown(e, moveIdentityId) {
-    this.debug(`-- begin -- moveIdentityId="${moveIdentityId}"`);
+    this.debugIdentityControl(`-- begin -- moveIdentityId="${moveIdentityId}"`);
 
     var identityMoved = false;
     var error         = false;
@@ -1620,13 +1884,13 @@ class OptionsUI {
         const moveLockInMenu                = (!moveIdentityProps || typeof moveIdentityProps.lockInMenu     !== 'boolean' ) ? false : moveIdentityProps.lockInMenu;
         const movePositionInMenu            = (!moveIdentityProps || typeof moveIdentityProps.positionInMenu !== 'number'  ) ? -1    : moveIdentityProps.positionInMenu;
 
-        this.debug(`-- MOVE id="${moveIdentityId}" moveLockInMenu=${moveLockInMenu} movePositionInMenu=${movePositionInMenu}`);
+        this.debugIdentityControl(`-- MOVE id="${moveIdentityId}" moveLockInMenu=${moveLockInMenu} movePositionInMenu=${movePositionInMenu}`);
 
         if (! moveIdentityProps) {
           this.error(`-- CANNOT MOVE -- No Old Identity Props: id="${moveIdentityId}"`);
           error = true;
         } else if (moveLockInMenu) {
-          this.debug(`-- CANNOT MOVE - Identity is lockInMenu: id="${moveIdentityId}"`);
+          this.debugIdentityControl(`-- CANNOT MOVE - Identity is lockInMenu: id="${moveIdentityId}"`);
         } else if (movePositionInMenu < 0) {
           this.error(`-- CANNOT MOVE - Identity has no positionInMenu: id="${moveIdentityId}"`);
           error = true;
@@ -1635,10 +1899,10 @@ class OptionsUI {
           const domListLength               = domIdentityDisplayOrderList.children.length;
           const indexOfIdentityTR           = Array.from(domIdentityDisplayOrderList.children).indexOf(moveIdentityItemTR);
 
-          this.debug(`-- movePositionInMenu=${movePositionInMenu} indexOfIdentityTR=${indexOfIdentityTR} domListLength=${domListLength} id="${moveIdentityId}"`);
+          this.debugIdentityControl(`-- movePositionInMenu=${movePositionInMenu} indexOfIdentityTR=${indexOfIdentityTR} domListLength=${domListLength} id="${moveIdentityId}"`);
 
           if (indexOfIdentityTR + 1 >= domListLength) {
-            this.debug(`-- CANNOT MOVE - Identity is at the End of the list: id="${moveIdentityId}"`);
+            this.debugIdentityControl(`-- CANNOT MOVE - Identity is at the End of the list: id="${moveIdentityId}"`);
 
           } else {
             var foundEligibleSwapIdentity = false;
@@ -1650,7 +1914,7 @@ class OptionsUI {
               const swapIdentityId     = swapIdentityItemTR.getAttribute("identityId");
 
               if (this.isFilteredDomIdentityTR(swapIdentityItemTR)) {
-                this.debug(`-- Swap Identity is Filtered Out: id="${swapIdentityId}"`);
+                this.debugIdentityControl(`-- Swap Identity is Filtered Out: id="${swapIdentityId}"`);
 
               } else if (! swapIdentityId) {
                 this.error("-- No Swap Identity Id");
@@ -1667,10 +1931,10 @@ class OptionsUI {
                 } else {
                   const swapLockInMenu     = (typeof swapIdentityProps.lockInMenu     !== 'boolean') ? false : swapIdentityProps.lockInMenu;
                   const swapPositionInMenu = (typeof swapIdentityProps.positionInMenu !== 'number' ) ? -1    : swapIdentityProps.positionInMenu;
-                  this.debug(`-- SWAP id="${swapIdentityId}" swapLockInMenu=${swapLockInMenu} swapPositionInMenu=${swapPositionInMenu}`);
+                  this.debugIdentityControl(`-- SWAP id="${swapIdentityId}" swapLockInMenu=${swapLockInMenu} swapPositionInMenu=${swapPositionInMenu}`);
 
                   if (swapLockInMenu) {
-                    this.debug(`-- Swap Identity is lockInMenu, skipping: id="${swapIdentityId}"`);
+                    this.debugIdentityControl(`-- Swap Identity is lockInMenu, skipping: id="${swapIdentityId}"`);
                   } else {
                     foundEligibleSwapIdentity = true;
 
@@ -1686,9 +1950,9 @@ class OptionsUI {
 
                     } else {
                       // SWAP!!!
-                      this.debug( "-- CAN SWAP --"
-                                  + `\n- Move Identity id="${moveIdentityId}" positionInMenu=${movePositionInMenu}`
-                                  + `\n- Swap Identity id="${swapIdentityId}" positionInMenu=${swapPositionInMenu}`
+                      this.debugIdentityControl( "-- CAN SWAP --",
+                                                 `\n- Move Identity id="${moveIdentityId}" positionInMenu=${movePositionInMenu}`,
+                                                 `\n- Swap Identity id="${swapIdentityId}" positionInMenu=${swapPositionInMenu}`,
                                 );
 
                       moveIdentityProps.positionInMenu = swapPositionInMenu;
@@ -1705,15 +1969,15 @@ class OptionsUI {
               }
             }
 
-            if (! error && ! foundEligibleSwapIdentity) this.debug(`-- FOUND NO UNLOCKED IDENTITY TO SWAP -- Identity id="${moveIdentityId}"`);
+            if (! error && ! foundEligibleSwapIdentity) this.debugIdentityControl(`-- FOUND NO UNLOCKED IDENTITY TO SWAP -- Identity id="${moveIdentityId}"`);
           }
         }
       }
     }
 
-    if (! identityMoved) this.debug(`-- NOT MOVED -- Identity id="${moveIdentityId}"`);
+    if (! identityMoved) this.debugIdentityControl(`-- NOT MOVED -- Identity id="${moveIdentityId}"`);
 
-    this.debug("-- end");
+    this.debugIdentityControl("-- end");
   }
 
   swapIdentityItemTRs(downward, domIdentityList, identityItemTR1, identityItemTR2) {
@@ -1772,7 +2036,7 @@ class OptionsUI {
 
 
   async moveIdentityToTop(e, identityIdToMove) {
-    this.debugAlways(`-- identityIdToMove="${identityIdToMove}"`);
+    this.debugIdentityControl(`-- identityIdToMove="${identityIdToMove}"`);
 
     if (identityIdToMove) {
       const domIdentityDisplayOrderList = document.getElementById("idmIdentityDisplayOrderList");
@@ -1783,7 +2047,7 @@ class OptionsUI {
         this.error(`-- FAILED TO FIND IDENTITY TO MOVE TR -- identityToMoveTRSelector="${identityToMoveTRSelector}"`);
 
       } else {
-        this.debugAlways(`-- Found Identity To Move TR -- identityToMoveTRSelector="${identityToMoveTRSelector}"`);
+        this.debugIdentityControl(`-- Found Identity To Move TR -- identityToMoveTRSelector="${identityToMoveTRSelector}"`);
 
         const idmIdentities     = await this.#idmIdentitiesApi.getIdmIdentities(); // index is positionInMenu
         const idmIdentityToMove = await this.#idmIdentitiesApi.getIdmIdentities(identityIdToMove);
@@ -1791,7 +2055,7 @@ class OptionsUI {
         if (! idmIdentityToMove) {
           this.error(`-- CANNOT MOVE -- Identity to Move NOT Found: id="${identityIdToMove}"`);
         } else if (idmIdentityToMove.lockInMenu) {
-          this.debugAlways(`-- CANNOT MOVE - Identity to Move is lockInMenu: id="${identityIdToMove}"`);
+          this.debugIdentityControl(`-- CANNOT MOVE - Identity to Move is lockInMenu: id="${identityIdToMove}"`);
         } else {
           const domIdentityTRs                      = domIdentityDisplayOrderList.querySelectorAll('tr.identity-item');
           const lockedDomIdentityTRByPositionInMenu = {};
@@ -1817,7 +2081,7 @@ class OptionsUI {
           }
 
           if (! fistUnlockedDomIdentityTR) {
-            this.debugAlways(`-- CANNOT MOVE - No Unlocked Identity Above Identity to Move : id="${identityIdToMove}"`);
+            this.debugIdentityControl(`-- CANNOT MOVE - No Unlocked Identity Above Identity to Move : id="${identityIdToMove}"`);
           } else {
             positionInMenu = fistUnlockedIdentityPositionInMenu;
             var insertBeforeElement = domIdentityDisplayOrderList.children[positionInMenu + 1];
@@ -1860,7 +2124,7 @@ class OptionsUI {
 
 
   async moveIdentityToBottom(e, identityId) {
-    this.debug(`-- identityId="${identityId}"`);
+    this.debugIdentityControl(`-- identityId="${identityId}"`);
 
     if (identityId) {
       const identitiesProps = await this.#idmOptionsApi.getIdentitiesExtendedProps();
@@ -1870,7 +2134,7 @@ class OptionsUI {
       if (! props) {
         this.error(`-- CANNOT MOVE -- No Old Identity Props: id="${identityId}"`);
       } else if (lockInMenu) {
-        this.debug(`-- CANNOT MOVE - Identity is lockInMenu: id="${identityId}"`);
+        this.debugIdentityControl(`-- CANNOT MOVE - Identity is lockInMenu: id="${identityId}"`);
 
       } else {
         const identitiesToMove = [identityId];
@@ -1893,18 +2157,18 @@ class OptionsUI {
     if (e == null) return;
     var target = e.target;
 
-    this.debug("-- begin");
-    if (this.#DEBUG) this.debugAlways( "-- begin" // don't build all this just to be denied by this.#DEBUG in this.debug()
-                                       + `\n- id="${target.getAttribute('id')}"`
-                                       + `\n- for="${target.getAttribute('for')}"`
-                                       + `\n- tagName="${target.tagName}"`
-                                       + `\n- type="${target.type}"`
-                                       + `\n- checked="${target.checked}"`
-                                       + `\n- identity-item-check?=${target.classList.contains("identity-item-check")}`
-                                       + `\n- show-in-menu-check?=${target.classList.contains("show-in-menu-check")}`
-                                       + `\n- lock-in-menu-check?=${target.classList.contains("lock-in-menu-check")}`
-                                       + `\n- identityId="${target.getAttribute('identityId')}"`
-                                     );
+    this.debugIdentityControl("-- begin");
+    if (this.#DEBUG_IDENTITY_CONTROL) this.debugAlways( "-- begin", // don't build all this just to be denied by this.#DEBUG in this.debug()
+                                                        `\n- id="${target.getAttribute('id')}"`,
+                                                        `\n- for="${target.getAttribute('for')}"`,
+                                                        `\n- tagName="${target.tagName}"`,
+                                                        `\n- type="${target.type}"`,
+                                                        `\n- checked="${target.checked}"`,
+                                                        `\n- identity-item-check?=${target.classList.contains("identity-item-check")}`,
+                                                        `\n- show-in-menu-check?=${target.classList.contains("show-in-menu-check")}`,
+                                                        `\n- lock-in-menu-check?=${target.classList.contains("lock-in-menu-check")}`,
+                                                        `\n- identityId="${target.getAttribute('identityId')}"`,
+                                                      );
 
 
     // I thought that if the 'for' attribute on a label matched the 'id' attribute on a checkbox,
@@ -1917,7 +2181,7 @@ class OptionsUI {
 //    const labelForId = target.getAttribute('for');
 //    target = undefined;
 //    if (! labelForId) {
-//      this.debug("-- a LABEL was clicked but it has no 'for' attribute");
+//      this.debugIdentityControl("-- a LABEL was clicked but it has no 'for' attribute");
 //    } else {
 //      const forElement = document.getElementById(labelForId);
 //      if (! forElement) {
@@ -1953,16 +2217,16 @@ class OptionsUI {
         const positionInMenu     = (!props || typeof props.positionInMenu !== 'number' ) ? nextPositionInMenu : props.positionInMenu;
 
         if (! props) {
-          this.debug("-- NO OLD PROPS - CREATING NEW PROPS --");
+          this.debugIdentityControl("-- NO OLD PROPS - CREATING NEW PROPS --");
         } else {
-          this.debug(`-- OLD PROPS: showInMenu=${props.showInMenu} lockInMenu=${props.lockInMenu} positionInMenu=${props.positionInMenu}`);
+          this.debugIdentityControl(`-- OLD PROPS: showInMenu=${props.showInMenu} lockInMenu=${props.lockInMenu} positionInMenu=${props.positionInMenu}`);
         }
 
         // is it a showInMenu checkbox?
         if (target.classList.contains("show-in-menu-check")) {          // identity-item > identity-item-controls-left > show-in-menu-check
           showInMenu = optionValue;
 
-          this.debug(`-- NEW PROPS: showInMenu=${showInMenu} lockInMenu=${lockInMenu} positionInMenu=${positionInMenu}`);
+          this.debugIdentityControl(`-- NEW PROPS: showInMenu=${showInMenu} lockInMenu=${lockInMenu} positionInMenu=${positionInMenu}`);
 
           identitiesProps[identityId] = {
             'showInMenu':     showInMenu,
@@ -1976,28 +2240,28 @@ class OptionsUI {
           const identitySelector    = `tr.identity-item[identityId='${identityId}']`
           const domSelectedIdentity = document.querySelector(identitySelector);
           if (! domSelectedIdentity) {
-            this.debug(`-- DID NOT FIND OUR IDENTITY-ITEM: "${identitySelector}"`);
+            this.debugIdentityControl(`-- DID NOT FIND OUR IDENTITY-ITEM: "${identitySelector}"`);
           } else {
-            this.debug(`-- Found our identity-item: "${identitySelector}"`);
-            this.debug(`-- Setting attribute "showInMenu" to: "${showInMenu? 'true' : 'false'}"`);
+            this.debugIdentityControl(`-- Found our identity-item: "${identitySelector}"`);
+            this.debugIdentityControl(`-- Setting attribute "showInMenu" to: "${showInMenu? 'true' : 'false'}"`);
             domSelectedIdentity.setAttribute("showInMenu", showInMenu ? 'true' : 'false' );
 
             if (showInMenu) {
-              this.debug("-- removing class 'not-show-in-menu'");
+              this.debugIdentityControl("-- removing class 'not-show-in-menu'");
               domSelectedIdentity.classList.remove("not-show-in-menu");
             } else {
-              this.debug("-- adding class 'not-show-in-menu'");
+              this.debugIdentityControl("-- adding class 'not-show-in-menu'");
               domSelectedIdentity.classList.add("not-show-in-menu");
             }
           }
 
-          this.debug("-- new showInMenu checkbox status: ", identitiesProps);
+          this.debugIdentityControl("-- new showInMenu checkbox status: ", identitiesProps);
 
         // is it a lockInMenu checkbox?
         } else if (target.classList.contains("lock-in-menu-check")) {   // identity-item > identity-item-controls-right > > lock-in-menu-check
           lockInMenu = optionValue;
 
-          this.debug(`-- NEW PROPS: showInMenu=${showInMenu} lockInMenu=${lockInMenu} positionInMenu=${positionInMenu}`);
+          this.debugIdentityControl(`-- NEW PROPS: showInMenu=${showInMenu} lockInMenu=${lockInMenu} positionInMenu=${positionInMenu}`);
 
           identitiesProps[identityId] = {
             'showInMenu':     showInMenu,
@@ -2011,46 +2275,47 @@ class OptionsUI {
           const identitySelector    = `tr.identity-item[identityId='${identityId}']`
           const domSelectedIdentity = document.querySelector(identitySelector);
           if (! domSelectedIdentity) {
-            this.debug(`-- DID NOT FIND OUR IDENTITY-ITEM: "${identitySelector}"`);
+            this.debugIdentityControl(`-- DID NOT FIND OUR IDENTITY-ITEM: "${identitySelector}"`);
           } else {
-            this.debug(`-- Found our identity-item: "${identitySelector}"`);
-            this.debug(`-- Setting attribute "lockInMenu" to: "${lockInMenu? 'true' : 'false'}"`);
+            this.debugIdentityControl(`-- Found our identity-item: "${identitySelector}"`);
+            this.debugIdentityControl(`-- Setting attribute "lockInMenu" to: "${lockInMenu? 'true' : 'false'}"`);
             domSelectedIdentity.setAttribute("lockInMenu", lockInMenu ? 'true' : 'false');
 
             if (lockInMenu) {
-              this.debug("-- adding class 'lock-in-menu'");
+              this.debugIdentityControl("-- adding class 'lock-in-menu'");
               domSelectedIdentity.classList.add("lock-in-menu");    // need this for Sortable.js
             } else {
-              this.debug("-- removing class 'lock-in-menu'");
+              this.debugIdentityControl("-- removing class 'lock-in-menu'");
               domSelectedIdentity.classList.remove("lock-in-menu"); // need this for Sortable.js
             }
           }
 
-          this.debug("-- new lockInMenu checkbox status: ", identitiesProps);
+          this.debugIdentityControl("-- new lockInMenu checkbox status: ", identitiesProps);
 
         } else {
           // We don't know exactly which checkbox it is!!!  This outer "if" should have prevented this
         }
       }
     } else {
-      this.debug("-- NOT OUR ELEMENT --");
+      this.debugIdentityControl("-- NOT OUR ELEMENT --");
     }
 
-    this.debug("-- end");
+    this.debugIdentityControl("-- end");
   }
 
 
 
-  // an Action Button was clicked - Sort, Refresh, Move to Top, Move to Bottom, Lock All, Unlock All, Show All, Hide All, Create, etc
+  // Something was clicked.
+  // Check if an Action Button was clicked - Sort, Refresh, Move to Top, Move to Bottom, Lock All, Unlock All, Show All, Hide All, Create, etc
   // NOTE: This listener is added to the DOCUMENT!  **ANY** Click Event will cause this function to get called!!!
   async actionClicked(e) {
-    this.debug('--');
+    this.debugActionClicked('--');
     if (e == null) return;
 
-    this.debug(`-- tagName="${e.target.tagName}" id="${e.target.id}"`);
+    this.debugActionClicked(`-- tagName="${e.target.tagName}" id="${e.target.id}"`);
 
     if (e.target.tagName === 'BUTTON' || e.target.tagName === 'LABEL') {
-      this.debug(`-- BUTTON OR LABEL CLICKED tagName="${e.target.tagName}" id="${e.target.id}"`);
+      this.debugActionClicked(`-- BUTTON OR LABEL CLICKED tagName="${e.target.tagName}" id="${e.target.id}"`);
       
       // I thought the browser was supposed to take care of this <label> with a 'for' attribute stuff...
       if (e.target.tagName === 'LABEL' && ! e.target.parentElement || e.target.parentElement.tagName !== 'BUTTON') {
@@ -2064,9 +2329,10 @@ class OptionsUI {
         } else {
           button = e.target;
         }
-        this.debug(`-- BUTTON CLICKED tagName="${button.tagName}" id="${button.id}"`);
 
         const buttonId = button.id;
+        this.debugActionClicked(`-- BUTTON CLICKED tagName="${button.tagName}" id="${buttonId}"`);
+
         if (buttonId) switch (buttonId) {
           case "idmAutoSortButton":
             await this.autoSortButtonClicked(e);
@@ -2128,16 +2394,18 @@ class OptionsUI {
           case "idmRunParseCSVFileTests":
           case "idmDisplayOrderFilterByAccountResetButton":
           case "idmDisplayOrderFilterByImportedResetButton":
+          case "idmDisplayOrderFilterByLockedResetButton":
+          case "idmDisplayOrderFilterByAccountDefaultResetButton":
           case "idmDisplayOrderFilterByCollectedResetButton":
           case "idmDisplayOrderFilterByLabelResetButton":
           case "idmDisplayOrderFilterByLabelResetButton":
           case "idmDisplayOrderFilterResetAllButton":
             // there are event listeners specific to these buttons - can stopPropagation() or something stop this function from getting called???
             // Does calling e.preventDefault() in the event listener prevent this?
-            this.debug(`-- CLICK EVENT ON A BUTTON THAT HAS IT'S OWN LISTENER -- id="${buttonId}"`);
+            this.debugActionClicked(`-- CLICK EVENT ON A BUTTON THAT HAS IT'S OWN LISTENER -- id="${buttonId}"`);
             break;
           default:
-            this.debug(`-- CLICK EVENT ON A BUTTON WE DON'T KNOW ABOUT -- id="${buttonId}"`);
+            this.debugActionClicked(`-- CLICK EVENT ON A BUTTON WE DON'T KNOW ABOUT -- id="${buttonId}"`);
         }
       }
 
@@ -2148,12 +2416,12 @@ class OptionsUI {
         this.#extensionOptionsTitleClickTimer = setTimeout(() => this.extensionOptionsTitleDIVSingleClicked(e), this.#EXTENSION_OPTIONS_TITLE_CLICK_DELAY);
       } else {
         // we don't care about this click
-        this.debug(`-- CLICK EVENT ON A DIV WE DON'T CARE ABOUT -- id="${e.target.id}"`);
+        this.debugActionClicked(`-- CLICK EVENT ON A DIV WE DON'T CARE ABOUT -- id="${e.target.id}"`);
       }
 
     } else {
       // we don't care about this click
-      this.debug(`-- CLICK EVENT ON AN ELEMENT WE DON'T CARE ABOUT -- tagName="${e.target.tagName}" id="${e.target.id}"`);
+      this.debugActionClicked(`-- CLICK EVENT ON AN ELEMENT WE DON'T CARE ABOUT -- tagName="${e.target.tagName}" id="${e.target.id}"`);
     }
   }
 
@@ -2618,11 +2886,11 @@ class OptionsUI {
     } else if (typeof bounds !== 'object') {
       this.error(`-- PREVIOUS WINDOW BOUNDS "editorWindowBounds" IS NOT AN OBJECT: typeof='${typeof bounds}' #####`);
     } else {
-      this.debug( "-- restoring previous window bounds:"
-                  + `\n- bounds.top=${bounds.top}`
-                  + `\n- bounds.left=${bounds.left}`
-                  + `\n- bounds.width=${bounds.width}`
-                  + `\n- bounds.height=${bounds.height}`
+      this.debug( "-- restoring previous window bounds:",
+                  `\n- bounds.top=${bounds.top}`,
+                  `\n- bounds.left=${bounds.left}`,
+                  `\n- bounds.width=${bounds.width}`,
+                  `\n- bounds.height=${bounds.height}`,
                 );
       popupTop    = bounds.top;
       popupLeft   = bounds.left;
@@ -2644,10 +2912,10 @@ class OptionsUI {
       }
     );
 
-    this.debug( "-- IdentityEditor Popup Window Created --"
-                + `\n- from window.id="${window.id}"`
-                + `\n- identityEditorWindow.id="${identityEditorWindow.id}"`
-                + `\n- URL="${identityEditorUrl}"`
+    this.debug( "-- IdentityEditor Popup Window Created --",
+                `\n- from window.id="${window.id}"`,
+                `\n- identityEditorWindow.id="${identityEditorWindow.id}"`,
+                `\n- URL="${identityEditorUrl}"`,
               );
 
     // window.id does not exist.  how do we get our own window id???
@@ -2662,11 +2930,11 @@ class OptionsUI {
       ourWindowId = currentTab.windowId;
     }
 
-    this.debug( "-- IdentityEditor Popup Window Created --"
-                + `\n-from ourTabId="${ourTabId}"`
-                + `\n-from ourWindowId="${ourWindowId}"`
-                + `\n-identityEditorWindow.id="${identityEditorWindow.id}"`
-////////////////+ `\n-URL="${identityEditorUrl}"`
+    this.debug( "-- IdentityEditor Popup Window Created --",
+                `\n-from ourTabId="${ourTabId}"`,
+                `\n-from ourWindowId="${ourWindowId}"`,
+                `\n-identityEditorWindow.id="${identityEditorWindow.id}"`,
+////////////////`\n-URL="${identityEditorUrl}"`,
               );
 
     // Re-focus on the identityEditor window when our window gets focus
@@ -2792,10 +3060,10 @@ class OptionsUI {
       }
     );
 
-    this.debug( " -- IdentityEditor Popup Window Created --"
-                + `\n- from window.id="${window.id}"`
-                + `\n- identityEditorWindow.id="${identityEditorWindow.id}"`
-                + `\n- URL="${identityEditorUrl}"`
+    this.debug( " -- IdentityEditor Popup Window Created --",
+                `\n- from window.id="${window.id}"`,
+                `\n- identityEditorWindow.id="${identityEditorWindow.id}"`,
+                `\n- URL="${identityEditorUrl}"`,
               );
 
     // window.id does not exist.  how do we get our own window id???
@@ -2810,11 +3078,11 @@ class OptionsUI {
       ourWindowId = currentTab.windowId;
     }
 
-    this.debug( " -- IdentityEditor Popup Window Created --"
-                + `\n-from ourTabId="${ourTabId}"`
-                + `\n-from ourWindowId="${ourWindowId}"`
-                + `\n-identityEditorWindow.id="${identityEditorWindow.id}"`
-////////////////+ `\n-URL="${identityEditorUrl}"`
+    this.debug( " -- IdentityEditor Popup Window Created --",
+                `\n-from ourTabId="${ourTabId}"`,
+                `\n-from ourWindowId="${ourWindowId}"`,
+                `\n-identityEditorWindow.id="${identityEditorWindow.id}"`,
+////////////////`\n-URL="${identityEditorUrl}"`,
               );
 
     // Re-focus on the identityEditor window when our window gets focus
@@ -2857,10 +3125,10 @@ class OptionsUI {
             if (! newIdmIdentity) {
               this.error(`-- FAILED TO GET NEW IDENTITY -- newIdentityId="${newIdentityId}"`);
             } else {
-              this.debug( " -- Got New Identity:"
-                          + `\n- id="${newIdmIdentity.id}"`
-                          + `\n- name="${newIdmIdentity.name}"`
-                          + `\n- email="${newIdmIdentity.email}"`
+              this.debug( " -- Got New Identity:",
+                          `\n- id="${newIdmIdentity.id}"`,
+                          `\n- name="${newIdmIdentity.name}"`,
+                          `\n- email="${newIdmIdentity.email}"`,
                         );
               await this.appendIdentityItemUI(newIdmIdentity); // Does NOT update positionInMenu
             }
@@ -2936,11 +3204,11 @@ class OptionsUI {
       this.debug("-- DID NOT GET THE CURRENT (MAIN, mail:3pane) WINDOW!!! ---");
 
     } else {
-      this.debug( "-- Got the Current (Main, mail:3pane) Window:"
-                  + `\n- mainWindow.top=${mainWindow.top}`
-                  + `\n- mainWindow.left=${mainWindow.left}`
-                  + `\n- mainWindow.height=${mainWindow.height}`
-                  + `\n- mainWindow.width=${mainWindow.width}`
+      this.debug( "-- Got the Current (Main, mail:3pane) Window:",
+                  `\n- mainWindow.top=${mainWindow.top}`,
+                  `\n- mainWindow.left=${mainWindow.left}`,
+                  `\n- mainWindow.height=${mainWindow.height}`,
+                  `\n- mainWindow.width=${mainWindow.width}`,
                 );
       popupTop  = mainWindow.top  + 100;
       popupLeft = mainWindow.left + 100;
@@ -2955,11 +3223,11 @@ class OptionsUI {
     } else if (typeof bounds !== 'object') {
       this.error(`-- PREVIOUS WINDOW BOUNDS "identityImporterWindowBounds" IS NOT AN OBJECT: typeof='${typeof bounds}' #####`);
     } else {
-      this.debug( "-- restoring previous window bounds:"
-                  + `\n- bounds.top=${bounds.top}`
-                  + `\n- bounds.left=${bounds.left}`
-                  + `\n- bounds.width=${bounds.width}`
-                  + `\n- bounds.height=${bounds.height}`
+      this.debug( "-- restoring previous window bounds:",
+                  `\n- bounds.top=${bounds.top}`,
+                  `\n- bounds.left=${bounds.left}`,
+                  `\n- bounds.width=${bounds.width}`,
+                  `\n- bounds.height=${bounds.height}`,
                 );
       popupTop    = bounds.top;
       popupLeft   = bounds.left;
@@ -2997,11 +3265,11 @@ class OptionsUI {
       }
     );
 
-    this.debug( "-- Identity Importer Popup Window Created --"
-                + `\n-from ourTabId="${ourTabId}"`
-                + `\n-from ourWindowId="${ourWindowId}"`
-                + `\n-identityImporterWindow.id="${identityImporterWindow.id}"`
-////////////////+ `\n-URL="${identityImporterUrl}"`
+    this.debug( "-- Identity Importer Popup Window Created --",
+                `\n-from ourTabId="${ourTabId}"`,
+                `\n-from ourWindowId="${ourWindowId}"`,
+                `\n-identityImporterWindow.id="${identityImporterWindow.id}"`,
+////////////////`\n-URL="${identityImporterUrl}"`,
               );
 
     // Re-focus on the identityImporter window when our window gets focus
@@ -3118,11 +3386,11 @@ class OptionsUI {
       this.debug("-- DID NOT GET THE CURRENT (MAIN, mail:3pane) WINDOW!!! ---");
 
     } else {
-      this.debug( "-- Got the Current (Main, mail:3pane) Window:"
-                  + `\n- mainWindow.top=${mainWindow.top}`
-                  + `\n- mainWindow.left=${mainWindow.left}`
-                  + `\n- mainWindow.height=${mainWindow.height}`
-                  + `\n- mainWindow.width=${mainWindow.width}`
+      this.debug( "-- Got the Current (Main, mail:3pane) Window:",
+                  `\n- mainWindow.top=${mainWindow.top}`,
+                  `\n- mainWindow.left=${mainWindow.left}`,
+                  `\n- mainWindow.height=${mainWindow.height}`,
+                  `\n- mainWindow.width=${mainWindow.width}`,
                 );
       popupTop  = mainWindow.top  + 100;
       popupLeft = mainWindow.left + 100;
@@ -3137,11 +3405,11 @@ class OptionsUI {
     } else if (typeof bounds !== 'object') {
       this.debugAlways(`-- PREVIOUS WINDOW BOUNDS IS NOT AN OBJECT: typeof='${typeof bounds}' #####`);
     } else {
-      this.debug( "-- restoring previous window bounds:"
-                  + `\n- bounds.top=${bounds.top}`
-                  + `\n- bounds.left=${bounds.left}`
-                  + `\n- bounds.width=${bounds.width}`
-                  + `\n- bounds.height=${bounds.height}`
+      this.debug( "-- restoring previous window bounds:",
+                  `\n- bounds.top=${bounds.top}`,
+                  `\n- bounds.left=${bounds.left}`,
+                  `\n- bounds.width=${bounds.width}`,
+                  `\n- bounds.height=${bounds.height}`,
                 );
       popupTop    = bounds.top;
       popupLeft   = bounds.left;
@@ -3179,11 +3447,11 @@ class OptionsUI {
       }
     );
 
-    this.debug( "-- Installed Backup Manager Popup Window Created --"
-                + `\n-from ourTabId="${ourTabId}"`
-                + `\n-from ourWindowId="${ourWindowId}"`
-                + `\n-backupManagerWindow.id="${backupManagerWindow.id}"`
-////////////////+ `\n-URL="${backupManagerUrl}"`
+    this.debug( "-- Installed Backup Manager Popup Window Created --",
+                `\n-from ourTabId="${ourTabId}"`,
+                `\n-from ourWindowId="${ourWindowId}"`,
+                `\n-backupManagerWindow.id="${backupManagerWindow.id}"`,
+////////////////`\n-URL="${backupManagerUrl}"`,
               );
 
     // Re-focus on the backupManager window when our window gets focus
@@ -3282,13 +3550,13 @@ class OptionsUI {
     var   lastFocusedWindowId;
     if (lastFocusedWindow) lastFocusedWindowId = lastFocusedWindow.id;
 
-    this.debug( "--"
-                + "\n- windowId="                 + windowId
-                + "\n- this.#prevFocusedWindowId=" + this.#prevFocusedWindowId
-                + "\n- lastFocusedWindowId="      + lastFocusedWindowId
-                + "\n- creatorTabId="             + creatorTabId
-                + "\n- creatorWindowId="          + creatorWindowId
-                + "\n- identityEditorWindowId="   + identityEditorWindowId
+    this.debug( "--",
+                "\n- windowId="                  + windowId,
+                "\n- this.#prevFocusedWindowId=" + this.#prevFocusedWindowId,
+                "\n- lastFocusedWindowId="       + lastFocusedWindowId,
+                "\n- creatorTabId="              + creatorTabId,
+                "\n- creatorWindowId="           + creatorWindowId,
+                "\n- identityEditorWindowId="    + identityEditorWindowId,
               );
 
     if ( windowId
@@ -3301,10 +3569,10 @@ class OptionsUI {
          && identityEditorWindowId != this.#prevFocusedWindowId
        )
     {
-      this.debug( "-- Creator Window got focus, bring Identity Editor Window into focus above it --"
-                  + "\n- creatorTabId="           + creatorTabId
-                  + "\n- creatorWindowId="        + creatorWindowId
-                  + "\n- identityEditorWindowId=" + identityEditorWindowId
+      this.debug( "-- Creator Window got focus, bring Identity Editor Window into focus above it --",
+                  "\n- creatorTabId="           + creatorTabId,
+                  "\n- creatorWindowId="        + creatorWindowId,
+                  "\n- identityEditorWindowId=" + identityEditorWindowId,
                 );
       try {
         messenger.windows.update(identityEditorWindowId, { focused: true });
@@ -3983,19 +4251,23 @@ class OptionsUI {
 
   // filtering is a UI-Only concept
   initAllIdentityFilters() {
-    const filterIdentitiesByAccountSelect    = document.getElementById("idmDisplayOrderFilterByAccountSelect");
-    const filterIdentitiesByImportedSelect   = document.getElementById("idmDisplayOrderFilterByImportedSelect");
-    const filterIdentitiesByCollectedSelect  = document.getElementById("idmDisplayOrderFilterByCollectedSelect");
-    const filterIdentitiesByShowInMenuSelect = document.getElementById("idmDisplayOrderFilterByShowInMenuSelect");
-    const filterIdentitiesByLabelRegexText   = document.getElementById("idmDisplayOrderFilterByLabelRegexText");
-    const filterIdentitiesByEmailRegexText   = document.getElementById("idmDisplayOrderFilterByEmailRegexText");
+    const filterIdentitiesByAccountSelect        = document.getElementById("idmDisplayOrderFilterByAccountSelect");
+    const filterIdentitiesByImportedSelect       = document.getElementById("idmDisplayOrderFilterByImportedSelect");
+    const filterIdentitiesByLockedSelect         = document.getElementById("idmDisplayOrderFilterByLockedSelect");
+    const filterIdentitiesByAccountDefaultSelect = document.getElementById("idmDisplayOrderFilterByAccountDefaultSelect");
+    const filterIdentitiesByCollectedSelect      = document.getElementById("idmDisplayOrderFilterByCollectedSelect");
+    const filterIdentitiesByShowInMenuSelect     = document.getElementById("idmDisplayOrderFilterByShowInMenuSelect");
+    const filterIdentitiesByLabelRegexText       = document.getElementById("idmDisplayOrderFilterByLabelRegexText");
+    const filterIdentitiesByEmailRegexText       = document.getElementById("idmDisplayOrderFilterByEmailRegexText");
 
-    filterIdentitiesByAccountSelect.value    = '';
-    filterIdentitiesByImportedSelect.value   = '';
-    filterIdentitiesByCollectedSelect.value  = '';
-    filterIdentitiesByShowInMenuSelect.value = '';
-    filterIdentitiesByLabelRegexText.value   = '';
-    filterIdentitiesByEmailRegexText.value   = '';
+    filterIdentitiesByAccountSelect.value        = '';
+    filterIdentitiesByImportedSelect.value       = '';
+    filterIdentitiesByLockedSelect.value         = '';
+    filterIdentitiesByAccountDefaultSelect.value = '';
+    filterIdentitiesByCollectedSelect.value      = '';
+    filterIdentitiesByShowInMenuSelect.value     = '';
+    filterIdentitiesByLabelRegexText.value       = '';
+    filterIdentitiesByEmailRegexText.value       = '';
   }
 
 
@@ -4139,6 +4411,156 @@ class OptionsUI {
 
 
   // filtering is a UI-Only concept - filtered out items are de-selected
+  async filterIdentitiesByLockedSelectChanged(e) {
+    const selectedId = e.target.value; // values are "", "LOCKED", "NOT_LOCKED"
+
+    this.clearFilterPanelMessages();
+
+    if (! selectedId) {
+      this.filterIdentitiesByLockedReset(true);
+
+    } else {
+      this.filterIdentitiesByLockedReset(false); // MABXXX IS THIS REALLY NECESSARY???
+
+      var lockedTest = false;
+      switch (selectedId) {
+        case "LOCKED":
+          lockedTest = true;
+          break;
+        case "NOT_LOCKED":
+          lockedTest = false;
+          break;
+        default:
+          this.error(`-- Unknown Selection ID: "${selectedId}"`);
+          return;
+      }
+
+      var deselected = 0;
+      const domIdentityTRs = document.querySelectorAll("tr.identity-item");
+      for (const domIdentityTR of domIdentityTRs) {
+// *        - .lock-in-menu
+        const identityLocked = domIdentityTR.classList.contains("lock-in-menu");
+        if (identityLocked === lockedTest) {
+          domIdentityTR.classList.remove("filter-by-locked");
+        } else {
+          domIdentityTR.classList.add("filter-by-locked");
+          if (domIdentityTR.getAttribute('selected') === 'true') {
+            domIdentityTR.setAttribute('selected', 'false');
+            ++deselected;
+          }
+        }
+      }
+
+      if (deselected) this.enableDisableButtonsOnSelectionChanged();
+
+      this.checkForAllIdentitiesFilteredOut();
+    }
+  }
+
+  // filtering is a UI-Only concept
+  async filterIdentitiesByLockedResetButtonClicked(e) {
+    if (e == null) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.clearFilterPanelMessages();
+
+    this.filterIdentitiesByLockedReset(true);
+
+    this.checkForAllIdentitiesFilteredOut();
+  }
+
+  // filtering is a UI-Only concept
+  filterIdentitiesByLockedReset(resetSelection) {
+    if (resetSelection) {
+      const filterIdentitiesByLockedSelect = document.getElementById("idmDisplayOrderFilterByLockedSelect");
+      filterIdentitiesByLockedSelect.value = '';
+    }
+
+    const domIdentityTRs = document.querySelectorAll("tr.identity-item");
+    for (const domIdentityTR of domIdentityTRs) {
+      domIdentityTR.classList.remove("filter-by-locked");
+    }
+  }
+
+
+
+  // filtering is a UI-Only concept - filtered out items are de-selected
+  async filterIdentitiesByAccountDefaultSelectChanged(e) {
+    const selectedId = e.target.value; // values are "", "DEFAULT_ACCOUNT", "NOT_DEFAULT_ACCOUNT"
+
+    this.clearFilterPanelMessages();
+
+    if (! selectedId) {
+      this.filterIdentitiesByAccountDefaultReset(true);
+
+    } else {
+      this.filterIdentitiesByAccountDefaultReset(false); // MABXXX IS THIS REALLY NECESSARY???
+
+      var accountDefaultTest = false;
+      switch (selectedId) {
+        case "DEFAULT":
+          accountDefaultTest = true;
+          break;
+        case "NOT_DEFAULT":
+          accountDefaultTest = false;
+          break;
+        default:
+          this.error(`-- Unknown Selection ID: "${selectedId}"`);
+          return;
+      }
+
+      var deselected = 0;
+      const domIdentityTRs = document.querySelectorAll("tr.identity-item");
+      for (const domIdentityTR of domIdentityTRs) {
+// *        - .lock-in-menu
+        const identityAccountDefault = domIdentityTR.classList.contains("account-default");
+        if (identityAccountDefault === accountDefaultTest) {
+          domIdentityTR.classList.remove("filter-by-default");
+        } else {
+          domIdentityTR.classList.add("filter-by-default");
+          if (domIdentityTR.getAttribute('selected') === 'true') {
+            domIdentityTR.setAttribute('selected', 'false');
+            ++deselected;
+          }
+        }
+      }
+
+      if (deselected) this.enableDisableButtonsOnSelectionChanged();
+
+      this.checkForAllIdentitiesFilteredOut();
+    }
+  }
+
+  // filtering is a UI-Only concept
+  async filterIdentitiesByAccountDefaultResetButtonClicked(e) {
+    if (e == null) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.clearFilterPanelMessages();
+
+    this.filterIdentitiesByAccountDefaultReset(true);
+
+    this.checkForAllIdentitiesFilteredOut();
+  }
+
+  // filtering is a UI-Only concept
+  filterIdentitiesByAccountDefaultReset(resetSelection) {
+    if (resetSelection) {
+      const filterIdentitiesByAccountDefaultSelect = document.getElementById("idmDisplayOrderFilterByAccountDefaultSelect");
+      filterIdentitiesByAccountDefaultSelect.value = '';
+    }
+
+    const domIdentityTRs = document.querySelectorAll("tr.identity-item");
+    for (const domIdentityTR of domIdentityTRs) {
+      domIdentityTR.classList.remove("filter-by-default");
+    }
+  }
+
+
+
+  // filtering is a UI-Only concept - filtered out items are de-selected
   async filterIdentitiesByCollectedSelectChanged(e) {
     const selectedId = e.target.value; // values are "", "COLLECTED", "NOT_COLLECTED"
 
@@ -4167,8 +4589,8 @@ class OptionsUI {
       const domIdentityTRs = document.querySelectorAll("tr.identity-item");
       for (const domIdentityTR of domIdentityTRs) {
 // *        - .collected-identity
-        const identityImported = domIdentityTR.classList.contains("collected-identity");
-        if (identityImported === collectedTest) {
+        const identityCollected = domIdentityTR.classList.contains("collected-identity");
+        if (identityCollected === collectedTest) {
           domIdentityTR.classList.remove("filter-by-collected");
         } else {
           domIdentityTR.classList.add("filter-by-collected");
@@ -4479,6 +4901,8 @@ class OptionsUI {
       domIdentityTR.classList.remove("filter-by-label");
       domIdentityTR.classList.remove("filter-by-email");
       domIdentityTR.classList.remove("filter-by-imported");
+      domIdentityTR.classList.remove("filter-by-locked");
+      domIdentityTR.classList.remove("filter-by-default");
       domIdentityTR.classList.remove("filter-by-collected");
       domIdentityTR.classList.remove("filter-by-showInMenu");
     }
@@ -4606,6 +5030,8 @@ class OptionsUI {
              || domIdentityTR.classList.contains("filter-by-label")
              || domIdentityTR.classList.contains("filter-by-email")
              || domIdentityTR.classList.contains("filter-by-imported")
+             || domIdentityTR.classList.contains("filter-by-locked")
+             || domIdentityTR.classList.contains("filter-by-default")
              || domIdentityTR.classList.contains("filter-by-collected")
              || domIdentityTR.classList.contains("filter-by-showInMenu");
     }
@@ -4639,11 +5065,11 @@ class OptionsUI {
     if (request && request.hasOwnProperty("IdentityCollected")) {
       const collectedIdentityInfo = request.IdentityCollected;
       this.logAlways( "NEW IDENTITY COLLECTED:",
-                        `\n- id="${collectedIdentityInfo.id}"`
-                      + `\n- accountId="${collectedIdentityInfo.accountId}"`
-                      + `\n- name="${collectedIdentityInfo.name}"`
-                      + `\n- email="${collectedIdentityInfo.email}"`
-                      + `\n- label="${collectedIdentityInfo.label}"`
+                      `\n- id="${collectedIdentityInfo.id}"`,
+                      `\n- accountId="${collectedIdentityInfo.accountId}"`,
+                      `\n- name="${collectedIdentityInfo.name}"`,
+                      `\n- email="${collectedIdentityInfo.email}"`,
+                      `\n- label="${collectedIdentityInfo.label}"`,
                     );
 
       const idmIdentity = await this.#idmIdentitiesApi.getIdmIdentity(collectedIdentityInfo.id);
@@ -5004,11 +5430,11 @@ class OptionsUI {
       if (! mainWindow) {
         this.debug("-- DID NOT GET THE CURRENT (MAIN, mail:3pane) WINDOW!!! ---");
       } else {
-        this.debug( "-- Got the Current (Main, mail:3pane) Window:"
-                    + `\n- mainWindow.top=${mainWindow.top}`
-                    + `\n- mainWindow.left=${mainWindow.left}`
-                    + `\n- mainWindow.height=${mainWindow.height}`
-                    + `\n- mainWindow.width=${mainWindow.width}`
+        this.debug( "-- Got the Current (Main, mail:3pane) Window:",
+                    `\n- mainWindow.top=${mainWindow.top}`,
+                    `\n- mainWindow.left=${mainWindow.left}`,
+                    `\n- mainWindow.height=${mainWindow.height}`,
+                    `\n- mainWindow.width=${mainWindow.width}`,
                   );
         popupTop  = mainWindow.top  + 100;
         popupLeft = mainWindow.left + 100;
@@ -5023,11 +5449,11 @@ class OptionsUI {
       } else if (typeof bounds !== 'object') {
         this.error(`-- PREVIOUS WINDOW BOUNDS "optionsWindowBounds" IS NOT AN OBJECT: typeof='${typeof bounds}' #####`);
       } else {
-        this.debug( "-- restoring previous window bounds:"
-                    + `\n- bounds.top=${bounds.top}`
-                    + `\n- bounds.left=${bounds.left}`
-                    + `\n- bounds.width=${bounds.width}`
-                    + `\n- bounds.height=${bounds.height}`
+        this.debug( "-- restoring previous window bounds:",
+                    `\n- bounds.top=${bounds.top}`,
+                    `\n- bounds.left=${bounds.left}`,
+                    `\n- bounds.width=${bounds.width}`,
+                    `\n- bounds.height=${bounds.height}`,
                   );
         popupTop    = bounds.top;
         popupLeft   = bounds.left;
@@ -5066,10 +5492,10 @@ class OptionsUI {
   }
 
   async popupWindowRemoved(windowId) {
-    this.debug( "--- WINDOW REMOVED ---"
-                + `\n- windowId="${windowId}"`
-                + `\n- this.#optionsPopupWindow.id="${this.#optionsPopupWindow ? this.#optionsPopupWindow.id : "(NONE)"}"`
-                + `\n- this.windowMode=${this.windowMode}`
+    this.debug( "--- WINDOW REMOVED ---",
+                `\n- windowId="${windowId}"`,
+                `\n- this.#optionsPopupWindow.id="${this.#optionsPopupWindow ? this.#optionsPopupWindow.id : "(NONE)"}"`,
+                `\n- this.windowMode=${this.windowMode}`,
               );
 
 

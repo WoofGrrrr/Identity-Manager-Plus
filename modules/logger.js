@@ -9,12 +9,12 @@ export class Logger {
 
 
   constructor(useManifestId, extId) {
-    this.EXTENSION_ID = extId;
+    var extensionId = extId;
 
-    if (typeof useManifestId == 'undefined') useManifestId = true;
-    if (useManifestId) this.EXTENSION_ID = getExtensionId(extId);
+    if ((typeof useManifestId) === 'undefined') useManifestId = true;
+    if (useManifestId) extensionId = getExtensionId(extId);
     
-    this.EXTENSION_ID = this.EXTENSION_ID ? this.EXTENSION_ID : ''; // HUH???
+    this.#EXTENSION_ID = extensionId ? extensionId : ''; // HUH???
   }
 
 
