@@ -8,7 +8,7 @@ import { FileSystemBrokerMessagingTest } from '../modules/Tests/test_filesystemb
 import { FileSystemBrokerApiTest       } from '../modules/Tests/test_filesystembroker_api.js';
 import { FileSystemExpApiTest          } from '../modules/Tests/test_filesystemexp_api.js';
 //import * as psl                        from '../modules/psl/psl.bundle.js';                 // Domain Parser
-import { getExtensionName, getI18nMsg, parseDocumentLocation, formatMsToDateTime12HR } from '../modules/utilities.js';
+import { getExtensionName, acctNumFromId, getI18nMsg, getI18nMsgSubst, parseDocumentLocation, formatMsToDateTime12HR } from '../modules/utilities.js';
 
 
 class OptionsUI {
@@ -17,8 +17,8 @@ class OptionsUI {
   #LOG                       = false;
   #DEBUG                     = false;
   #DEBUG_OPTION_CHANGED      = false;
-  #DEBUG_ACTIION_CLICKED     = true;
-  #DEBUG_IDENTITY_CONTROL    = true;
+  #DEBUG_ACTIION_CLICKED     = false;
+  #DEBUG_IDENTITY_CONTROL    = false;
   #WARN                      = false;
 
   #PARSE_CSV_TEST_VERBOSE    = false;
@@ -36,10 +36,22 @@ class OptionsUI {
   #accounts                  = null;
   #accountsById              = [];
 
-  // a (small) cache of some options
-  #displayIdentityPosition   = false;
-  #displayIdentityIndex      = false;
-  #displayIdentityId         = false;
+  #totalIdentityCount        = 0;
+  #filteredIdentityCount     = -1;
+
+  #filterByAccountId         = '';
+  #filterByImported          = '';
+  #filterByLocked            = '';
+  #filterByAccountDefault    = '';
+  #filterByCollected         = '';
+  #filterByShowInMenu        = '';
+  #filterBylabelRegexText    = '';
+  #filterByEmailRegexText    = '';
+
+  // a (small) cache of some options - eventually cache them all and listen for changes from IdmOptions
+  #option_displayIdentityPosition = false;
+  #option_displayIdentityIndex    = false;
+  #option_displayIdentityId       = false;
 
   #extensionOptionsTitleClickTimer     = null;  // for detecting single- vs double-click on the Options Title Text (for show/hide developer options)
   #EXTENSION_OPTIONS_TITLE_CLICK_DELAY = 500;   // 500ms, 1/2 second (the JavaScript runtime does not guarantee this time - it's single-threaded)
@@ -48,43 +60,54 @@ class OptionsUI {
   #IDENTITY_ITEM_CLICK_DELAY           = 500;   // 500ms, 1/2 second (the JavaScript runtime does not guarantee this time - it's single-threaded)
 
   // gather i18n messages for tooltips in the Display Order List
-  // - these calls to getI18nMsg will return "" - NOT the message ID - if no message is configured
+  // - these calls to getI18nMsg with "" as the 2nd parameter will return "" - NOT the message ID - if no message is configured
 
-  #listHeader_text_controlsLeft           = getI18nMsg( "options_idmDisplayOrder_listHeader_text_controlsLeft",     ""               );
-  #listHeader_tooltip_controlsLeft        = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_controlsLeft",  ""               );
-  #listHeader_text_identityColor          = getI18nMsg( "options_idmDisplayOrder_listHeader_text_identityColor",    ""               );
-  #listHeader_tooltip_identityColor       = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_identityColor", "Color"          );
-  #listHeader_text_account                = getI18nMsg( "options_idmDisplayOrder_listHeader_text_account",          "Account"        );
-  #listHeader_tooltip_account             = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_account",       "Account"        );
-  #listHeader_text_nameAndLabel           = getI18nMsg( "options_idmDisplayOrder_listHeader_text_nameAndLabel",     "Name+Label"     );
-  #listHeader_tooltip_nameAndLabel        = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_nameAndLabel",  "Name + (Label)" );
-  #listHeader_text_email                  = getI18nMsg( "options_idmDisplayOrder_listHeader_text_email",            "Email"          );
-  #listHeader_tooltip_email               = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_email",         "Email"          );
-  #listHeader_text_pos                    = getI18nMsg( "options_idmDisplayOrder_listHeader_text_pos",              "pos"            );
-  #listHeader_tooltip_pos                 = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_pos",           "pos"            );
-  #listHeader_text_id                     = getI18nMsg( "options_idmDisplayOrder_listHeader_text_id",               "ID"             );
-  #listHeader_tooltip_id                  = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_id",            "ID"             );
-  #listHeader_text_index                  = getI18nMsg( "options_idmDisplayOrder_listHeader_text_index",            "Index"          );
-  #listHeader_tooltip_index               = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_index",         "Index"          );
-  #listHeader_text_controlsRight          = getI18nMsg( "options_idmDisplayOrder_listHeader_text_controlsRight",    ""               );
-  #listHeader_tooltip_controlsRight       = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_controlsRight", ""               );
 
-  #tooltip_check_showInMenu               = getI18nMsg( "options_check_showInMenu.tooltip",                         ""               );
-  #tooltip_check_lockInMenu               = getI18nMsg( "options_check_lockInMenu.tooltip",                         ""               );
-  #tooltip_button_moveUp                  = getI18nMsg( "options_button_moveIdentityUp.tooltip",                    ""               );
-  #tooltip_button_moveDown                = getI18nMsg( "options_button_moveIdentityDown.tooltip",                  ""               );
-  #tooltip_button_moveToTop               = getI18nMsg( "options_button_moveIdentityToTop.tooltip",                 ""               );
-  #tooltip_button_moveToBottom            = getI18nMsg( "options_button_moveIdentityToBottom.tooltip",              ""               );
-  #tooltip_button_edit                    = getI18nMsg( "options_button_editIdentity.tooltip",                      ""               );
-  #tooltip_button_delete                  = getI18nMsg( "options_button_deleteIdentity.tooltip",                    ""               );
+  #listHeader_text_controlsLeft                      = getI18nMsg( "options_idmDisplayOrder_listHeader_text_controlsLeft",                      ""                              );
+  #listHeader_tooltip_controlsLeft                   = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_controlsLeft",                   ""                              );
+  #listHeader_text_identityColor                     = getI18nMsg( "options_idmDisplayOrder_listHeader_text_identityColor",                     ""                              );
+  #listHeader_tooltip_identityColor                  = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_identityColor",                  "Identity Color"                );
+  #listHeader_text_account                           = getI18nMsg( "options_idmDisplayOrder_listHeader_text_account",                           "Account"                       );
+  #listHeader_tooltip_account                        = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_account",                        "Email Account"                 );
+  #listHeader_tooltip_sortBy_accountId_ascending     = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_sortBy_accountId_ascending",     "Sort Ascending"                );
+  #listHeader_tooltip_sortBy_accountId_descending    = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_sortBy_accountId_descending",    "Sort Descending"               );
+  #listHeader_text_nameAndLabel                      = getI18nMsg( "options_idmDisplayOrder_listHeader_text_nameAndLabel",                      "Name+Label"                    );
+  #listHeader_tooltip_nameAndLabel                   = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_nameAndLabel",                   "Name + (Label)"                );
+  #listHeader_tooltip_sortBy_nameAndLabel_ascending  = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_sortBy_nameAndLabel_ascending",  "Sort Ascending"                );
+  #listHeader_tooltip_sortBy_nameAndLabel_descending = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_sortBy_nameAndLabel_descending", "Sort Descending"               );
+  #listHeader_text_email                             = getI18nMsg( "options_idmDisplayOrder_listHeader_text_email",                             "Email"                         );
+  #listHeader_tooltip_email                          = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_email",                          "Email Address"                 );
+  #listHeader_tooltip_sortBy_email_ascending         = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_sortBy_email_ascending",         "Sort Ascending"                );
+  #listHeader_tooltip_sortBy_email_descending        = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_sortBy_email_descending",        "Sort Descending"               );
+  #listHeader_text_pos                               = getI18nMsg( "options_idmDisplayOrder_listHeader_text_pos",                               "pos"                           );
+  #listHeader_tooltip_pos                            = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_pos",                            "Position in Identity List"     );
+  #listHeader_text_id                                = getI18nMsg( "options_idmDisplayOrder_listHeader_text_id",                                "ID"                            );
+  #listHeader_tooltip_id                             = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_id",                             "Identity ID"                   );
+  #listHeader_tooltip_sortBy_id_ascending            = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_sortBy_id_ascending",            "Sort Ascending"                );
+  #listHeader_tooltip_sortBy_id_descending           = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_sortBy_id_descending",           "Sort Descending"               );
+  #listHeader_text_index                             = getI18nMsg( "options_idmDisplayOrder_listHeader_text_index",                             "Index"                         );
+  #listHeader_tooltip_index                          = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_index",                          "Index in Identity List"        );
+  #listHeader_text_controlsRight                     = getI18nMsg( "options_idmDisplayOrder_listHeader_text_controlsRight",                     ""                              );
+  #listHeader_tooltip_controlsRight                  = getI18nMsg( "options_idmDisplayOrder_listHeader_tooltip_controlsRight",                  ""                              );
 
-  #tooltip_listItemMarker_account_default = getI18nMsg( "options_listItemMarker_accountDefault.tooltip",            ""               );
-  #tooltip_listItemMarker_collected       = getI18nMsg( "options_listItemMarker_collected.tooltip",                 ""               );
-  #tooltip_listItemMarker_imported        = getI18nMsg( "options_listItemMarker_imported.tooltip",                  ""               );
+  #tooltip_check_showInMenu                          = getI18nMsg( "options_check_showInMenu.tooltip",                                          ""                              );
+  #tooltip_check_lockInMenu                          = getI18nMsg( "options_check_lockInMenu.tooltip",                                          ""                              );
+  #tooltip_button_moveUp                             = getI18nMsg( "options_button_moveIdentityUp.tooltip",                                     "Move Identity Up"              );
+  #tooltip_button_moveDown                           = getI18nMsg( "options_button_moveIdentityDown.tooltip",                                   "Move Identity Down"            );
+  #tooltip_button_moveToTop                          = getI18nMsg( "options_button_moveIdentityToTop.tooltip",                                  "Move Identity to Top"          );
+  #tooltip_button_moveToBottom                       = getI18nMsg( "options_button_moveIdentityToBottom.tooltip",                               "Move Identity to Bottom"       );
+  #tooltip_button_edit                               = getI18nMsg( "options_button_editIdentity.tooltip",                                       "Edit Identity"                 );
+  #tooltip_button_create                             = getI18nMsg( "options_idmCreateIdentityButton.tooltip",                                   "Create New Identity"           );
+  #tooltip_button_delete                             = getI18nMsg( "options_button_deleteIdentity.tooltip",                                     "Delete Identity"               );
 
-  #error_invalidLabeLFilterRegex          = getI18nMsg( "options_idmDisplayOrderFilterError_labelRegexInvalid",     "Invalid Regular Expression for Name+Label" );
-  #error_invalidEmaiLFilterRegex          = getI18nMsg( "options_idmDisplayOrderFilterError_emailRegexInvalid",     "Invalid Regular Expression for Email"      );
+  #tooltip_listItemMarker_accountDefault             = getI18nMsg( "options_listItemMarker_accountDefault.tooltip",                             ""                              );
+  #tooltip_listItemMarker_collected                  = getI18nMsg( "options_listItemMarker_collected.tooltip",                                  ""                              );
+  #tooltip_listItemMarker_imported                   = getI18nMsg( "options_listItemMarker_imported.tooltip",                                   ""                              );
+  #tooltip_listItemMarker_notShowInMenu              = getI18nMsg( "options_listItemMarker_notShowInMenu.tooltip",                              ""                              );
+  #tooltip_listItemMarker_lockInMenu                 = getI18nMsg( "options_listItemMarker_lockInMenu.tooltip",                                 ""                              );
 
+  #error_invalidLabeLFilterRegex                     = getI18nMsg( "options_idmDisplayOrderFilterError_labelRegexInvalid",                      "Invalid Regular Expression"    );
+  #error_invalidEmaiLFilterRegex                     = getI18nMsg( "options_idmDisplayOrderFilterError_emailRegexInvalid",                      "Invalid Regular Expression"    );
 
 
   constructor() {
@@ -103,15 +126,15 @@ class OptionsUI {
     if (this.#DEBUG) this.#logger.debug(this.#CLASS_NAME, ...info);
   }
 
-  debugOptionChanged(...info) {
+  __debugOptionChanged(...info) {
     if (this.#DEBUG_OPTION_CHANGED) this.#logger.debug(this.#CLASS_NAME, ...info);
   }
 
-  debugActionClicked(...info) {
+  __debugActionClicked(...info) {
     if (this.#DEBUG_ACTIION_CLICKED) this.#logger.debug(this.#CLASS_NAME, ...info);
   }
 
-  debugIdentityControl(...info) {
+  __debugIdentityControl(...info) {
     if (this.#DEBUG_IDENTITY_CONTROL) this.#logger.debug(this.#CLASS_NAME, ...info);
   }
 
@@ -164,10 +187,7 @@ class OptionsUI {
       messenger.windows.onRemoved.addListener( async (windowId) => { this.popupWindowRemoved(windowId); } );
     }
 
-    this.#accounts = await messenger.accounts.list(false); // includeSubFolders=false: do not get sub-folders
-    for (const account of this.#accounts) {
-      if (account.type !== 'none') this.#accountsById[account.id] = account;
-    }
+    await this.#getAccounts();
 
     await this.localizePage();
     await this.applyTooltips(document);
@@ -175,6 +195,21 @@ class OptionsUI {
     await this.setupEventListeners();
 
     this.debug("-- end");
+  }
+
+
+
+  async #getAccounts() {
+    this.#accounts = await messenger.accounts.list(false); // includeSubFolders=false: do not get sub-folders
+    for (const account of this.#accounts) {
+      if (account.type !== 'none') this.#accountsById[account.id] = account;
+    }
+  }
+
+  #getAccountName(accountId) {
+    const mailAccount = this.#accountsById[accountId];
+    if (mailAccount) return mailAccount.name;
+    return accountId;
   }
 
 
@@ -373,22 +408,15 @@ class OptionsUI {
       this.hideDisplayOrderActions();
     }
 
-    const autoSortButton = document.getElementById("idmAutoSortButton");
-    if (! autoSortButton) {
-      this.error("-- Failed to get Auto Sort Button 'idmAutoSortButton'");
-    } else {
-      const isAutoSortByNone = await this.#idmOptionsApi.isAutoSortByNone();
-      this.debug(`-- isAutoSortByNone=${isAutoSortByNone}`);
-      autoSortButton.disabled = isAutoSortByNone;
-    }
-
     this.populateSelectUIs();
 
     await this.updateUIForFileSystemBrokerAccess();
     await this.updateOptionsUI();
+////await this.updateAutoSortUI();          // This is done in updateOptionsUI()
     await this.buildIdentitiesListUI();
+////await this.clearFilterPanelMessages();  // This is done in buildIdentitiesListUI()
+////await this.clearDisplayOrderMessages(); // This is done in buildIdentitiesListUI()
     this.enableDisableButtonsOnSelectionChanged();
-    this.clearFilterPanelMessages();
   }
 
 
@@ -420,6 +448,13 @@ class OptionsUI {
           } else if (optionElement.tagName === 'SELECT') {
             this.debug("-- SELECT option: ", optionName, "value: ", optionValue);
             optionElement.value = optionValue;
+            
+            switch (optionName) {
+              case 'idmAutoSortBySelect':
+              case 'idmAutoSortDirectionSelect':
+                await this.updateAutoSortUI();
+                break;
+            }
           }
         }
       }
@@ -473,6 +508,11 @@ class OptionsUI {
       option4.setAttribute('value', IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_HOST);
       option4.appendChild( document.createTextNode( getI18nMsg("options_idmAutoSortBySelectOption_emailHost") ) );
       select.appendChild(option4);
+
+      const option5 = document.createElement('option');
+      option5.setAttribute('value', IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_ACCOUNT);
+      option5.appendChild( document.createTextNode( getI18nMsg("options_idmAutoSortBySelectOption_accountId") ) );
+      select.appendChild(option5);
     }
   }
 
@@ -515,9 +555,11 @@ class OptionsUI {
 
     for (const account of this.#accounts) {
       if (account.type !== 'none') {
-        const option = document.createElement('option');
+        const option     = document.createElement('option');
+        const acctNum    = acctNumFromId(account.id);
+        const optionText = isNaN(acctNum) ? account.name : acctNum + ": " + account.name;
         option.setAttribute('value', account.id);
-        option.appendChild( document.createTextNode(account.name) );
+        option.appendChild( document.createTextNode(optionText) );
         filterIdentitiesByAccountSelect.appendChild(option);
       }
     }
@@ -700,16 +742,17 @@ class OptionsUI {
 
 
 
-  // clears filters!!!
   async buildIdentitiesListUI(e) { // the event is not used - is it even useful?
     this.debug("-- start");
 
-    this.initAllIdentityFilters(); // clears filters!!!
+    await this.initAllIdentityFilters(); // clears filters!!!
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
 
     // a (small) cache of options
-    this.#displayIdentityPosition = await this.#idmOptionsApi.isEnabledOption( "idmDisplayIdentityPositionInDisplayOrder", false );
-    this.#displayIdentityIndex    = await this.#idmOptionsApi.isEnabledOption( "idmDisplayIdentityIndexInDisplayOrder",    false );
-    this.#displayIdentityId       = await this.#idmOptionsApi.isEnabledOption( "idmDisplayIdentityIdInDisplayOrder",       false );
+    this.#option_displayIdentityPosition = await this.#idmOptionsApi.isEnabledOption( "idmDisplayIdentityPositionInDisplayOrder", false );
+    this.#option_displayIdentityIndex    = await this.#idmOptionsApi.isEnabledOption( "idmDisplayIdentityIndexInDisplayOrder",    false );
+    this.#option_displayIdentityId       = await this.#idmOptionsApi.isEnabledOption( "idmDisplayIdentityIdInDisplayOrder",       false );
 
     const domIdentityDisplayOrderList = document.getElementById("idmIdentityDisplayOrderList");
 
@@ -717,8 +760,10 @@ class OptionsUI {
     domIdentityDisplayOrderList.innerHTML = '';
     const i18nMessage = getI18nMsg("options_identitiesLoadingMessage", "...");
     const loadingTR = document.createElement('tr');
-    loadingTR.classList.add("identities-loading");
-    loadingTR.appendChild( document.createTextNode(i18nMessage) );
+      const loadingTD = document.createElement('td');
+        loadingTD.classList.add("loading-data-text");
+        loadingTD.appendChild( document.createTextNode(i18nMessage) );
+      loadingTR.appendChild(loadingTD);
     domIdentityDisplayOrderList.appendChild(loadingTR);
 
     // disable buttons that require something to be selected
@@ -728,10 +773,13 @@ class OptionsUI {
     const borderColors  = await this.#borderColorsApi.getAllColors(); // need to keep getting this as BorderColors-D maybe have changed its colors
 
 
+    this.debug("-- building Identity Display Order list, length=" + idmIdentities.length);
+    this.#totalIdentityCount    = idmIdentities.length;
+    this.#filteredIdentityCount = -1;
+    await this.updateMessageCountsUI();
+
     // Remove the "Loading Identities List" DIV and build the actual List UI
     domIdentityDisplayOrderList.innerHTML = '';
-
-    this.debug("-- building Identity Display Order list, length=" + idmIdentities.length);
 
     const headerTR = this.buildIdentityListHeaderUI(borderColors);
     domIdentityDisplayOrderList.appendChild(headerTR);
@@ -758,27 +806,27 @@ class OptionsUI {
     // Set Up Sortable.js
     //
     // Unused Callbacks:
-    // - onunChoose:      (e) => this.XXX(e), */           // Element is unchosen 
-    // - onStart:         (e) => this.XXX(e), */           // Element dragging started 
-    // - onAdd:           (e) => this.XXX(e), */           // Element is dropped into the list from another list 
-    // - onSort:          (e) => this.XXX(e), */           // Called by any change to the list (add / update / remove) 
-    // - onRemove:        (e) => this.XXX(e), */           // Element is removed from the list into another list 
-    // - onClone:         (e) => this.XXX(e), */           // Called when creating a clone of element
-    // - onChange:        (e) => this.XXX(e), */           // Called when dragging element changes position 
+    // - onunChoose:      (e) => this.XXX(e), */              // Element is unchosen 
+    // - onStart:         (e) => this.XXX(e), */              // Element dragging started 
+    // - onAdd:           (e) => this.XXX(e), */              // Element is dropped into the list from another list 
+    // - onSort:          (e) => this.XXX(e), */              // Called by any change to the list (add / update / remove) 
+    // - onRemove:        (e) => this.XXX(e), */              // Element is removed from the list into another list 
+    // - onClone:         (e) => this.XXX(e), */              // Called when creating a clone of element
+    // - onChange:        (e) => this.XXX(e), */              // Called when dragging element changes position 
 
     new Sortable(domIdentityDisplayOrderList, {   // this is where we setup Sortable on the Display Order List
-      animation:       150,                                // ms, animation speed moving items when sorting, `0` — without animation
-      filter:          ".lock-in-menu",                    // Selectors that do not lead to dragging (String or Function)
-      preventOnFilter: true,                               // Call `event.preventDefault()` when triggered `filter`
-      draggable:       ".identity-item-draggable",         // Specifies which items inside the element should be draggable // apparently works only one level deep????
-//   	ghostClass:      "sortable-ghost",                   // Class name for the drop placeholder
-      chosenClass:     "sortable-chosen",                  // Class name for the chosen item
-      dragClass:       "sortable-drag",                    // Class name for the dragging item
-      onChoose:        (e) => this.identityChosen(e),      // Element is chosen 
-      onEnd:           (e) => this.identityDragEnded(e),   // Element dragging ended 
-      onFilter:        (e) => this.filterIdentity(e),      // Attempt to drag a filtered element
-      onMove:          (e) => this.identityMoved(e),       // Event when you move an item in the list or between lists 
-      onUpdate:        (e) => this.identitiesReordered(e)  // Changed sorting within list 
+      animation:       150,                                   // ms, animation speed moving items when sorting, `0` — without animation
+      filter:          ".lock-in-menu",                       // Selectors that do not lead to dragging (String or Function) (From, Item, & To are <TABLE>)
+      preventOnFilter: true,                                  // Call `event.preventDefault()` when triggered `filter`
+      draggable:       ".identity-item-draggable",            // Specifies which items inside the element should be draggable // apparently works only one level deep????
+//   	ghostClass:      "sortable-ghost",                      // Class name for the drop placeholder
+      chosenClass:     "sortable-chosen",                     // Class name for the chosen item
+      dragClass:       "sortable-drag",                       // Class name for the dragging item
+      onChoose:        (e)     => this.identityChosen(e),     // Element is chosen  (From, Item, & To are <TABLE>)
+      onEnd:           (e)     => this.identityDragEnded(e),  // Element dragging ended (From, Item, & To are <TABLE>)
+      onFilter:        (e)     => this.filterIdentity(e),     // Attempt to drag a filtered element
+      onMove:          (e, oe) => this.identityMoved(e, oe),  // Event when you move an item in the list or between lists (From, Item, To are <TABLE>, Dragged, Related are <TR>)
+      onUpdate:        (e)     => this.identitiesReordered(e) // Changed sorting within list 
     });
 
     this.debug("-- end");
@@ -788,78 +836,242 @@ class OptionsUI {
 
   buildIdentityListHeaderUI(borderColors) {
     const headerTR = document.createElement('tr');
-    headerTR.classList.add("identity-list-header");                         // identity-list-header
+    headerTR.classList.add("identity-list-header");                    // identity-list-header
+    headerTR.addEventListener('click', (e) => this.identityHeaderClicked(e), true);    // <====== NOTE: event "capturing" phase
 
     const headerControlsLeftTH = document.createElement('th');
-      headerControlsLeftTH.classList.add("header-controls-left");           // identity-list-header > header-controls-left
+      headerControlsLeftTH.classList.add("header-controls-left");      // identity-list-header > header-controls-left
       //#listHeader_text_controlsLeft
       headerControlsLeftTH.setAttribute("title", this.#listHeader_tooltip_controlsLeft);
     headerTR.appendChild(headerControlsLeftTH);
 
     // if we have access to borderColors, add the color dot
-    if (borderColors != null) {
+    if (borderColors !== null) {
       const headerBorderColorsTH = document.createElement('th');
-        headerBorderColorsTH.classList.add("header-text");                  // identity-list-header > header-text
-        headerBorderColorsTH.classList.add("header-border-color");          // identity-list-header > header-border-color
+        headerBorderColorsTH.classList.add("header-item");             // identity-list-header > header-item
+        headerBorderColorsTH.classList.add("header-border-color");     // identity-list-header > header-border-color
+        headerBorderColorsTH.classList.add("dummy-icon");              // identity-list-header > dummy-icon
         //#listHeader_text_identityColor
         headerBorderColorsTH.setAttribute("title", this.#listHeader_tooltip_identityColor);
         const dotSPAN = document.createElement('span');
-          dotSPAN.classList.add("header-border-color-dot");                 // identity-list-header > header-border-color > header-border-color-dot
+          dotSPAN.classList.add("header-border-color-dot");            // identity-list-header > header-border-color > header-border-color-dot
         headerBorderColorsTH.appendChild(dotSPAN);
       headerTR.appendChild(headerBorderColorsTH);
     }
 
     const headerAccountTH = document.createElement('th');
-      headerAccountTH.classList.add("header-text");                           // identity-list-header > header-text
-      headerAccountTH.classList.add("header-label");                          // identity-list-header > header-account
+      headerAccountTH.classList.add("header-item");                    // identity-list-header > header-item
+      headerAccountTH.classList.add("header-account");                 // identity-list-header > header-account
+      headerAccountTH.setAttribute("id", "identityListHeaderAccount");
+      headerAccountTH.setAttribute("sortBy", IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_ACCOUNT);
       headerAccountTH.setAttribute("title", this.#listHeader_tooltip_account);
-      headerAccountTH.appendChild( document.createTextNode(this.#listHeader_text_account) );
+      const headerAccountDIV = document.createElement('div');
+        headerAccountDIV.classList.add("header-data");                 // identity-list-header > header-item > header-data
+        const headerAccountSortDIV = document.createElement('div');
+          headerAccountSortDIV.classList.add("header-sort");           // identity-list-header > header-item > header-data > header-sort
+          const accountSortUpButton = document.createElement('button');
+            accountSortUpButton.classList.add("header-button");        // identity-list-header > header-item > header-data > header-sort > header-button
+            accountSortUpButton.classList.add("sort-button");          // identity-list-header > header-item > header-item > header-sort > sort-button
+            accountSortUpButton.classList.add("sort-ascending");       // identity-list-header > header-item > header-item > header-sort > sort-ascending
+            accountSortUpButton.classList.add("icon-button");          // identity-list-header > header-item > header-data > header-sort > icon-button
+            accountSortUpButton.classList.add("icon-only");            // identity-list-header > header-item > header-data > header-sort > icon-only
+            accountSortUpButton.classList.add("no-css");               // keep my userContent-css from messing with this
+            accountSortUpButton.setAttribute("title", this.#listHeader_tooltip_sortBy_accountId_ascending);
+            accountSortUpButton.addEventListener('click', (e) => this.identityListHeaderControlClicked(e));
+          headerAccountSortDIV.appendChild(accountSortUpButton);
+          const accountSortDownButton = document.createElement('button');
+            accountSortDownButton.classList.add("header-button");      // identity-list-header > header-item > header-data > header-sort > header-button
+            accountSortDownButton.classList.add("sort-button");        // identity-list-header > header-item > header-item > header-sort > sort-button
+            accountSortDownButton.classList.add("sort-descending");    // identity-list-header > header-item > header-item > header-sort > sort-descending
+            accountSortDownButton.classList.add("icon-button");        // identity-list-header > header-item > header-data > header-sort > icon-button
+            accountSortDownButton.classList.add("icon-only");          // identity-list-header > header-item > header-data > header-sort > icon-only
+            accountSortDownButton.classList.add("no-css");             // keep my userContent-css from messing with this
+            accountSortDownButton.setAttribute("title", this.#listHeader_tooltip_sortBy_accountId_descending);
+            accountSortDownButton.addEventListener('click', (e) => this.identityListHeaderControlClicked(e));
+          headerAccountSortDIV.appendChild(accountSortDownButton);
+        headerAccountDIV.appendChild(headerAccountSortDIV);
+        const headerAccountTextSPAN = document.createElement('span');
+          headerAccountTextSPAN.classList.add("header-text");          // identity-list-header > header-data > header-text
+          headerAccountTextSPAN.appendChild( document.createTextNode(this.#listHeader_text_account) );
+        headerAccountDIV.appendChild(headerAccountTextSPAN);
+        const headerAccountSpaceSPAN = document.createElement('span');
+          headerAccountSpaceSPAN.classList.add("header-space");        // identity-list-header > header-data > header-space
+        headerAccountDIV.appendChild(headerAccountSpaceSPAN);
+      headerAccountTH.appendChild(headerAccountDIV);
     headerTR.appendChild(headerAccountTH);
 
     const headerLabelTH = document.createElement('th');
-      headerLabelTH.classList.add("header-text");                           // identity-list-header > header-text
-      headerLabelTH.classList.add("header-label");                          // identity-list-header > header-label
+      headerLabelTH.classList.add("header-item");                    // identity-list-header > header-item
+      headerLabelTH.classList.add("header-label");                   // identity-list-header > header-label
+      headerLabelTH.setAttribute("id", "identityListHeaderLabel");
+      headerLabelTH.setAttribute("sortBy", IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_NAME);
       headerLabelTH.setAttribute("title", this.#listHeader_tooltip_nameAndLabel);
-      headerLabelTH.appendChild( document.createTextNode(this.#listHeader_text_nameAndLabel) );
+      const headerLabelDIV = document.createElement('div');
+        headerLabelDIV.classList.add("header-data");                 // identity-list-header > header-data
+        const headerLabelSortDIV = document.createElement('div');
+          headerLabelSortDIV.classList.add("header-sort");           // identity-list-header > header-item > header-data > header-sort
+          const labelSortUpButton = document.createElement('button');
+            labelSortUpButton.classList.add("header-button");        // identity-list-header > header-item > header-data > header-sort > header-button
+            labelSortUpButton.classList.add("sort-button");          // identity-list-header > header-item > header-item > header-sort > sort-button
+            labelSortUpButton.classList.add("sort-ascending");       // identity-list-header > header-item > header-item > header-sort > sort-ascending
+            labelSortUpButton.classList.add("icon-button");          // identity-list-header > header-item > header-data > header-sort > icon-button
+            labelSortUpButton.classList.add("icon-only");            // identity-list-header > header-item > header-data > header-sort > icon-only
+            labelSortUpButton.classList.add("no-css");               // keep my userContent-css from messing with this
+            labelSortUpButton.setAttribute("title", this.#listHeader_tooltip_sortBy_nameAndLabel_ascending);
+            labelSortUpButton.addEventListener('click', (e) => this.identityListHeaderControlClicked(e));
+          headerLabelSortDIV.appendChild(labelSortUpButton);
+          const labelSortDownButton = document.createElement('button');
+            labelSortDownButton.classList.add("header-button");      // identity-list-header > header-item > header-data > header-sort > header-button
+            labelSortDownButton.classList.add("sort-button");        // identity-list-header > header-item > header-item > header-sort > sort-button
+            labelSortDownButton.classList.add("sort-descending");    // identity-list-header > header-item > header-item > header-sort > sort-descending
+            labelSortDownButton.classList.add("icon-button");        // identity-list-header > header-item > header-data > header-sort > icon-button
+            labelSortDownButton.classList.add("icon-only");          // identity-list-header > header-item > header-data > header-sort > icon-only
+            labelSortDownButton.classList.add("no-css");             // keep my userContent-css from messing with this
+            labelSortDownButton.setAttribute("title", this.#listHeader_tooltip_sortBy_nameAndLabel_descending);
+            labelSortDownButton.addEventListener('click', (e) => this.identityListHeaderControlClicked(e));
+          headerLabelSortDIV.appendChild(labelSortDownButton);
+        headerLabelDIV.appendChild(headerLabelSortDIV);
+        const headerLabelTextSPAN = document.createElement('span');
+          headerLabelTextSPAN.classList.add("header-text");          // identity-list-header > header-data > header-text
+          headerLabelTextSPAN.appendChild( document.createTextNode(this.#listHeader_text_nameAndLabel) );
+        headerLabelDIV.appendChild(headerLabelTextSPAN);
+        const headerLabelSpaceSPAN = document.createElement('span');
+          headerLabelSpaceSPAN.classList.add("header-space");        // identity-list-header > header-data > header-space
+        headerLabelDIV.appendChild(headerLabelSpaceSPAN);
+      headerLabelTH.appendChild(headerLabelDIV);
     headerTR.appendChild(headerLabelTH);
 
     const headerEmailTH = document.createElement('th');
-      headerEmailTH.classList.add("header-text");                           // identity-list-header > header-text
-      headerEmailTH.classList.add("header-email");                          // identity-list-header > header-email
+      headerEmailTH.classList.add("header-item");                            // identity-list-header > header-item
+      headerEmailTH.classList.add("header-email");                           // identity-list-header > header-email
+      headerEmailTH.setAttribute("id", "identityListHeaderEmail");
+      headerEmailTH.setAttribute("sortBy", IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_EMAIL);
       headerEmailTH.setAttribute("title", this.#listHeader_tooltip_email);
-      headerEmailTH.appendChild( document.createTextNode(this.#listHeader_text_email) );
+      const headerEmailDIV = document.createElement('div');
+        headerEmailDIV.classList.add("header-data");                         // identity-list-header > header-data
+        const headerEmailSortDIV = document.createElement('div');
+          headerEmailSortDIV.classList.add("header-sort");           // identity-list-header > header-item > header-data > header-sort
+          const emailSortUpButton = document.createElement('button');
+            emailSortUpButton.classList.add("header-button");        // identity-list-header > header-item > header-data > header-sort > header-button
+            emailSortUpButton.classList.add("sort-button");          // identity-list-header > header-item > header-item > header-sort > sort-button
+            emailSortUpButton.classList.add("sort-ascending");       // identity-list-header > header-item > header-item > header-sort > sort-ascending
+            emailSortUpButton.classList.add("icon-button");          // identity-list-header > header-item > header-data > header-sort > icon-button
+            emailSortUpButton.classList.add("icon-only");            // identity-list-header > header-item > header-data > header-sort > icon-only
+            emailSortUpButton.classList.add("no-css");               // keep my userContent-css from messing with this
+            emailSortUpButton.setAttribute("title", this.#listHeader_tooltip_sortBy_email_ascending);
+            emailSortUpButton.addEventListener('click', (e) => this.identityListHeaderControlClicked(e));
+          headerEmailSortDIV.appendChild(emailSortUpButton);
+          const emailSortDownButton = document.createElement('button');
+            emailSortDownButton.classList.add("header-button");      // identity-list-header > header-item > header-data > header-sort > header-button
+            emailSortDownButton.classList.add("sort-button");        // identity-list-header > header-item > header-item > header-sort > sort-button
+            emailSortDownButton.classList.add("sort-descending");    // identity-list-header > header-item > header-item > header-sort > sort-descending
+            emailSortDownButton.classList.add("icon-button");        // identity-list-header > header-item > header-data > header-sort > icon-button
+            emailSortDownButton.classList.add("icon-only");          // identity-list-header > header-item > header-data > header-sort > icon-only
+            emailSortDownButton.classList.add("no-css");             // keep my userContent-css from messing with this
+            emailSortDownButton.setAttribute("title", this.#listHeader_tooltip_sortBy_email_descending);
+            emailSortDownButton.addEventListener('click', (e) => this.identityListHeaderControlClicked(e));
+          headerEmailSortDIV.appendChild(emailSortDownButton);
+        headerEmailDIV.appendChild(headerEmailSortDIV);
+        const headerEmailTextSPAN = document.createElement('span');
+          headerEmailTextSPAN.classList.add("header-text");          // identity-list-header > header-data > header-text
+          headerEmailTextSPAN.appendChild( document.createTextNode(this.#listHeader_text_email) );
+        headerEmailDIV.appendChild(headerEmailTextSPAN);
+        const headerEmailSpaceSPAN = document.createElement('span');
+          headerEmailSpaceSPAN.classList.add("header-space");        // identity-list-header > header-data > header-space
+        headerEmailDIV.appendChild(headerEmailSpaceSPAN);
+      headerEmailTH.appendChild(headerEmailDIV);
     headerTR.appendChild(headerEmailTH);
 
-    if (this.#displayIdentityPosition) {
+    if (this.#option_displayIdentityPosition) {
       const headerPosTH = document.createElement('th');
-        headerPosTH.classList.add("header-text");                           // identity-list-header > header-text
-        headerPosTH.classList.add("header-pos");                            // identity-list-header > header-pos
+        headerPosTH.classList.add("header-item");                    // identity-list-header > header-item
+        headerPosTH.classList.add("header-pos");                     // identity-list-header > header-pos
+        headerPosTH.setAttribute("id", "identityListHeaderPos");
         headerPosTH.setAttribute("title", this.#listHeader_tooltip_pos);
-        headerPosTH.appendChild( document.createTextNode(this.#listHeader_text_pos) );
+        const headerPosDIV = document.createElement('div');
+          headerPosDIV.classList.add("header-data");                 // identity-list-header > header-data
+//        const headerPosSortSPAN = document.createElement('span');
+//          headerPosSortSPAN.classList.add("header-space");         // identity-list-header > header-data > header-space
+//        headerPosDIV.appendChild(headerPosSortSPAN);
+          const headerPosTextSPAN = document.createElement('span');
+            headerPosTextSPAN.classList.add("header-text");          // identity-list-header > header-data > header-text
+            headerPosTextSPAN.appendChild( document.createTextNode(this.#listHeader_text_pos) );
+          headerPosDIV.appendChild(headerPosTextSPAN);
+//        const headerPosSpaceSPAN = document.createElement('span');
+//          headerPosSpaceSPAN.classList.add("header-space");        // identity-list-header > header-data > header-space
+//        headerPosDIV.appendChild(headerPosSpaceSPAN);
+        headerPosTH.appendChild(headerPosDIV);
       headerTR.appendChild(headerPosTH);
     }
 
-    if (this.#displayIdentityIndex) {
+    if (this.#option_displayIdentityIndex) {
       const headerIndexTH = document.createElement('th');
-        headerIndexTH.classList.add("header-text");                         // identity-list-header > header-text
-        headerIndexTH.classList.add("header-index");                        // identity-list-header > header-index
+        headerIndexTH.classList.add("header-item");                  // identity-list-header > header-item
+        headerIndexTH.classList.add("header-index");                 // identity-list-header > header-index
+        headerIndexTH.setAttribute("id", "identityListHeaderIndex");
         headerIndexTH.setAttribute("title", this.#listHeader_tooltip_index);
-        headerIndexTH.appendChild( document.createTextNode(this.#listHeader_text_index) );
+        const headerIndexDIV = document.createElement('div');
+          headerIndexDIV.classList.add("header-data");               // identity-list-header > header-data
+//        const headerIndexSortSPAN = document.createElement('span');
+//          headerIndexSortSPAN .classList.add("header-space");      // identity-list-header > header-data > header-space
+//        headerIndexDIV.appendChild(headerIndexSortSPAN);
+          const headerIndexTextSPAN = document.createElement('span');
+            headerIndexTextSPAN.classList.add("header-text");        // identity-list-header > header-data > header-text
+            headerIndexTextSPAN.appendChild( document.createTextNode(this.#listHeader_text_index) );
+          headerIndexDIV.appendChild(headerIndexTextSPAN);
+//        const headerIndexSpaceSPAN = document.createElement('span');
+//          headerIndexSpaceSPAN.classList.add("header-space");      // identity-list-header > header-data > header-space
+//        headerIndexDIV.appendChild(headerIndexSpaceSPAN);
+        headerIndexTH.appendChild(headerIndexDIV);
       headerTR.appendChild(headerIndexTH);
     }
 
-    if (this.#displayIdentityId) {
+    if (this.#option_displayIdentityId) {
       const headerIdTH = document.createElement('th');
-        headerIdTH.classList.add("header-text");                            // identity-list-header > header-text
-        headerIdTH.classList.add("header-id");                              // identity-list-header > header-id
+        headerIdTH.classList.add("header-item");                     // identity-list-header > header-item
+        headerIdTH.classList.add("header-id");                       // identity-list-header > header-id
+        headerIdTH.setAttribute("id", "identityListHeaderId");
+        headerIdTH.setAttribute("sortBy", IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_ID);
         headerIdTH.setAttribute("title", this.#listHeader_tooltip_id);
-        headerIdTH.appendChild( document.createTextNode(this.#listHeader_text_id) );
+        const headerIdDIV = document.createElement('div');
+          headerIdDIV.classList.add("header-data");                  // identity-list-header > header-data
+          const headerIdSortDIV = document.createElement('div');
+            headerIdSortDIV.classList.add("header-sort");            // identity-list-header > header-item > header-data > header-sort
+            const idSortUpButton = document.createElement('button');
+              idSortUpButton.classList.add("header-button");         // identity-list-header > header-item > header-data > header-sort > header-button
+              idSortUpButton.classList.add("sort-button");           // identity-list-header > header-item > header-item > header-sort > sort-button
+              idSortUpButton.classList.add("sort-ascending");        // identity-list-header > header-item > header-item > header-sort > sort-ascending
+              idSortUpButton.classList.add("icon-button");           // identity-list-header > header-item > header-data > header-sort > icon-button
+              idSortUpButton.classList.add("icon-only");             // identity-list-header > header-item > header-data > header-sort > icon-only
+              idSortUpButton.classList.add("no-css");                // keep my userContent-css from messing with this
+              idSortUpButton.setAttribute("title", this.#listHeader_tooltip_sortBy_id_ascending);
+              idSortUpButton.addEventListener('click', (e) => this.identityListHeaderControlClicked(e));
+            headerIdSortDIV.appendChild(idSortUpButton);
+            const idSortDownButton = document.createElement('button');
+              idSortDownButton.classList.add("header-button");       // identity-list-header > header-item > header-data > header-sort > header-button
+              idSortDownButton.classList.add("sort-button");         // identity-list-header > header-item > header-item > header-sort > sort-button
+              idSortDownButton.classList.add("sort-descending");     // identity-list-header > header-item > header-item > header-sort > sort-descending
+              idSortDownButton.classList.add("icon-button");         // identity-list-header > header-item > header-data > header-sort > icon-button
+              idSortDownButton.classList.add("icon-only");           // identity-list-header > header-item > header-data > header-sort > icon-only
+              idSortDownButton.classList.add("no-css");              // keep my userContent-css from messing with this
+              idSortDownButton.setAttribute("title", this.#listHeader_tooltip_sortBy_id_descending);
+              idSortDownButton.addEventListener('click', (e) => this.identityListHeaderControlClicked(e));
+            headerIdSortDIV.appendChild(idSortDownButton);
+          headerIdDIV.appendChild(headerIdSortDIV);
+          const headerIdTextSPAN = document.createElement('span');
+            headerIdTextSPAN.classList.add("header-text");           // identity-list-header > header-data > header-text
+            headerIdTextSPAN.appendChild( document.createTextNode(this.#listHeader_text_id) );
+          headerIdDIV.appendChild(headerIdTextSPAN);
+          const headerIdSpaceSPAN = document.createElement('span');
+            headerIdSpaceSPAN.classList.add("header-space")          // identity-list-header > header-data > header-space;
+          headerIdDIV.appendChild(headerIdSpaceSPAN);
+        headerIdTH.appendChild(headerIdDIV);
       headerTR.appendChild(headerIdTH);
     }
 
     // Create controls-right element and add it to the row
     const headerControlsRightTH = document.createElement('th');
-      headerControlsRightTH.classList.add("header-controls-right");         // identity-list-header > header-controls-right
+      headerControlsRightTH.classList.add("header-controls-right");    // identity-list-header > header-controls-right
       //#listHeader_text_controlsRight
       headerControlsRightTH.setAttribute("title", this.#listHeader_tooltip_controlsRight);
 
@@ -903,6 +1115,7 @@ class OptionsUI {
           moveUpButton.classList.add("stacked-icon");                  // identity-list-header > header-controls-right > move-up-down-controls > stacked-icon
           moveUpButton.classList.add("move-identity-button");          // identity-list-header > header-controls-right > move-up-down-controls > move-identity-button
           moveUpButton.classList.add("move-identity-up");              // identity-list-header > header-controls-right > move-up-down-controls > move-identity-up
+          moveUpButton.classList.add("no-css");                        // keep my userContent-css from messing with this
           moveUpButton.setAttribute("id", "headerMoveUp");
 //        moveUpButton.addEventListener('click', (e) => this.identityControlButtonClicked(e), true); // <====== NOTE: event "capturing" phase
 //        if (this.#tooltip_button_moveUp) moveUpButton.setAttribute('title', this.#tooltip_button_moveUp);
@@ -917,6 +1130,7 @@ class OptionsUI {
           moveDownButton.classList.add("stacked-icon");                // identity-list-header > header-controls-right > move-up-down-controls > stacked-icon
           moveDownButton.classList.add("move-identity-button");        // identity-list-header > header-controls-right > move-up-down-controls > move-identity-button
           moveDownButton.classList.add("move-identity-down");          // identity-list-header > header-controls-right > move-up-down-controls > move-identity-down
+          moveDownButton.classList.add("no-css");                      // keep my userContent-css from messing with this
           moveDownButton.setAttribute("id", "headerMoveDown");
 //        moveDownButton.addEventListener('click', (e) => this.identityControlButtonClicked(e), true); // <====== NOTE: event "capturing" phase
 //        if (this.#tooltip_button_moveDown) moveDownButton.setAttribute('title', this.#tooltip_button_moveDown);
@@ -929,26 +1143,28 @@ class OptionsUI {
         moveTopBottomControlsDIV.classList.add("move-to-controls");             // identity-list-header > header-controls-right > move-to-controls
 
         const moveTopButton = document.createElement('button');
-          moveTopButton.classList.add("identity-item-button");         // identity-list-header > header-controls-right > move-top-bottom-controls > identity-item-button
-          moveTopButton.classList.add("dummy-icon");                   // identity-list-header > header-controls-right > move-top-bottom-controls > dummy-icon
-          moveTopButton.classList.add("icon-button");                  // identity-list-header > header-controls-right > move-top-bottom-controls > icon-button
-          moveTopButton.classList.add("icon-only");                    // identity-list-header > header-controls-right > move-top-bottom-controls > icon-only
-          moveTopButton.classList.add("stacked-icon");                 // identity-list-header > header-controls-right > move-up-down-controls > stacked-icon
-          moveTopButton.classList.add("move-identity-button");         // identity-list-header > header-controls-right > move-top-bottom-controls > move-identity-button
-          moveTopButton.classList.add("move-identity-to-top");         // identity-list-header > header-controls-right > move-top-bottom-controls > move-identity-to-top
+          moveTopButton.classList.add("identity-item-button");         // identity-list-header > header-controls-right > move-to-controls > identity-item-button
+          moveTopButton.classList.add("dummy-icon");                   // identity-list-header > header-controls-right > move-to-controls > dummy-icon
+          moveTopButton.classList.add("icon-button");                  // identity-list-header > header-controls-right > move-to-controls > icon-button
+          moveTopButton.classList.add("icon-only");                    // identity-list-header > header-controls-right > move-to-controls > icon-only
+          moveTopButton.classList.add("stacked-icon");                 // identity-list-header > header-controls-right > move-to-controls > stacked-icon
+          moveTopButton.classList.add("move-identity-button");         // identity-list-header > header-controls-right > move-to-controls > move-identity-button
+          moveTopButton.classList.add("move-identity-to-top");         // identity-list-header > header-controls-right > move-to-controls > move-identity-to-top
+          moveTopButton.classList.add("no-css");                       // keep my userContent-css from messing with this
 //        moveTopButton.addEventListener('click', (e) => this.identityControlButtonClicked(e));
 //        if (this.#tooltip_button_moveToTop) moveTopButton.setAttribute('title', this.#tooltip_button_moveToTop);
           moveTopButton.disabled = true;
         moveTopBottomControlsDIV.appendChild(moveTopButton);
 
         const moveBottomButton = document.createElement('button');
-          moveBottomButton.classList.add("identity-item-button");      // identity-list-header > header-controls-right > move-top-bottom-controls > identity-item-button
-          moveBottomButton.classList.add("dummy-icon");                // identity-list-header > header-controls-right > move-top-bottom-controls > dummy-icon
-          moveBottomButton.classList.add("icon-button");               // identity-list-header > header-controls-right > move-top-bottom-controls > icon-button
-          moveBottomButton.classList.add("icon-only");                 // identity-list-header > header-controls-right > move-top-bottom-controls > icon-only
-          moveBottomButton.classList.add("stacked-icon");              // identity-list-header > header-controls-right > move-up-down-controls > stacked-icon
-          moveBottomButton.classList.add("move-identity-button");      // identity-list-header > header-controls-right > move-top-bottom-controls > move-identity-button
-          moveBottomButton.classList.add("move-identity-to-bottom");   // identity-list-header > header-controls-right > move-top-bottom-controls > move-identity-to-bottom
+          moveBottomButton.classList.add("identity-item-button");      // identity-list-header > header-controls-right > move-to-controls > identity-item-button
+          moveBottomButton.classList.add("dummy-icon");                // identity-list-header > header-controls-right > move-to-controls > dummy-icon
+          moveBottomButton.classList.add("icon-button");               // identity-list-header > header-controls-right > move-to-controls > icon-button
+          moveBottomButton.classList.add("icon-only");                 // identity-list-header > header-controls-right > move-to-controls > icon-only
+          moveBottomButton.classList.add("stacked-icon");              // identity-list-header > header-controls-right > move-to-controls > stacked-icon
+          moveBottomButton.classList.add("move-identity-button");      // identity-list-header > header-controls-right > move-to-controls > move-identity-button
+          moveBottomButton.classList.add("move-identity-to-bottom");   // identity-list-header > header-controls-right > move-to-controls > move-identity-to-bottom
+          moveBottomButton.classList.add("no-css");                    // keep my userContent-css from messing with this
 //        moveBottomButton.addEventListener('click', (e) => this.identityControlButtonClicked(e), true); // <====== NOTE: event "capturing" phase
 //        if (this.#tooltip_button_moveToBottom) moveBottomButton.setAttribute('title', this.#tooltip_button_moveToBottom);
           moveBottomButton.disabled = true;
@@ -961,13 +1177,14 @@ class OptionsUI {
 
         const createButton = document.createElement('button');
           createButton.classList.add("identity-item-button");          // identity-list-header > header-controls-right > edit-controls > identity-item-button
-          createButton.classList.add("dummy-icon");                    // identity-list-header > header-controls-right > edit-controls > dummy-icon
+//        createButton.classList.add("dummy-icon");                    // identity-list-header > header-controls-right > edit-controls > dummy-icon
           createButton.classList.add("icon-button");                   // identity-list-header > header-controls-right > edit-controls > icon-button
           createButton.classList.add("icon-only");                     // identity-list-header > header-controls-right > edit-controls > icon-only
           createButton.classList.add("create-identity");               // identity-list-header > header-controls-right > edit-controls > create-identity
-//        createButton.addEventListener('click', (e) => this.identityControlButtonClicked(e));
-//        if (this.#tooltip_button_create) createButton.setAttribute('title', this.#tooltip_button_create);
-          createButton.disabled = true;
+          createButton.classList.add("no-css");                        // keep my userContent-css from messing with this
+          createButton.addEventListener('click', (e) => this.createIdentity(e));
+          if (this.#tooltip_button_create) createButton.setAttribute('title', this.#tooltip_button_create);
+//        createButton.disabled = true;
         editControlsDIV.appendChild(createButton);
 
         const deleteButton = document.createElement('button');
@@ -976,6 +1193,7 @@ class OptionsUI {
           deleteButton.classList.add("icon-button");                   // identity-list-header > header-controls-right > edit-controls > icon-button
           deleteButton.classList.add("icon-only");                     // identity-list-header > header-controls-right > edit-controls > icon-only
           deleteButton.classList.add("delete-identity");               // identity-list-header > header-controls-right > edit-controls > delete-identity
+          deleteButton.classList.add("no-css");                        // keep my userContent-css from messing with this
 //        deleteButton.addEventListener('click', (e) => this.identityControlButtonClicked(e));
 //        if (this.#tooltip_button_delete) deleteButton.setAttribute('title', this.#tooltip_button_delete);
           deleteButton.disabled = true;
@@ -1012,14 +1230,20 @@ class OptionsUI {
    * EXAMPLE:
    *    <!--
    *      CLASSES AND ATTRIBUTES FOR <TR>:
+   *        - .identity-item
+   *        - .identity-item-draggable REQUIRED for Sortable.js !!!
    *
-   *        - need .identity-item-draggable for Sortable.js !!!
+   *        - identityId=id001
+   *        - accountId=account001
+   *
    *        - selected='true'/'false'
    *        - .not-show-in-menu & showInMenu='true'/'false' 
    *        - .lock-in-menu & lockInMenu='true'/'false'
+   *
    *        - .account-default
    *        - .collected-identity
    *        - .imported-identity
+   *
    *        - .filter-by-account
    *        - .filter-by-label
    *        - .filter-by-email
@@ -1035,7 +1259,7 @@ class OptionsUI {
    *        <input type='checkbox' class="identity-item-check show-in-menu-check" identityId="id001"/>
    *      </td>
    * 
-   *      <td class="identity-item-border-color identity-item-data">
+   *      <td class="identity-item-border-color identity-item-data" style="--bullet_color=XXX; --bullet-border-style=XXX; --bullet-border-color=XXX">
    *        <span class="identity-item-border-color-dot"></span>
    *      </td>
    * 
@@ -1047,10 +1271,13 @@ class OptionsUI {
    *        <span class="identity-item-text identity-item-label-text">
    *          Ex Ample Name (identityLabel)
    *        </span>
-   *        <span class="identity-item-markers">                     <!-- optional -->
-   *          <span class="identity-item-marker marker-default"/>    <!-- optional - uses background image -->
-   *          <span class="identity-item-marker marker-collected"/>  <!-- optional - uses background image -->
-   *          <span class="identity-item-marker marker-imported"/>   <!-- optional - uses background image -->
+   *        <span class="identity-item-markers">
+   *          <span class="identity-item-marker marker-account-default"/>  <!-- uses background image -->
+   *          <span class="identity-item-marker marker-collected"/>        <!-- uses background image -->
+   *          <span class="identity-item-marker marker-imported"/>         <!-- uses background image -->
+   *          <span class="identity-item-marker marker-lock-in-menu"/>     <!-- uses background image -->
+   *          <span class="identity-item-marker marker-not-show-in-menu"/> <!-- uses background image -->
+   *        </span>
    *        </span>
    *      </td>
    * 
@@ -1072,7 +1299,7 @@ class OptionsUI {
    * 
    *      <td class="identity-item-controls-right">
    *        <span class="lock-in-menu-controls"> 
-   *          <input type='checkbox' class="lock-in-menu-check MABXXX??? icon-button icon-only ???MABXXX" id="lockInMenu_id001" identityId="id001"/>
+   *          <input type="checkbox" class="icon-button icon-only lock-in-menu-check" id="lockInMenu_id001" identityId="id001"/>
    *          <label for="lockInMenu_id001" class="lock-in-menu-label"></label>
    *        </span>
    *        <div class="identity-controls-panel move-up-down-controls">
@@ -1093,20 +1320,23 @@ class OptionsUI {
   buildIdentityListItemUI(idmIdentity, identityIndex, borderColors) {
     const identityTR = document.createElement('tr');
     identityTR.classList.add("identity-item");
-    identityTR.classList.add("identity-item-draggable");    // Indicates to Sortable.js that this element is the "Draggable"
-    identityTR.setAttribute("identityId", idmIdentity.id);
-    identityTR.setAttribute('selected', 'false');
-    identityTR.addEventListener('click', (e) => this.identityClicked(e), true);          // <====== NOTE: event "capturing" phase - but not helping - Sortable.js still getting it
-    identityTR.addEventListener('dblclick', (e) => this.identityDoubleClicked(e), true); // <====== NOTE: event "capturing" phase - but not helping - Sortable.js still getting it
+    identityTR.setAttribute( "identityId", idmIdentity.id        );
+    identityTR.setAttribute( "accountId",  idmIdentity.accountId );
+    identityTR.setAttribute( 'selected',   'false'               );
+    identityTR.addEventListener( 'click',    (e) => this.identityClicked(e),       true ); // <===== NOTE: event "capturing" phase - but not helping - Sortable.js still getting it
+    identityTR.addEventListener( 'dblclick', (e) => this.identityDoubleClicked(e), true ); // <===== NOTE: event "capturing" phase - but not helping - Sortable.js still getting it
 
     identityTR.setAttribute( "showInMenu", idmIdentity.showInMenu ? 'true' : 'false' );
     identityTR.setAttribute( "lockInMenu", idmIdentity.lockInMenu ? 'true' : 'false' );
-    if (idmIdentity.lockInMenu)     identityTR.classList.add("lock-in-menu");       // lock-in-menu: Sortable.js is configured to use this class !!!
-    if (! idmIdentity.showInMenu)   identityTR.classList.add("not-show-in-menu");   // not-show-in-menu
-    if (idmIdentity.collected)      identityTR.classList.add("collected-identity"); // collected-identity: was the Identity "collected" from un-matched "From" email address?
-    if (idmIdentity.imported)       identityTR.classList.add("imported-identity");  // imported-identity: was the Identity "imported"?
-    if (idmIdentity.accountDefault) identityTR.classList.add("account-default");    // account-default: is the Identhty the default for its Account?
+    if (idmIdentity.lockInMenu)     identityTR.classList.add( "lock-in-menu"       );// lock-in-menu: Sortable.js is configured to use this class !!!
+    if (! idmIdentity.showInMenu)   identityTR.classList.add( "not-show-in-menu"   ); // not-show-in-menu
+    if (idmIdentity.collected)      identityTR.classList.add( "collected-identity" ); // collected-identity: was the Identity "collected" from un-matched "From" email address?
+    if (idmIdentity.imported)       identityTR.classList.add( "imported-identity"  ); // imported-identity: was the Identity "imported"?
+    if (idmIdentity.accountDefault) identityTR.classList.add( "account-default"    ); // account-default: is the Identhty the default for its Account?
 
+    if (! idmIdentity.lockInMenu) {
+      identityTR.classList.add("identity-item-draggable");    // Indicates to Sortable.js that this element is the "Draggable"
+    }
 
 
     // Create show-in-menu checkbox inside a TD and add it to the row
@@ -1114,122 +1344,117 @@ class OptionsUI {
       controlsLeftTD.classList.add("identity-item-controls-left");     // identity-item > identity-item-controls-left
         //
       const showInMenuCheck = document.createElement('input');
-        showInMenuCheck.setAttribute('type', 'checkbox');
-        showInMenuCheck.classList.add("identity-item-check");          // identity-item > identity-item-controls-left > lock-in-menu-controls > identity-item-check
-        showInMenuCheck.classList.add("show-in-menu-check");           // identity-item > identity-item-controls-left > lock-in-menu-controls > show-in-menu-check
-        showInMenuCheck.setAttribute("identityId", idmIdentity.id);
+        showInMenuCheck.setAttribute( 'type',       'checkbox'     );
+        showInMenuCheck.setAttribute( "identityId", idmIdentity.id );
+        showInMenuCheck.classList.add( "identity-item-check" );        // identity-item > identity-item-controls-left > lock-in-menu-controls > identity-item-check
+        showInMenuCheck.classList.add( "show-in-menu-check"  );        // identity-item > identity-item-controls-left > lock-in-menu-controls > show-in-menu-check
         showInMenuCheck.checked = idmIdentity.showInMenu; // <=================================================================================<<
         showInMenuCheck.addEventListener('change', (e) => this.identityOptionCheckClicked(e), true); // <====== NOTE: event "capturing" phase
         if (this.#tooltip_check_showInMenu) showInMenuCheck.setAttribute('title', this.#tooltip_check_showInMenu);
-        //
       controlsLeftTD.appendChild(showInMenuCheck);
     identityTR.appendChild(controlsLeftTD);
 
     // if we have access to borderColors, add the color dot
-    if (borderColors != null) {
+    if (borderColors !== null) {
       const identityBorderColorsTD = document.createElement('td');
-        identityBorderColorsTD.classList.add("identity-item-data");         // identity-item > identity-item-data
-        identityBorderColorsTD.classList.add("identity-item-border-color"); // identity-item > identity-item-border-color
-////////identityBorderColorsTD.classList.add("identity-item-draggable");    // DOES NOT WORK - MUST BE THE <TR> - Indicates to Sortable.js that this element is Draggable
+        identityBorderColorsTD.classList.add( "identity-item-data"         ); // identity-item > identity-item-data
+        identityBorderColorsTD.classList.add( "identity-item-border-color" ); // identity-item > identity-item-border-color
         const dotSPAN = document.createElement('span');
-          dotSPAN.classList.add("identity-item-border-color-dot");          // identity-item > identity-item-label > identity-item-border-color-dot
+          dotSPAN.classList.add("identity-item-border-color-dot");            // identity-item > identity-item-label > identity-item-border-color-dot
         identityBorderColorsTD.appendChild(dotSPAN);
 
         if (idmIdentity.id in borderColors && borderColors[idmIdentity.id] !== undefined) {
-          identityBorderColorsTD.style.setProperty("--bullet-color", borderColors[idmIdentity.id]);
-          identityBorderColorsTD.style.setProperty("--bullet-border-style", "solid");
-          identityBorderColorsTD.style.setProperty("--bullet-border-color", "black");
+          identityBorderColorsTD.style.setProperty( "--bullet-color",        borderColors[idmIdentity.id] );
+          identityBorderColorsTD.style.setProperty( "--bullet-border-style", "solid"                      );
+          identityBorderColorsTD.style.setProperty( "--bullet-border-color", "black"                      );
         }
       identityTR.appendChild(identityBorderColorsTD);
     }
 
     // Create idmIdentity account name element and add it to the row
+    const acctName = this.#getAccountName(idmIdentity.accountId);
+    const acctNum  = acctNumFromId(idmIdentity.accountId);
+    const account  = isNaN(acctNum) ? acctName : acctNum + ": " + acctName;
     const identityAccountTD = document.createElement('td');
-      identityAccountTD.classList.add("identity-item-data");           // identity-item > identity-item-data
-      identityAccountTD.classList.add("identity-item-account");        // identity-item > identity-item-account
-//////identityAccountTD.classList.add("identity-item-draggable");      // DOES NOT WORK - MUST BE THE <TR> - Indicates to Sortable.js that this element is Draggable
-      var accountName = idmIdentity.accountId;
-      if (this.#accountsById[idmIdentity.accountId]) accountName = this.#accountsById[idmIdentity.accountId].name;
-      identityAccountTD.appendChild( document.createTextNode(accountName) );
+      identityAccountTD.classList.add( "identity-item-data"      );    // identity-item > identity-item-data
+      identityAccountTD.classList.add( "identity-item-account"   );    // identity-item > identity-item-account
+      identityAccountTD.setAttribute("accountId", idmIdentity.accountId);
+      identityAccountTD.appendChild( document.createTextNode(account) );
     identityTR.appendChild(identityAccountTD);
 
     // Create idmIdentity name+label element and add it to the row
     const identityLabelTD = document.createElement('td');
-      identityLabelTD.classList.add("identity-item-data");             // identity-item > identity-item-data
-      identityLabelTD.classList.add("identity-item-label");            // identity-item > identity-item-label
-//////identityLabelTD.classList.add("identity-item-draggable");        // DOES NOT WORK - MUST BE THE <TR> - Indicates to Sortable.js that this element is Draggable
+      identityLabelTD.classList.add( "identity-item-data"      );      // identity-item > identity-item-data
+      identityLabelTD.classList.add( "identity-item-label"     );      // identity-item > identity-item-label
       const identityLabelTextSPAN = document.createElement('span');
-        identityLabelTextSPAN.classList.add("identity-item-text");
-        identityLabelTextSPAN.classList.add("identity-item-label-text");
+        identityLabelTextSPAN.classList.add( "identity-item-text"       );
+        identityLabelTextSPAN.classList.add( "identity-item-label-text" );
         identityLabelTextSPAN.appendChild( document.createTextNode(idmIdentity.label) );
       identityLabelTD.appendChild(identityLabelTextSPAN);
-      if (idmIdentity.accountDefault || idmIdentity.collected || idmIdentity.imported) {
-        const identityLabelMarkersSPAN = document.createElement('span');
-          identityLabelMarkersSPAN.classList.add("identity-item-markers");
-
-          if (idmIdentity.accountDefault) {
-            const identityAccountDefaultMarkerSPAN = document.createElement('span');
-              identityAccountDefaultMarkerSPAN.classList.add("identity-item-marker");
-              identityAccountDefaultMarkerSPAN.classList.add("marker-default");
-              identityAccountDefaultMarkerSPAN.setAttribute("title", this.#tooltip_listItemMarker_account_default);
-            identityLabelMarkersSPAN.appendChild(identityAccountDefaultMarkerSPAN);
-          }
-
-          if (idmIdentity.collected) {
-            const identityCollectedMarkerSPAN = document.createElement('span');
-              identityCollectedMarkerSPAN.classList.add("identity-item-marker");
-              identityCollectedMarkerSPAN.classList.add("marker-collected");
-              identityCollectedMarkerSPAN.setAttribute("title", this.#tooltip_listItemMarker_collected);
-            identityLabelMarkersSPAN.appendChild(identityCollectedMarkerSPAN);
-          }
-
-          if (idmIdentity.imported) {
-            const identityImportedMarkerSPAN = document.createElement('span');
-              identityImportedMarkerSPAN.classList.add("identity-item-marker");
-              identityImportedMarkerSPAN.classList.add("marker-imported");
-              identityImportedMarkerSPAN.setAttribute("title", this.#tooltip_listItemMarker_imported);
-            identityLabelMarkersSPAN.appendChild(identityImportedMarkerSPAN);
-          }
-        identityLabelTD.appendChild(identityLabelMarkersSPAN);
-      }
+      // markers for account-default identity, collected, imported, lock-in-menu
+      const identityLabelMarkersSPAN = document.createElement('span');
+        identityLabelMarkersSPAN.classList.add("identity-item-markers");
+        // <SPAN> style for markers CSS attribute 'display' is set to 'none' or 'inline-block' based on the corresponding class in the <TR>
+        const identityAccountDefaultMarkerSPAN = document.createElement('span');
+          identityAccountDefaultMarkerSPAN.classList.add( "identity-item-marker"  );
+          identityAccountDefaultMarkerSPAN.classList.add( "marker-account-default" );
+          identityAccountDefaultMarkerSPAN.setAttribute("title", this.#tooltip_listItemMarker_accountDefault);
+        identityLabelMarkersSPAN.appendChild(identityAccountDefaultMarkerSPAN);
+        const identityCollectedMarkerSPAN = document.createElement('span');
+          identityCollectedMarkerSPAN.classList.add( "identity-item-marker" );
+          identityCollectedMarkerSPAN.classList.add( "marker-collected"     );
+          identityCollectedMarkerSPAN.setAttribute("title", this.#tooltip_listItemMarker_collected);
+        identityLabelMarkersSPAN.appendChild(identityCollectedMarkerSPAN);
+        const identityImportedMarkerSPAN = document.createElement('span');
+          identityImportedMarkerSPAN.classList.add( "identity-item-marker" );
+          identityImportedMarkerSPAN.classList.add( "marker-imported"      );
+          identityImportedMarkerSPAN.setAttribute("title", this.#tooltip_listItemMarker_imported);
+        identityLabelMarkersSPAN.appendChild(identityImportedMarkerSPAN);
+        const identityLockInMenu = document.createElement('span');
+          identityLockInMenu.classList.add( "identity-item-marker" );
+          identityLockInMenu.classList.add( "marker-lock-in-menu"  );
+          identityLockInMenu.setAttribute("title", this.#tooltip_listItemMarker_lockInMenu);
+        const identityNotShowInMenu = document.createElement('span');
+          identityNotShowInMenu.classList.add( "identity-item-marker"    );
+          identityNotShowInMenu.classList.add( "marker-not-show-in-menu" );
+          identityNotShowInMenu.setAttribute("title", this.#tooltip_listItemMarker_notShowInMenu);
+        identityLabelMarkersSPAN.appendChild(identityNotShowInMenu);
+        identityLabelMarkersSPAN.appendChild(identityLockInMenu);
+      identityLabelTD.appendChild(identityLabelMarkersSPAN);
     identityTR.appendChild(identityLabelTD);
 
     // Create idmIdentity email element and add it to the row
     const identityEmailTD = document.createElement('td');
-      identityEmailTD.classList.add("identity-item-data");             // identity-item > identity-item-data
-      identityEmailTD.classList.add("identity-item-email");            // identity-item > identity-item-email
-//////identityEmailTD.classList.add("identity-item-draggable");        // DOES NOT WORK - MUST BE THE <TR> - Indicates to Sortable.js that this element is Draggable
+      identityEmailTD.classList.add( "identity-item-data"      );      // identity-item > identity-item-data
+      identityEmailTD.classList.add( "identity-item-email"     );      // identity-item > identity-item-email
       identityEmailTD.appendChild( document.createTextNode(idmIdentity.email) );
     identityTR.appendChild(identityEmailTD);
 
-    if (this.#displayIdentityPosition) {
+    if (this.#option_displayIdentityPosition) {
       // Create idmIdentity Position element and add it to the row
       const identityPosTD = document.createElement('td');
-        identityPosTD.classList.add("identity-item-data");             // identity-item > identity-item-data
-        identityPosTD.classList.add("identity-item-pos");              // identity-item > identity-item-pos
-////////identityPosTD.classList.add("identity-item-draggable");        // DOES NOT WORK - MUST BE THE <TR> - Indicates to Sortable.js that this element is Draggable
+        identityPosTD.classList.add( "identity-item-data"      );      // identity-item > identity-item-data
+        identityPosTD.classList.add( "identity-item-pos"       );      // identity-item > identity-item-pos
         if (idmIdentity.positionInMenu !== undefined) {
           identityPosTD.appendChild( document.createTextNode(idmIdentity.positionInMenu.toString()) );
         }
       identityTR.appendChild(identityPosTD);
     }
 
-    if (this.#displayIdentityIndex) {
+    if (this.#option_displayIdentityIndex) {
       // Create idmIdentity List Index element and add it to the row
       const identityIndexTD = document.createElement('td');
-        identityIndexTD.classList.add("identity-item-data");           // identity-item > identity-item-data
-        identityIndexTD.classList.add("identity-item-index");          // identity-item > identity-item-index
-////////identityIndexTD.classList.add("identity-item-draggable");      // DOES NOT WORK - MUST BE THE <TR> - Indicates to Sortable.js that this element is Draggable
+        identityIndexTD.classList.add( "identity-item-data"      );    // identity-item > identity-item-data
+        identityIndexTD.classList.add( "identity-item-index"     );    // identity-item > identity-item-index
         identityIndexTD.appendChild( document.createTextNode(identityIndex.toString()) );
       identityTR.appendChild(identityIndexTD);
     }
 
-    if (this.#displayIdentityId) {
+    if (this.#option_displayIdentityId) {
       // Create idmIdentity ID element and add it to the row
       const identityIdTD = document.createElement('td');
-        identityIdTD.classList.add("identity-item-data");              // identity-item > identity-item-data
-        identityIdTD.classList.add("identity-item-id");                // identity-item > identity-item-id
-////////identityIdTD.classList.add("identity-item-draggable");         // DOES NOT WORK - MUST BE THE <TR> - Indicates to Sortable.js that this element is Draggable
+        identityIdTD.classList.add( "identity-item-data"      );       // identity-item > identity-item-data
+        identityIdTD.classList.add( "identity-item-id"        );       // identity-item > identity-item-id
         identityIdTD.appendChild( document.createTextNode(idmIdentity.id) );
       identityTR.appendChild(identityIdTD);
     }
@@ -1245,15 +1470,15 @@ class OptionsUI {
         lockInMenuControlsSPAN.classList.add("lock-in-menu-controls"); // identity-item > identity-item-controls-right > lock-in-menu-controls
 
         const lockInMenuCheck = document.createElement('input');
-          lockInMenuCheck.setAttribute('type', 'checkbox');
-          lockInMenuCheck.classList.add("icon-button");                // identity-item > identity-item-controls-right > lock-in-menu-controls > icon-button
-          lockInMenuCheck.classList.add("icon-only");                  // identity-item > identity-item-controls-right > lock-in-menu-controls > icon-only
-          lockInMenuCheck.classList.add("identity-item-check");        // identity-item > identity-item-controls-right > lock-in-menu-controls > identity-item-check
-          lockInMenuCheck.classList.add("lock-in-menu-check");         // identity-item > identity-item-controls-right > lock-in-menu-controls > lock-in-menu-check
-          lockInMenuCheck.setAttribute("identityId", idmIdentity.id);
+          lockInMenuCheck.setAttribute( 'type',       'checkbox'     );
+          lockInMenuCheck.setAttribute( "identityId", idmIdentity.id );
+          lockInMenuCheck.classList.add( "icon-button"         );      // identity-item > identity-item-controls-right > lock-in-menu-controls > icon-button
+          lockInMenuCheck.classList.add( "icon-only"           );      // identity-item > identity-item-controls-right > lock-in-menu-controls > icon-only
+          lockInMenuCheck.classList.add( "identity-item-check" );      // identity-item > identity-item-controls-right > lock-in-menu-controls > identity-item-check
+          lockInMenuCheck.classList.add( "lock-in-menu-check"  );      // identity-item > identity-item-controls-right > lock-in-menu-controls > lock-in-menu-check
           const lockInMenuCheckId = "lockInMenu_" + idmIdentity.id;    // <===IMPORTANT: the 'id' attribute for the checkbox and the 'for' attribute for the label MUST MATCH
           lockInMenuCheck.setAttribute('id', lockInMenuCheckId);
-          lockInMenuCheck.checked = idmIdentity.lockInMenu;             // <=================================================================================<<
+          lockInMenuCheck.checked = idmIdentity.lockInMenu;            // <=================================================================================<<
           lockInMenuCheck.addEventListener('change', (e) => this.identityOptionCheckClicked(e), true); // <====== NOTE: true=event "capturing" phase
           if (this.#tooltip_check_lockInMenu) lockInMenuCheck.setAttribute('title', this.#tooltip_check_lockInMenu);
         lockInMenuControlsSPAN.appendChild(lockInMenuCheck);
@@ -1269,28 +1494,30 @@ class OptionsUI {
       controlsRightTD.appendChild(lockInMenuControlsSPAN);
 
       const moveUpDownControlsDIV = document.createElement('div');
-        moveUpDownControlsDIV.classList.add("identity-item-controls-panel"); // identity-item > identity-item-controls-right > identity-item-controls-panel
-        moveUpDownControlsDIV.classList.add("move-up-down-controls");        // identity-item > identity-item-controls-right > move-up-down-controls
+        moveUpDownControlsDIV.classList.add( "identity-item-controls-panel" ); // identity-item > identity-item-controls-right > identity-item-controls-panel
+        moveUpDownControlsDIV.classList.add( "move-up-down-controls"        );        // identity-item > identity-item-controls-right > move-up-down-controls
 
         const moveUpButton = document.createElement('button');
-          moveUpButton.classList.add("identity-item-button");          // identity-item > identity-item-controls-right > move-up-down-controls > identity-item-button
-          moveUpButton.classList.add("icon-button");                   // identity-item > identity-item-controls-right > move-up-down-controls > icon-button
-          moveUpButton.classList.add("icon-only");                     // identity-item > identity-item-controls-right > move-up-down-controls > icon-only
-          moveUpButton.classList.add("stacked-icon");                  // identity-item > identity-item-controls-right > move-up-down-controls > stacked-icon
-          moveUpButton.classList.add("move-identity-button");          // identity-item > identity-item-controls-right > move-up-down-controls > move-identity-button
-          moveUpButton.classList.add("move-identity-up");              // identity-item > identity-item-controls-right > move-up-down-controls > move-identity-up
+          moveUpButton.classList.add( "identity-item-button" );        // identity-item > identity-item-controls-right > move-up-down-controls > identity-item-button
+          moveUpButton.classList.add( "icon-button"          );        // identity-item > identity-item-controls-right > move-up-down-controls > icon-button
+          moveUpButton.classList.add( "icon-only"            );        // identity-item > identity-item-controls-right > move-up-down-controls > icon-only
+          moveUpButton.classList.add( "stacked-icon"         );        // identity-item > identity-item-controls-right > move-up-down-controls > stacked-icon
+          moveUpButton.classList.add( "move-identity-button" );        // identity-item > identity-item-controls-right > move-up-down-controls > move-identity-button
+          moveUpButton.classList.add( "move-identity-up"     );        // identity-item > identity-item-controls-right > move-up-down-controls > move-identity-up
+          moveUpButton.classList.add( "no-css"               );        // keep my userContent-css from messing with this
           moveUpButton.setAttribute("identityId", idmIdentity.id);
           moveUpButton.addEventListener('click', (e) => this.identityControlButtonClicked(e), true); // <====== NOTE: event "capturing" phase
           if (this.#tooltip_button_moveUp) moveUpButton.setAttribute('title', this.#tooltip_button_moveUp);
         moveUpDownControlsDIV.appendChild(moveUpButton);
 
         const moveDownButton = document.createElement('button');
-          moveDownButton.classList.add("identity-item-button");        // identity-item > identity-item-controls-right > move-up-down-controls > identity-item-button
-          moveDownButton.classList.add("icon-button");                 // identity-item > identity-item-controls-right > move-up-down-controls > icon-button
-          moveDownButton.classList.add("icon-only");                   // identity-item > identity-item-controls-right > move-up-down-controls > icon-only
-          moveDownButton.classList.add("stacked-icon");                // identity-item > identity-item-controls-right > move-up-down-controls > stacked-icon
-          moveDownButton.classList.add("move-identity-button");        // identity-item > identity-item-controls-right > move-up-down-controls > move-identity-button
-          moveDownButton.classList.add("move-identity-down");          // identity-item > identity-item-controls-right > move-up-down-controls > move-identity-down
+          moveDownButton.classList.add( "identity-item-button" );      // identity-item > identity-item-controls-right > move-up-down-controls > identity-item-button
+          moveDownButton.classList.add( "icon-button"          );      // identity-item > identity-item-controls-right > move-up-down-controls > icon-button
+          moveDownButton.classList.add( "icon-only"            );      // identity-item > identity-item-controls-right > move-up-down-controls > icon-only
+          moveDownButton.classList.add( "stacked-icon"         );      // identity-item > identity-item-controls-right > move-up-down-controls > stacked-icon
+          moveDownButton.classList.add( "move-identity-button" );      // identity-item > identity-item-controls-right > move-up-down-controls > move-identity-button
+          moveDownButton.classList.add( "move-identity-down"   );      // identity-item > identity-item-controls-right > move-up-down-controls > move-identity-down
+          moveDownButton.classList.add( "no-css"               );      // keep my userContent-css from messing with this
           moveDownButton.setAttribute("identityId", idmIdentity.id);
           moveDownButton.addEventListener('click', (e) => this.identityControlButtonClicked(e), true); // <====== NOTE: event "capturing" phase
           if (this.#tooltip_button_moveDown) moveDownButton.setAttribute('title', this.#tooltip_button_moveDown);
@@ -1298,28 +1525,30 @@ class OptionsUI {
       controlsRightTD.appendChild(moveUpDownControlsDIV);
 
       const moveTopBottomControlsDIV = document.createElement('div');
-        moveTopBottomControlsDIV.classList.add("identity-item-controls-panel"); // identity-item > identity-item-controls-right > identity-item-controls-panel
-        moveTopBottomControlsDIV.classList.add("move-to-controls");             // identity-item > identity-item-controls-right > move-to-controls
+        moveTopBottomControlsDIV.classList.add( "identity-item-controls-panel" ); // identity-item > identity-item-controls-right > identity-item-controls-panel
+        moveTopBottomControlsDIV.classList.add( "move-to-controls"             ); // identity-item > identity-item-controls-right > move-to-controls
 
         const moveTopButton = document.createElement('button');
-          moveTopButton.classList.add("identity-item-button");         // identity-item > identity-item-controls-right > move-top-bottom-controls > identity-item-button
-          moveTopButton.classList.add("icon-button");                  // identity-item > identity-item-controls-right > move-top-bottom-controls > icon-button
-          moveTopButton.classList.add("icon-only");                    // identity-item > identity-item-controls-right > move-top-bottom-controls > icon-only
-          moveTopButton.classList.add("stacked-icon");                 // identity-item > identity-item-controls-right > move-up-down-controls > stacked-icon
-          moveTopButton.classList.add("move-identity-button");         // identity-item > identity-item-controls-right > move-top-bottom-controls > move-identity-button
-          moveTopButton.classList.add("move-identity-to-top");         // identity-item > identity-item-controls-right > move-top-bottom-controls > move-identity-to-top
+          moveTopButton.classList.add( "identity-item-button" );       // identity-item > identity-item-controls-right > move-top-bottom-controls > identity-item-button
+          moveTopButton.classList.add( "icon-button"          );       // identity-item > identity-item-controls-right > move-top-bottom-controls > icon-button
+          moveTopButton.classList.add( "icon-only"            );       // identity-item > identity-item-controls-right > move-top-bottom-controls > icon-only
+          moveTopButton.classList.add( "stacked-icon"         );       // identity-item > identity-item-controls-right > move-up-down-controls > stacked-icon
+          moveTopButton.classList.add( "move-identity-button" );       // identity-item > identity-item-controls-right > move-top-bottom-controls > move-identity-button
+          moveTopButton.classList.add( "move-identity-to-top" );       // identity-item > identity-item-controls-right > move-top-bottom-controls > move-identity-to-top
+          moveTopButton.classList.add( "no-css");                      // keep my userContent-css from messing with this
           moveTopButton.setAttribute("identityId", idmIdentity.id);
           moveTopButton.addEventListener('click', (e) => this.identityControlButtonClicked(e));
           if (this.#tooltip_button_moveToTop) moveTopButton.setAttribute('title', this.#tooltip_button_moveToTop);
         moveTopBottomControlsDIV.appendChild(moveTopButton);
 
         const moveBottomButton = document.createElement('button');
-          moveBottomButton.classList.add("identity-item-button");      // identity-item > identity-item-controls-right > move-top-bottom-controls > identity-item-button
-          moveBottomButton.classList.add("icon-button");               // identity-item > identity-item-controls-right > move-top-bottom-controls > icon-button
-          moveBottomButton.classList.add("icon-only");                 // identity-item > identity-item-controls-right > move-top-bottom-controls > icon-only
-          moveBottomButton.classList.add("stacked-icon");              // identity-item > identity-item-controls-right > move-up-down-controls > stacked-icon
-          moveBottomButton.classList.add("move-identity-button");      // identity-item > identity-item-controls-right > move-top-bottom-controls > move-identity-button
-          moveBottomButton.classList.add("move-identity-to-bottom");   // identity-item > identity-item-controls-right > move-top-bottom-controls > move-identity-to-bottom
+          moveBottomButton.classList.add( "identity-item-button"    ); // identity-item > identity-item-controls-right > move-top-bottom-controls > identity-item-button
+          moveBottomButton.classList.add( "icon-button"             ); // identity-item > identity-item-controls-right > move-top-bottom-controls > icon-button
+          moveBottomButton.classList.add( "icon-only"               ); // identity-item > identity-item-controls-right > move-top-bottom-controls > icon-only
+          moveBottomButton.classList.add( "stacked-icon"            ); // identity-item > identity-item-controls-right > move-up-down-controls > stacked-icon
+          moveBottomButton.classList.add( "move-identity-button"    ); // identity-item > identity-item-controls-right > move-top-bottom-controls > move-identity-button
+          moveBottomButton.classList.add( "move-identity-to-bottom" ); // identity-item > identity-item-controls-right > move-top-bottom-controls > move-identity-to-bottom
+          moveBottomButton.classList.add( "no-css"                  ); // keep my userContent-css from messing with this
           moveBottomButton.setAttribute("identityId", idmIdentity.id);
           moveBottomButton.addEventListener('click', (e) => this.identityControlButtonClicked(e), true); // <====== NOTE: event "capturing" phase
           if (this.#tooltip_button_moveToBottom) moveBottomButton.setAttribute('title', this.#tooltip_button_moveToBottom);
@@ -1327,24 +1556,26 @@ class OptionsUI {
       controlsRightTD.appendChild(moveTopBottomControlsDIV);
 
       const editControlsDIV = document.createElement('div');
-        editControlsDIV.classList.add("identity-item-controls-panel"); // identity-item > identity-item-controls-right > identity-item-controls-panel
-        editControlsDIV.classList.add("edit-controls");                // identity-item > identity-item-controls-right > edit-controls
+        editControlsDIV.classList.add( "identity-item-controls-panel" ); // identity-item > identity-item-controls-right > identity-item-controls-panel
+        editControlsDIV.classList.add( "edit-controls"                ); // identity-item > identity-item-controls-right > edit-controls
 
         const editButton = document.createElement('button');
-          editButton.classList.add("identity-item-button");            // identity-item > identity-item-controls-right > edit-controls > identity-item-button
-          editButton.classList.add("icon-button");                     // identity-item > identity-item-controls-right > edit-controls > icon-button
-          editButton.classList.add("icon-only");                       // identity-item > identity-item-controls-right > edit-controls > icon-only
-          editButton.classList.add("edit-identity");                   // identity-item > identity-item-controls-right > edit-controls > edit-identity
+          editButton.classList.add( "identity-item-button" );          // identity-item > identity-item-controls-right > edit-controls > identity-item-button
+          editButton.classList.add( "icon-button"          );          // identity-item > identity-item-controls-right > edit-controls > icon-button
+          editButton.classList.add( "icon-only"            );          // identity-item > identity-item-controls-right > edit-controls > icon-only
+          editButton.classList.add( "edit-identity"        );          // identity-item > identity-item-controls-right > edit-controls > edit-identity
+          editButton.classList.add( "no-css"               );          // keep my userContent-css from messing with this
           editButton.setAttribute("identityId", idmIdentity.id);
           editButton.addEventListener('click', (e) => this.identityControlButtonClicked(e));
           if (this.#tooltip_button_edit) editButton.setAttribute('title', this.#tooltip_button_edit);
         editControlsDIV.appendChild(editButton);
 
         const deleteButton = document.createElement('button');
-          deleteButton.classList.add("identity-item-button");          // identity-item > identity-item-controls-right > edit-controls > identity-item-button
-          deleteButton.classList.add("icon-button");                   // identity-item > identity-item-controls-right > edit-controls > icon-button
-          deleteButton.classList.add("icon-only");                     // identity-item > identity-item-controls-right > edit-controls > icon-only
-          deleteButton.classList.add("delete-identity");               // identity-item > identity-item-controls-right > edit-controls > delete-identity
+          deleteButton.classList.add( "identity-item-button" );        // identity-item > identity-item-controls-right > edit-controls > identity-item-button
+          deleteButton.classList.add( "icon-button"          );        // identity-item > identity-item-controls-right > edit-controls > icon-button
+          deleteButton.classList.add( "icon-only"            );        // identity-item > identity-item-controls-right > edit-controls > icon-only
+          deleteButton.classList.add( "delete-identity"      );        // identity-item > identity-item-controls-right > edit-controls > delete-identity
+          deleteButton.classList.add( "no-css"               );        // keep my userContent-css from messing with this
           deleteButton.setAttribute("identityId", idmIdentity.id);
           deleteButton.addEventListener('click', (e) => this.identityControlButtonClicked(e));
           if (this.#tooltip_button_delete) deleteButton.setAttribute('title', this.#tooltip_button_delete);
@@ -1367,7 +1598,56 @@ class OptionsUI {
   // - e.oldIndex;  // element index within parent 
   // THAT'S IT???
   async identityChosen(e) {
-    if (e == null) return true;
+    if (e === null) return true;
+
+/*
+    const draggedElement     = e.dragged;
+    const draggedElementTag  = draggedElement?.tagName;
+    const draggedIdentityId  = draggedElement?.getAttribute("identityId")
+    const draggedLockInMenu  = draggedElement?.classList.contains("lock-in-menu");
+
+    const fromElement        = e.from; // from list
+    const fromElementTag     = fromElement?.tagName;
+    const fromIdentityId     = fromElement?.getAttribute("identityId")
+    const fromLockInMenu     = fromElement?.classList.contains("lock-in-menu");
+
+    const itemElement        = e.from;
+    const itemElementTag     = itemElement?.tagName;
+    const itemIdentityId     = itemElement?.getAttribute("identityId")
+    const itemLockInMenu     = itemElement?.classList.contains("lock-in-menu");
+
+    const toElement          = e.to; // to list
+    const toElementTag       = toElement?.tagName;
+    const toIdentityId       = toElement?.getAttribute("identityId")
+    const toLockInMenu       = toElement?.classList.contains("lock-in-menu");
+
+    const relatedElement     = e.related;
+    const relatedElementTag  = relatedElement?.tagName;
+    const relatedIdentityId  = relatedElement?.getAttribute("identityId")
+    const relatedLockInMenu  = relatedElement?.classList.contains("lock-in-menu");
+
+    this.debugAlways("@@@@@@@ identityChosen @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
+                `\n- draggedElementTag ... "${draggedElementTag}"`,
+                `\n- draggedIdentityId ... "${draggedIdentityId}"`,
+                `\n- draggedLockInMenu ... ${draggedLockInMenu}`,
+                "\n",
+                `\n- fromElementTag ...... "${fromElementTag}"`,
+                `\n- fromIdentityId ...... "${fromIdentityId}"`,
+                `\n- fromLockInMenu ...... ${fromLockInMenu}`,
+                "\n",
+                `\n- itemElementTag ...... "${itemElementTag}"`,
+                `\n- itemIdentityId ...... "${itemIdentityId}"`,
+                `\n- itemLockInMenu ...... ${itemLockInMenu}`,
+                "\n",
+                `\n- relatedElementTag ... "${relatedElementTag}"`,
+                `\n- relatedIdentityId ... "${relatedIdentityId}"`,
+                `\n- relatedLockInMenu ... ${relatedLockInMenu}`,
+                "\n",
+                `\n- toElementTag ........ "${toElementTag}"`,
+                `\n- toIdentityId ........ "${toIdentityId}"`,
+                `\n- toLockInMenu ........ ${toLockInMenu}`,
+              );
+*/
 
     this.debug(`@@@@@@@@@@@@@@@@@@@@@@@@@@ e.oldIndex=${e.oldIndex}  @@@@@@@@@@@@@@@@@@@@@@@@@@`);
 
@@ -1402,7 +1682,56 @@ class OptionsUI {
   // e.clone              // the clone element
   // e.pullMode;          // when item is in another sortable: `"clone"` if cloning, `true` if moving 
   async identityDragEnded(e) {
-    if (e == null) return true;
+    if (e === null) return true;
+
+/*
+    const draggedElement     = e.dragged;
+    const draggedElementTag  = draggedElement?.tagName;
+    const draggedIdentityId  = draggedElement?.getAttribute("identityId")
+    const draggedLockInMenu  = draggedElement?.classList.contains("lock-in-menu");
+
+    const fromElement        = e.from; // from list
+    const fromElementTag     = fromElement?.tagName;
+    const fromIdentityId     = fromElement?.getAttribute("identityId")
+    const fromLockInMenu     = fromElement?.classList.contains("lock-in-menu");
+
+    const itemElement        = e.from;
+    const itemElementTag     = itemElement?.tagName;
+    const itemIdentityId     = itemElement?.getAttribute("identityId")
+    const itemLockInMenu     = itemElement?.classList.contains("lock-in-menu");
+
+    const toElement          = e.to; // to list
+    const toElementTag       = toElement?.tagName;
+    const toIdentityId       = toElement?.getAttribute("identityId")
+    const toLockInMenu       = toElement?.classList.contains("lock-in-menu");
+
+    const relatedElement     = e.related;
+    const relatedElementTag  = relatedElement?.tagName;
+    const relatedIdentityId  = relatedElement?.getAttribute("identityId")
+    const relatedLockInMenu  = relatedElement?.classList.contains("lock-in-menu");
+
+    this.debugAlways("@@@@@@@ identityDragEnded @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
+                `\n- draggedElementTag ... "${draggedElementTag}"`,
+                `\n- draggedIdentityId ... "${draggedIdentityId}"`,
+                `\n- draggedLockInMenu ... ${draggedLockInMenu}`,
+                "\n",
+                `\n- fromElementTag ...... "${fromElementTag}"`,
+                `\n- fromIdentityId ...... "${fromIdentityId}"`,
+                `\n- fromLockInMenu ...... ${fromLockInMenu}`,
+                "\n",
+                `\n- itemElementTag ...... "${itemElementTag}"`,
+                `\n- itemIdentityId ...... "${itemIdentityId}"`,
+                `\n- itemLockInMenu ...... ${itemLockInMenu}`,
+                "\n",
+                `\n- relatedElementTag ... "${relatedElementTag}"`,
+                `\n- relatedIdentityId ... "${relatedIdentityId}"`,
+                `\n- relatedLockInMenu ... ${relatedLockInMenu}`,
+                "\n",
+                `\n- toElementTag ........ "${toElementTag}"`,
+                `\n- toIdentityId ........ "${toIdentityId}"`,
+                `\n- toLockInMenu ........ ${toLockInMenu}`,
+              );
+*/
 
     this.debug(`@@@@@@@@@@@@@@@@@@@@@@@@@@ oldIndex=${e.oldIndex}-->newIndex=${e.newIndex} @@@@@@@@@@@@@@@@@@@@@@@@@@`);
     const item       = e.item;                            // the item that actually got dragged.  is there any reference to the item was dragged over???
@@ -1424,12 +1753,64 @@ class OptionsUI {
   //
   // - e.item  // HTMLElement receiving the `mousedown|tapstart` event./
   async filterIdentity(e) {
-    if (e == null) return true;
+    if (e === null) return true;
 
-    if (e.item && e.item.classList.contains('lock-in-menu')) { 
-      this.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@ LOCKED ITEM, RETURNING false @@@@@@@@@@@@@@@@@@@@@@@@@@");
-      return false; // I'm not sure the return value even does anything
-    }
+    const draggedElement     = e.dragged;
+    const draggedElementTag  = draggedElement?.tagName;
+    const draggedIdentityId  = draggedElement?.getAttribute("identityId")
+    const draggedLockInMenu  = draggedElement?.classList.contains("lock-in-menu");
+
+    const fromElement        = e.from; // from list
+    const fromElementTag     = fromElement?.tagName;
+    const fromIdentityId     = fromElement?.getAttribute("identityId")
+    const fromLockInMenu     = fromElement?.classList.contains("lock-in-menu");
+
+    const itemElement        = e.from;
+    const itemElementTag     = itemElement?.tagName;
+    const itemIdentityId     = itemElement?.getAttribute("identityId")
+    const itemLockInMenu     = itemElement?.classList.contains("lock-in-menu");
+
+    const toElement          = e.to; // to list
+    const toElementTag       = toElement?.tagName;
+    const toIdentityId       = toElement?.getAttribute("identityId")
+    const toLockInMenu       = toElement?.classList.contains("lock-in-menu");
+
+    const relatedElement     = e.related;
+    const relatedElementTag  = relatedElement?.tagName;
+    const relatedIdentityId  = relatedElement?.getAttribute("identityId")
+    const relatedLockInMenu  = relatedElement?.classList.contains("lock-in-menu");
+
+    console.debug("@@@@@@@ filterIdentity @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
+                `\n- oldIndex ............ ${e.oldIndex}`,
+                `\n- newIndex ............ ${e.newIndex}`,
+                `\n- oldDraggableIndex ... ${e.oldDraggableIndex}`,
+                `\n- newDraggableIndex ... ${e.newDraggableIndex}`,
+                "\n",
+                `\n- draggedElementTag ... "${draggedElementTag}"`,
+                `\n- draggedIdentityId ... "${draggedIdentityId}"`,
+                `\n- draggedLockInMenu ... ${draggedLockInMenu}`,
+                "\n",
+                `\n- fromElementTag ...... "${fromElementTag}"`,
+                `\n- fromIdentityId ...... "${fromIdentityId}"`,
+                `\n- fromLockInMenu ...... ${fromLockInMenu}`,
+                "\n",
+                `\n- itemElementTag ...... "${itemElementTag}"`,
+                `\n- itemIdentityId ...... "${itemIdentityId}"`,
+                `\n- itemLockInMenu ...... ${itemLockInMenu}`,
+                "\n",
+                `\n- relatedElementTag ... "${relatedElementTag}"`,
+                `\n- relatedIdentityId ... "${relatedIdentityId}"`,
+                `\n- relatedLockInMenu ... ${relatedLockInMenu}`,
+                "\n",
+                `\n- toElementTag ........ "${toElementTag}"`,
+                `\n- toIdentityId ........ "${toIdentityId}"`,
+                `\n- toLockInMenu ........ ${toLockInMenu}`,
+              );
+
+//  if (e.item && e.item.classList.contains('lock-in-menu')) { 
+//    this.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@ LOCKED ITEM, RETURNING false @@@@@@@@@@@@@@@@@@@@@@@@@@");
+//    return false; // I'm not sure the return value even does anything
+//  }
 
     return true;
   }
@@ -1437,42 +1818,34 @@ class OptionsUI {
   // Sortable has fired it's onMove event. // the return value doesn't seem to make any difference
   // Event when you move an item in the list or between lists
   //
-  // - e.dragged;           // dragged HTMLElement
-  // - e.draggedRect;       // DOMRect {left, top, right, bottom}
-  // - e.related;           // HTMLElement on which have guided
-  // - e.relatedRect;       // DOMRect
-  // - e.willInsertAfter;   // Boolean that is true if Sortable will insert drag element after target by default
-  // - originalEvent.clientY; // mouse position
-  // - return false;          // - for cancel                     !!! DOESN"T WORK!!!
-  // - return -1;             // - insert before target
-  // - return 1;              // - insert after target
-  // - return true;           // - keep default insertion point based on the direction
-  // - return void;           // - keep default insertion point based on the direction
-  async identityMoved(e) {
-    if (e == null) return true;
+  // - evt.dragged;         // dragged HTMLElement
+  // - evt.draggedRect;     // DOMRect {left, top, right, bottom}
+  // - evt.related;         // HTMLElement on which have guided
+  // - evt.relatedRect;     // DOMRect
+  // - evt.willInsertAfter; // Boolean that is true if Sortable will insert drag element after target by default
+  // - originalEvt.clientY; // mouse position
+  //
+  // - return false;        // - for cancel                     !!! DOESN"T WORK!!!
+  // - return -1;           // - insert before target
+  // - return 1;            // - insert after target
+  // - return true;         // - keep default insertion point based on the direction
+  // - return void;         // - keep default insertion point based on the direction
+  async identityMoved(evt, originalEvt) {
+    if (evt === null) return true;
 
-    if (e.related) {
-      const from           = e.dragged;
-      const over           = e.related;
-      const fromIdentityId = from.getAttribute("identityId")
-      const overIdentityId = over.getAttribute("identityId")
-      const lockInMenu     = over.classList.contains("lock-in-menu");
+//  const draggedElement     = evt.dragged;
+//  const draggedElementTag  = draggedElement?.tagName;
+//  const draggedIdentityId  = draggedElement?.getAttribute("identityId")
+//  const draggedLockInMenu  = draggedElement?.classList.contains("lock-in-menu");
 
-      // e.from and e.to both appear to the the <TABLE> element
+    const relatedElement     = evt.related;
+//  const relatedElementTag  = relatedElement?.tagName;
+//  const relatedIdentityId  = relatedElement?.getAttribute("identityId")
+    const relatedLockInMenu  = relatedElement?.classList.contains("lock-in-menu");
 
-      this.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-      this.debug("@@@",
-                  `\n- oldIndex=${e.oldIndex}`,
-                  `\n- newIndex=${e.newIndex}`,
-                  `\n- fromIdentityId="${fromIdentityId}"`,
-                  `\n- overIdentityId="${overIdentityId}"`,
-                  `\n- lockInMenu=${lockInMenu}`,
-                );
-
-      if (lockInMenu) { 
-        this.debug("@@@ LOCKED ITEM, RETURNING false @@@");
-        return false; // I'm not sure the return value even does anything
-      }
+    if (relatedLockInMenu) { 
+      this.debugAlways("@@@ LOCKED ITEM, RETURNING false @@@");
+      return false; // This is SUPPOSED to CANCEL the Move, but it doesn't work for me.
     }
 
     return true;
@@ -1509,7 +1882,7 @@ class OptionsUI {
   // e.clone              // the clone element
   // e.pullMode;          // when item is in another sortable: `"clone"` if cloning, `true` if moving 
   async identitiesReordered(e) {
-    if (e == null) return;
+    if (e === null) return;
 
     this.debug("-- begin");
 
@@ -1517,7 +1890,7 @@ class OptionsUI {
 
     const domIdentityDisplayOrderList = document.getElementById("idmIdentityDisplayOrderList");
     const newIdentitiesProps          = {};
-    const positionInMenu              = 0;
+    var   positionInMenu              = 0;
     for (const domIdentityTR of domIdentityDisplayOrderList.children) { // THESE ARE ALL TR ELEMENTS!!!
       const identityId                   = domIdentityTR.getAttribute("identityId");
 //    const domIdentityShowInMenuInputTD = domIdentityTR.children.item(0);
@@ -1550,9 +1923,9 @@ class OptionsUI {
   // One of the Options checkboxes or radio buttons or selects (etc) has been clicked
   // NOTE: This listener is added to the DOCUMENT!  **ANY** Change Event will cause this function to get called!!!
   async optionChanged(e) {
-    if (e == null) return;
+    if (e === null) return;
 
-    this.debugOptionChanged(`-- tagName="${e.target.tagName}" type="${e.target.type}" id="${e.target.id}" idmGeneralOption? ${e.target.classList.contains("idmGeneralOption")}`);
+    this.__debugOptionChanged(`-- tagName="${e.target.tagName}" type="${e.target.type}" id="${e.target.id}" idmGeneralOption? ${e.target.classList.contains("idmGeneralOption")}`);
 
     if (e.target.classList.contains("idmGeneralOption")) {
       if (e.target.tagName === 'INPUT') {
@@ -1562,7 +1935,7 @@ class OptionsUI {
 
           /* if it's a radio button, set the values for all the other buttons in the group to false */
           if (e.target.type === 'radio') { // is it a radio button?
-            this.debugOptionChanged(`-- Radio Button Setting option ${optionName}=<${optionValue}> - group=${e.target.name}`);
+            this.__debugOptionChanged(`-- Radio Button Setting option ${optionName}=<${optionValue}> - group=${e.target.name}`);
 
             // first, set this option
             await this.#idmOptionsApi.storeOption(
@@ -1574,15 +1947,15 @@ class OptionsUI {
               const radioGroupName = e.target.name;
               const radioGroup = document.querySelectorAll(`input[type='radio'][name="${radioGroupName}"]`);
               if (! radioGroup) {
-                this.debugOptionChanged('-- no radio group found');
+                this.__debugOptionChanged('-- no radio group found');
               } else {
-                this.debugOptionChanged(`-- radio group members length=${radioGroup.length}`);
+                this.__debugOptionChanged(`-- radio group members length=${radioGroup.length}`);
                 if (radioGroup.length < 2) {
-                  this.debugOptionChanged('-- no radio group members to reset (length < 2)');
+                  this.__debugOptionChanged('-- no radio group members to reset (length < 2)');
                 } else {
                   for (const radio of radioGroup) {
-                    if (radio.id != optionName) { // don't un-check the one that fired
-                      this.debugOptionChanged(`-- resetting  radio button [${radio.id}]: ${false}`);
+                    if (radio.id !== optionName) { // don't un-check the one that fired
+                      this.__debugOptionChanged(`-- resetting  radio button [${radio.id}]: ${false}`);
                       await this.#idmOptionsApi.storeOption(
                         { [radio.id]: false }
                       );
@@ -1592,7 +1965,7 @@ class OptionsUI {
               }
             }
           } else { // since we already tested for it, it's got to be a checkbox
-            this.debugOptionChanged(`-- Checkbox Setting Option [${optionName}]: ${optionValue}]`);
+            this.__debugOptionChanged(`-- Checkbox Setting Option [${optionName}]: ${optionValue}]`);
             await this.#idmOptionsApi.storeOption(
               { [optionName]: optionValue }
             );
@@ -1603,15 +1976,15 @@ class OptionsUI {
                 break;
               case 'idmDisplayIdentityPositionInDisplayOrder':
                 // keep our (small) cache of options up to date
-                this.#displayIdentityPosition = optionValue;
+                this.#option_displayIdentityPosition = optionValue;
                 break;
               case 'idmDisplayIdentityIndexInDisplayOrder':
                 // keep our (small) cache of options up to date
-                this.#displayIdentityIndex    = optionValue;
+                this.#option_displayIdentityIndex    = optionValue;
                 break;
               case 'idmDisplayIdentityIdInDisplayOrder':
                 // keep our (small) cache of options up to date
-                this.#displayIdentityId       = optionValue;
+                this.#option_displayIdentityId       = optionValue;
                 break;
               case 'idmShowPopupOptions':
                 await this.showPopupOptionsCheckClicked(e);
@@ -1637,7 +2010,7 @@ class OptionsUI {
       } else if (e.target.tagName === 'SELECT') {
         const optionName  = e.target.id;
         const optionValue = e.target.value;
-        this.debugOptionChanged(`-- Select Setting Option [${optionName}]: "${optionValue}"]`);
+        this.__debugOptionChanged(`-- Select Setting Option [${optionName}]: "${optionValue}"]`);
 
         await this.#idmOptionsApi.storeOption(
           { [optionName]: optionValue }
@@ -1662,13 +2035,82 @@ class OptionsUI {
 
 
 
-  // the user clicked an identity-item-button: move-identity-up, move-identity-down, move-identity-to-top, move-identity-to-bottom, edit-identity, delete-identity, etc
-  async identityControlButtonClicked(e) {
-    if (e == null) return;
+  async identityListHeaderControlClicked(e) {
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 
-    this.debugIdentityControl("-- begin");
+    this.debug("-- begin, e.target:", e.target);
+
+    if (e.target.tagName !== "BUTTON") {
+      this.debug("Click Target is not a Button:", e.target);
+    } else {
+      const button = e.target;
+
+      if (! button.classList.contains("header-button")) {
+        this.debug("Button does not have class 'header-button':", button);
+      } else {
+        if (button.classList.contains("sort-button")) {
+          const selectorForTH = 'th.header-item';
+          const headerTH = button.closest(selectorForTH);
+
+          if (! headerTH) {
+            this.error(`FAILED TO GET HEADER TH for 'sort-button': selectorForTH="${selectorForTH}" - button:`, button);
+          } else {
+            const sortBy = headerTH.getAttribute('sortBy');
+
+            if (! sortBy) {
+              this.error("FAILED TO GET 'sortBy' Attribute from headerTH:", headerTH);
+            } else {
+              var sortDirection;
+              if (button.classList.contains("sort-ascending")) {
+                sortDirection = IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_ASCENDING;
+              } else if (button.classList.contains("sort-descending")) {
+                sortDirection = IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_DESCENDING;
+              } else {
+                this.error("Button 'sort-button' does not have class 'sort-ascending' or 'sort-descending' - button:", button);
+              }
+
+              if (sortDirection) {
+                this.debug(`Sort by "${sortBy}" "${sortDirection}"`);
+                await this.sortIdentityList(e, sortBy, sortDirection);
+
+                const autoSortBySelect        = document.getElementById("idmAutoSortBySelect");
+                const autoSortDirectionSelect = document.getElementById("idmAutoSortDirectionSelect");
+
+                if (! autoSortBySelect || ! autoSortDirectionSelect) {
+                  if (! autoSortBySelect)        this.error("-- failed to get autoSortBySelect, id='idmAutoSortBySelect'");
+                  if (! autoSortDirectionSelect) this.error("-- failed to get autoSortDirectionSelect, id='idmAutoSortDirectionSelect'");
+            
+                } else if (sortBy === IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_ID) { // The SELECT does NOT include this OPTION because the column is optional
+                  autoSortBySelect.value        = IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_NONE;            // MABXXX will this update the option? Doesn't seem to...
+                  autoSortDirectionSelect.value = IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_NONE;     // MABXXX will this update the option? Doesn't seem to...
+                } else {
+                  autoSortBySelect.value        = sortBy;            // MABXXX will this update the option? It DOES seem to...
+                  autoSortDirectionSelect.value = sortDirection;     // MABXXX will this update the option? It DOES seem to...
+                }
+              }
+            }
+          }
+
+        } else {
+          this.debug("Button does not have one of the expected button classes: ", button);
+        }
+      }
+    }
+
+    this.debug("-- end");
+  }
+
+
+
+  // the user clicked an identity-item-button: move-identity-up, move-identity-down, move-identity-to-top, move-identity-to-bottom, edit-identity, delete-identity, etc
+  async identityControlButtonClicked(e) {
+    if (e === null) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.__debugIdentityControl("-- begin");
 
     if (this.#DEBUG_IDENTITY_CONTROL) this.debugAlways( "--", // don't build all this just to be denied by this.#DEBUG inside this.debug()
                                                         `\n- tagName="${e.target.tagName}"`,
@@ -1683,11 +2125,11 @@ class OptionsUI {
                                                       );
 
     if (e.target.tagName === 'BUTTON' || e.target.tagName === 'LABEL') {
-      this.debugIdentityControl(`BUTTON OR LABEL CLICKED tagName="${e.target.tagName}" id="${e.target.id}"`);
+      this.__debugIdentityControl(`BUTTON OR LABEL CLICKED tagName="${e.target.tagName}" id="${e.target.id}"`);
       
       // I thought the browser was supposed to take care of this <label> with a 'for' attribute stuff...
       if (e.target.tagName === 'LABEL' && (! e.target.parentElement || e.target.parentElement.tagName !== 'BUTTON')) {
-        this.debugIdentityControl(`-- LABEL CLICKED BUT PARENT ELEMENT NOT A BUTTON -- id="${e.target.id}" parent="${e.target.parentElement.tagName}"`);
+        this.__debugIdentityControl(`-- LABEL CLICKED BUT PARENT ELEMENT NOT A BUTTON -- id="${e.target.id}" parent="${e.target.parentElement.tagName}"`);
       } else {
         e.preventDefault();
 
@@ -1697,7 +2139,7 @@ class OptionsUI {
         } else {
           button = e.target;
         }
-        this.debugIdentityControl(`-- BUTTON CLICKED id="${button.id}"`);
+        this.__debugIdentityControl(`-- BUTTON CLICKED id="${button.id}"`);
 
         if (button.classList.contains("identity-item-button")) {
           if ( button.classList.contains("move-identity-up")
@@ -1709,7 +2151,7 @@ class OptionsUI {
              )
           {
             if (! button.hasAttribute("identityId")) { // if it doesn't have an identityID then we can't store in IdentitiesExtendedProps
-              this.debugIdentityControl("-- BUTTON HAS NO \"identitId\" ATTRIBUTE - CAN'T DO ANYTHING!!!");
+              this.__debugIdentityControl("-- BUTTON HAS NO \"identitId\" ATTRIBUTE - CAN'T DO ANYTHING!!!");
 
             } else {
               const identityId = button.getAttribute("identityId");
@@ -1734,17 +2176,17 @@ class OptionsUI {
               }
             }
           } else {
-            this.debugIdentityControl("-- NOT OUR BUTTON -- got expected class 'identity-item-button', but button-specific class not found --"); 
+            this.__debugIdentityControl("-- NOT OUR BUTTON -- got expected class 'identity-item-button', but button-specific class not found --"); 
           }
         } else {
-          this.debugIdentityControl("-- NOT OUR BUTTON -- expected class 'identity-item-button' not found --");
+          this.__debugIdentityControl("-- NOT OUR BUTTON -- expected class 'identity-item-button' not found --");
         }
       }
     } else {
-      this.debugIdentityControl(`-- BUTTON NOT FOUND -- tagName="${e.target.tagName}" id="${e.target.id}"`);
+      this.__debugIdentityControl(`-- BUTTON NOT FOUND -- tagName="${e.target.tagName}" id="${e.target.id}"`);
     }
 
-    this.debugIdentityControl("-- end");
+    this.__debugIdentityControl("-- end");
   }
 
 
@@ -1752,7 +2194,7 @@ class OptionsUI {
   // Move the given Identity up ONE position in the list,
   // skipping locked and filtered-out identities
   async moveIdentityUp(e, moveIdentityId) {
-    this.debugIdentityControl(`-- begin -- moveIdentityId="${moveIdentityId}"`);
+    this.__debugIdentityControl(`-- begin -- moveIdentityId="${moveIdentityId}"`);
 
     var identityMoved = false;
     var error         = false;
@@ -1771,24 +2213,24 @@ class OptionsUI {
         const moveLockInMenu     = (!moveIdentityProps || typeof moveIdentityProps.lockInMenu     !== 'boolean' ) ? false : moveIdentityProps.lockInMenu;
         const movePositionInMenu = (!moveIdentityProps || typeof moveIdentityProps.positionInMenu !== 'number'  ) ? -1    : moveIdentityProps.positionInMenu;
 
-        this.debugIdentityControl(`-- MOVE id="${moveIdentityId}" moveLockInMenu=${moveLockInMenu} movePositionInMenu=${movePositionInMenu}`);
+        this.__debugIdentityControl(`-- MOVE id="${moveIdentityId}" moveLockInMenu=${moveLockInMenu} movePositionInMenu=${movePositionInMenu}`);
 
         if (! moveIdentityProps) {
           this.error(`-- CANNOT MOVE -- No Old Identity Props: id="${moveIdentityId}"`);
           error = true;
         } else if (moveLockInMenu) {
-          this.debugIdentityControl(`-- CANNOT MOVE - Identity is lockInMenu: id="${moveIdentityId}"`);
+          this.__debugIdentityControl(`-- CANNOT MOVE - Identity is lockInMenu: id="${moveIdentityId}"`);
         } else if (movePositionInMenu < 0) {
           this.error(`-- CANNOT MOVE - Identity has no positionInMenu: id="${moveIdentityId}"`);
           error = true;
         } else if (movePositionInMenu === 0) {
-          this.debugIdentityControl(`-- CANNOT MOVE - Identity is at the Beginning of the list: id="${moveIdentityId}"`);
+          this.__debugIdentityControl(`-- CANNOT MOVE - Identity is at the Beginning of the list: id="${moveIdentityId}"`);
         } else {
           const domIdentityDisplayOrderList = document.getElementById("idmIdentityDisplayOrderList"); // this is a <TABLE>
           const indexOfIdentityTR           = Array.from(domIdentityDisplayOrderList.children).indexOf(moveIdentityItemTR);
           var   foundEligibleSwapIdentity   = false;
 
-          this.debugIdentityControl(`-- movePositionInMenu=${movePositionInMenu} indexOfIdentityTR=${indexOfIdentityTR} id="${moveIdentityId}"`);
+          this.__debugIdentityControl(`-- movePositionInMenu=${movePositionInMenu} indexOfIdentityTR=${indexOfIdentityTR} id="${moveIdentityId}"`);
 
           // We have to do all this just to skip over LOCKED and/or FILTERED Identities
           // children[0] is the header row
@@ -1797,7 +2239,7 @@ class OptionsUI {
             const swapIdentityId     = swapIdentityItemTR.getAttribute("identityId");
 
             if (this.isFilteredDomIdentityTR(swapIdentityItemTR)) {
-              this.debugIdentityControl(`-- Swap Identity is Filtered Out: id="${swapIdentityId}"`);
+              this.__debugIdentityControl(`-- Swap Identity is Filtered Out: id="${swapIdentityId}"`);
 
             } else if (! swapIdentityId) {
               this.error("-- No Swap Identity Id");
@@ -1814,10 +2256,10 @@ class OptionsUI {
               } else {
                 const swapLockInMenu     = (typeof swapIdentityProps.lockInMenu     !== 'boolean') ? false : swapIdentityProps.lockInMenu;
                 const swapPositionInMenu = (typeof swapIdentityProps.positionInMenu !== 'number' ) ? -1    : swapIdentityProps.positionInMenu;
-                this.debugIdentityControl(`-- SWAP id="${swapIdentityId}" swapLockInMenu=${swapLockInMenu} swapPositionInMenu=${swapPositionInMenu}`);
+                this.__debugIdentityControl(`-- SWAP id="${swapIdentityId}" swapLockInMenu=${swapLockInMenu} swapPositionInMenu=${swapPositionInMenu}`);
 
                 if (swapLockInMenu) {
-                  this.debugIdentityControl(`-- Swap Identity is lockInMenu, skipping: id="${swapIdentityId}"`);
+                  this.__debugIdentityControl(`-- Swap Identity is lockInMenu, skipping: id="${swapIdentityId}"`);
                 } else {
                   foundEligibleSwapIdentity = true;
 
@@ -1833,7 +2275,7 @@ class OptionsUI {
 
                   } else {
                     // SWAP!!!
-                    this.debugIdentityControl( "-- CAN SWAP --",
+                    this.__debugIdentityControl( "-- CAN SWAP --",
                                                `\n- Move Identity id="${moveIdentityId}" positionInMenu=${movePositionInMenu}`,
                                                `\n- Swap Identity id="${swapIdentityId}" positionInMenu=${swapPositionInMenu}`,
                               );
@@ -1852,20 +2294,20 @@ class OptionsUI {
             }
           }
 
-          if (! error && ! foundEligibleSwapIdentity) this.debugIdentityControl(`-- FOUND NO UNLOCKED IDENTITY TO SWAP -- Identity id="${moveIdentityId}"`);
+          if (! error && ! foundEligibleSwapIdentity) this.__debugIdentityControl(`-- FOUND NO UNLOCKED IDENTITY TO SWAP -- Identity id="${moveIdentityId}"`);
         }
       }
     }
 
-    if (! identityMoved) this.debugIdentityControl(`-- NOT MOVED -- Identity id="${moveIdentityId}"`);
+    if (! identityMoved) this.__debugIdentityControl(`-- NOT MOVED -- Identity id="${moveIdentityId}"`);
 
-    this.debugIdentityControl("-- end");
+    this.__debugIdentityControl("-- end");
   }
 
   // Move the given Identity up DOWN position in the list,
   // skipping locked and filtered-out identities
   async moveIdentityDown(e, moveIdentityId) {
-    this.debugIdentityControl(`-- begin -- moveIdentityId="${moveIdentityId}"`);
+    this.__debugIdentityControl(`-- begin -- moveIdentityId="${moveIdentityId}"`);
 
     var identityMoved = false;
     var error         = false;
@@ -1884,13 +2326,13 @@ class OptionsUI {
         const moveLockInMenu                = (!moveIdentityProps || typeof moveIdentityProps.lockInMenu     !== 'boolean' ) ? false : moveIdentityProps.lockInMenu;
         const movePositionInMenu            = (!moveIdentityProps || typeof moveIdentityProps.positionInMenu !== 'number'  ) ? -1    : moveIdentityProps.positionInMenu;
 
-        this.debugIdentityControl(`-- MOVE id="${moveIdentityId}" moveLockInMenu=${moveLockInMenu} movePositionInMenu=${movePositionInMenu}`);
+        this.__debugIdentityControl(`-- MOVE id="${moveIdentityId}" moveLockInMenu=${moveLockInMenu} movePositionInMenu=${movePositionInMenu}`);
 
         if (! moveIdentityProps) {
           this.error(`-- CANNOT MOVE -- No Old Identity Props: id="${moveIdentityId}"`);
           error = true;
         } else if (moveLockInMenu) {
-          this.debugIdentityControl(`-- CANNOT MOVE - Identity is lockInMenu: id="${moveIdentityId}"`);
+          this.__debugIdentityControl(`-- CANNOT MOVE - Identity is lockInMenu: id="${moveIdentityId}"`);
         } else if (movePositionInMenu < 0) {
           this.error(`-- CANNOT MOVE - Identity has no positionInMenu: id="${moveIdentityId}"`);
           error = true;
@@ -1899,10 +2341,10 @@ class OptionsUI {
           const domListLength               = domIdentityDisplayOrderList.children.length;
           const indexOfIdentityTR           = Array.from(domIdentityDisplayOrderList.children).indexOf(moveIdentityItemTR);
 
-          this.debugIdentityControl(`-- movePositionInMenu=${movePositionInMenu} indexOfIdentityTR=${indexOfIdentityTR} domListLength=${domListLength} id="${moveIdentityId}"`);
+          this.__debugIdentityControl(`-- movePositionInMenu=${movePositionInMenu} indexOfIdentityTR=${indexOfIdentityTR} domListLength=${domListLength} id="${moveIdentityId}"`);
 
           if (indexOfIdentityTR + 1 >= domListLength) {
-            this.debugIdentityControl(`-- CANNOT MOVE - Identity is at the End of the list: id="${moveIdentityId}"`);
+            this.__debugIdentityControl(`-- CANNOT MOVE - Identity is at the End of the list: id="${moveIdentityId}"`);
 
           } else {
             var foundEligibleSwapIdentity = false;
@@ -1914,7 +2356,7 @@ class OptionsUI {
               const swapIdentityId     = swapIdentityItemTR.getAttribute("identityId");
 
               if (this.isFilteredDomIdentityTR(swapIdentityItemTR)) {
-                this.debugIdentityControl(`-- Swap Identity is Filtered Out: id="${swapIdentityId}"`);
+                this.__debugIdentityControl(`-- Swap Identity is Filtered Out: id="${swapIdentityId}"`);
 
               } else if (! swapIdentityId) {
                 this.error("-- No Swap Identity Id");
@@ -1931,10 +2373,10 @@ class OptionsUI {
                 } else {
                   const swapLockInMenu     = (typeof swapIdentityProps.lockInMenu     !== 'boolean') ? false : swapIdentityProps.lockInMenu;
                   const swapPositionInMenu = (typeof swapIdentityProps.positionInMenu !== 'number' ) ? -1    : swapIdentityProps.positionInMenu;
-                  this.debugIdentityControl(`-- SWAP id="${swapIdentityId}" swapLockInMenu=${swapLockInMenu} swapPositionInMenu=${swapPositionInMenu}`);
+                  this.__debugIdentityControl(`-- SWAP id="${swapIdentityId}" swapLockInMenu=${swapLockInMenu} swapPositionInMenu=${swapPositionInMenu}`);
 
                   if (swapLockInMenu) {
-                    this.debugIdentityControl(`-- Swap Identity is lockInMenu, skipping: id="${swapIdentityId}"`);
+                    this.__debugIdentityControl(`-- Swap Identity is lockInMenu, skipping: id="${swapIdentityId}"`);
                   } else {
                     foundEligibleSwapIdentity = true;
 
@@ -1950,7 +2392,7 @@ class OptionsUI {
 
                     } else {
                       // SWAP!!!
-                      this.debugIdentityControl( "-- CAN SWAP --",
+                      this.__debugIdentityControl( "-- CAN SWAP --",
                                                  `\n- Move Identity id="${moveIdentityId}" positionInMenu=${movePositionInMenu}`,
                                                  `\n- Swap Identity id="${swapIdentityId}" positionInMenu=${swapPositionInMenu}`,
                                 );
@@ -1969,15 +2411,15 @@ class OptionsUI {
               }
             }
 
-            if (! error && ! foundEligibleSwapIdentity) this.debugIdentityControl(`-- FOUND NO UNLOCKED IDENTITY TO SWAP -- Identity id="${moveIdentityId}"`);
+            if (! error && ! foundEligibleSwapIdentity) this.__debugIdentityControl(`-- FOUND NO UNLOCKED IDENTITY TO SWAP -- Identity id="${moveIdentityId}"`);
           }
         }
       }
     }
 
-    if (! identityMoved) this.debugIdentityControl(`-- NOT MOVED -- Identity id="${moveIdentityId}"`);
+    if (! identityMoved) this.__debugIdentityControl(`-- NOT MOVED -- Identity id="${moveIdentityId}"`);
 
-    this.debugIdentityControl("-- end");
+    this.__debugIdentityControl("-- end");
   }
 
   swapIdentityItemTRs(downward, domIdentityList, identityItemTR1, identityItemTR2) {
@@ -1996,7 +2438,7 @@ class OptionsUI {
       }
 
       // If Pos and/or Idx are displayed they need to be updated in the DOM!!!
-      if (this.#displayIdentityPosition) {
+      if (this.#option_displayIdentityPosition) {
         const posSelector = 'td.identity-item-pos';
         const domPos1     = identityItemTR1.querySelector(posSelector);
         const domPos2     = identityItemTR2.querySelector(posSelector);
@@ -2008,7 +2450,7 @@ class OptionsUI {
           domPos2.innerText = saveText;
         }
       }
-      if (this.#displayIdentityIndex) {
+      if (this.#option_displayIdentityIndex) {
         const idxSelector = 'td.identity-item-index';
         const domIdx1     = identityItemTR1.querySelector(idxSelector);
         const domIdx2     = identityItemTR2.querySelector(idxSelector);
@@ -2035,11 +2477,11 @@ class OptionsUI {
 
 
 
-  async moveIdentityToTop(e, identityIdToMove) {
-    this.debugIdentityControl(`-- identityIdToMove="${identityIdToMove}"`);
+  async DEADmoveIdentityToTop(e, identityIdToMove) {
+    this.__debugIdentityControl(`-- identityIdToMove="${identityIdToMove}"`);
 
     if (identityIdToMove) {
-      const domIdentityDisplayOrderList = document.getElementById("idmIdentityDisplayOrderList");
+      const domIdentityDisplayOrderList = document.getElementById("idmIdentityDisplayOrderList"); // MABXXX WHAT IF WE DIDN'T FIND IT?
       const identityToMoveTRSelector    = `tr.identity-item[identityId='${identityIdToMove}']`;
       const domIdentityToMoveTR         = domIdentityDisplayOrderList.querySelector(identityToMoveTRSelector);
 
@@ -2047,48 +2489,109 @@ class OptionsUI {
         this.error(`-- FAILED TO FIND IDENTITY TO MOVE TR -- identityToMoveTRSelector="${identityToMoveTRSelector}"`);
 
       } else {
-        this.debugIdentityControl(`-- Found Identity To Move TR -- identityToMoveTRSelector="${identityToMoveTRSelector}"`);
+        this.__debugIdentityControl(`-- Found Identity To Move TR -- identityToMoveTRSelector="${identityToMoveTRSelector}"`);
 
-        const idmIdentities     = await this.#idmIdentitiesApi.getIdmIdentities(); // index is positionInMenu
-        const idmIdentityToMove = await this.#idmIdentitiesApi.getIdmIdentities(identityIdToMove);
+        const identitiesProps   = await this.#idmOptionsApi.getIdentitiesExtendedProps();
+        const identityPropsToMove = identitiesProps[identityIdToMove];
 
-        if (! idmIdentityToMove) {
-          this.error(`-- CANNOT MOVE -- Identity to Move NOT Found: id="${identityIdToMove}"`);
-        } else if (idmIdentityToMove.lockInMenu) {
-          this.debugIdentityControl(`-- CANNOT MOVE - Identity to Move is lockInMenu: id="${identityIdToMove}"`);
+        if (! identityPropsToMove) {
+          this.error(`-- CANNOT MOVE -- Identity Props to Move NOT Found: id="${identityIdToMove}"`);
+        } else if (identityPropsToMove.lockInMenu) {
+          this.__debugIdentityControl(`-- CANNOT MOVE - Identity to Move is lockInMenu: id="${identityIdToMove}"`);
         } else {
-          const domIdentityTRs                      = domIdentityDisplayOrderList.querySelectorAll('tr.identity-item');
-          const lockedDomIdentityTRByPositionInMenu = {};
-          var   positionInMenu                      = 0;
-          var   fistUnlockedDomIdentityTR;
-          var   fistUnlockedIdentityPositionInMenu;
+          const positionInMenuToMove = identityPropsToMove.positionInMenu;
+          var   firstUnlockedFound   = false;
+          var   storeIdentitiesProps = false;
+          var   positionInMenu       = 0;
+          var   swapIdentityId       = identityIdToMove;
+          var   swapDomIdentityTR    = domIdentityToMoveTR;
+          var   swapIdentityProps    = identityPropsToMove;
+          var   swapPositionInMenu   = positionInMenuToMove
+          const domIdentityTRs       = domIdentityDisplayOrderList.querySelectorAll('tr.identity-item'); // this does not include the Header!
 
           for (const domIdentityTR of domIdentityTRs) {
-            const domIdentityId = domIdentityTR.getAttribute('identityId');
-            if (domIdentityId === identityIdToMove && ! fistUnlockedDomIdentityTR) {
+            const domIdentityId    = domIdentityTR.getAttribute('identityId');
+            if (! identitiesProps) {
+              this.error("FAILED TO GET identityId from identity-item TR:", domIdentityTR);
+              storeIdentitiesProps = false;
               break;
             }
 
-            if (! domIdentityTR.classList.contains('lock-in-menu')) {
-              if (! fistUnlockedDomIdentityTR) {
-                fistUnlockedDomIdentityTR          = domIdentityTR;
-                fistUnlockedIdentityPositionInMenu = positionInMenu;
-              }
-            } else if (! fistUnlockedDomIdentityTR) {
-              lockedDomIdentityTRByPositionInMenu[positionInMenu] = domIdentityTR;
+            const identityProps = identitiesProps[domIdentityId];             // MABXXX WHAT IF IT'S NOT FOUND???
+            if (! identitiesProps) {
+              this.error(`FAILED TO GET IdentityProps for Identity "${domIdentityId}"`);
+              storeIdentitiesProps = false;
+              break;
             }
+
+            const idPositionInMenu = identityProps.positionInMenu;
+            this.__debugIdentityControl( "\n----",
+                                         `\n<< identityIdToMove ....... "${identityIdToMove}"`,
+                                         `\n<< positionInMenuToMove ... ${positionInMenuToMove}`,
+                                         `\n>> domIdentityId .......... "${domIdentityId}"`,
+                                         `\n>> idPositionInMenu= ...... ${idPositionInMenu}`,
+                                         `\n>> lockInMenu ............. ${(domIdentityTR.classList.contains('lock-in-menu'))}`,
+                                         `\n-- swapIdentityId ......... "${swapIdentityId}"`,
+                                         `\n-- swapPositionInMenu ..... ${swapPositionInMenu}`,
+                                         `\n-- positionInMenu= ........ ${positionInMenu}`,
+                                         );
+
+            if (idPositionInMenu === positionInMenuToMove) { // have we reached the position of where we're moving from???
+              this.__debugIdentityControl("\n---- IdentityToMove Reached:");
+              if (! firstUnlockedFound) {
+                this.__debugIdentityControl("\n---- Cannot Move UP -- IdentityToMove Reached Before finding FIRST Unlocked Identity:");
+              }
+              break;
+            }
+
+            if (domIdentityTR.classList.contains('lock-in-menu')) { // or identityProps.lockInMenu???
+//            this.__debugIdentityControl( "\n---- Skipping Locked Identity:",
+//                                         `\n>> domIdentityId .......... "${domIdentityId}"`,
+//                                         `\n>> idPositionInMenu= ...... ${idPositionInMenu}`,
+//                                         `\n-- swapIdentityId ......... "${swapIdentityId}"`,
+//                                         `\n-- swapPositionInMenu ..... ${swapPositionInMenu}`,
+//                                         `\n-- positionInMenu= ........ ${positionInMenu}`,
+//                                         `\n<< positionInMenuToMove ... ${positionInMenuToMove}`,
+//                                         `\n<< identityIdToMove ....... "${identityIdToMove}"`,
+//                                       );
+            } else {
+//            this.__debugIdentityControl( `\n---- Found${(! firstUnlockedFound) ? " FIRST" : ""} Unlocked Identity, Swapping:`,
+//                                         `\n>> domIdentityId .......... "${domIdentityId}"`,
+//                                         `\n>> idPositionInMenu= ...... ${idPositionInMenu}`,
+//                                         `\n-- swapIdentityId ......... "${swapIdentityId}"`,
+//                                         `\n-- swapPositionInMenu ..... ${swapPositionInMenu}`,
+//                                         `\n-- positionInMenu= ........ ${positionInMenu}`,
+//                                         `\n<< positionInMenuToMove ... ${positionInMenuToMove}`,
+//                                         `\n<< identityIdToMove ....... "${identityIdToMove}"`,
+//                                       );
+              firstUnlockedFound = true;
+
+              this.debugAlways(`\n---- SWAPPING ${swapPositionInMenu} --> ${positionInMenu}`);
+//            this.swapIdentityItemTRs(true, domIdentityDisplayOrderList, swapDomIdentityTR, domIdentityTR); // downward=true;
+              const nextSibling = domIdentityTR.nextSibling;
+              domIdentityDisplayOrderList.insertBefore(identityItemTR2, identityItemTR1);
+//            domIdentityDisplayOrderList.insertBefore(identityItemTR1, identityItemTR2NextSibling);
+
+              // swap the data
+              swapIdentityProps.positionInMenu = positionInMenu;
+              identityProps.positionInMenu     = swapPositionInMenu;
+              storeIdentitiesProps = true;
+              
+              // set up for next iteration
+              swapIdentityId     = domIdentityId;
+              swapDomIdentityTR  = domIdentityTR;
+              swapIdentityProps  = identityProps;
+              swapPositionInMenu = idPositionInMenu;
+            }
+
             positionInMenu++;
+if (positionInMenu > 15) break;
           }
 
-          if (! fistUnlockedDomIdentityTR) {
-            this.debugIdentityControl(`-- CANNOT MOVE - No Unlocked Identity Above Identity to Move : id="${identityIdToMove}"`);
-          } else {
-            positionInMenu = fistUnlockedIdentityPositionInMenu;
-            var insertBeforeElement = domIdentityDisplayOrderList.children[positionInMenu + 1];
-            this.swapIdentityItemTRs(false, domIdentityDisplayOrderList, domIdentityToMoveTR, insertBeforeElement); // MABXXX DOES NOT DO IT!!!
-
-//          if (var i = positionInMMenu + 1; i < domIdentityDisplayOrderList.children.length; ++i) {
-//          }
+if (false && storeIdentitiesProps) {
+            // store the swapped data
+            this.__debugIdentityControl("\n---- Storing Props");
+            await this.#idmOptionsApi.storeIdentitiesExtendedProps(identitiesProps);
           }
         }
       }
@@ -2097,7 +2600,7 @@ class OptionsUI {
 
 
 
-  async OLDmoveIdentityToTop(e, identityId) {
+  async moveIdentityToTop(e, identityId) {
     this.debug(`-- identityId="${identityId}"`);
 
     if (identityId) {
@@ -2124,7 +2627,7 @@ class OptionsUI {
 
 
   async moveIdentityToBottom(e, identityId) {
-    this.debugIdentityControl(`-- identityId="${identityId}"`);
+    this.__debugIdentityControl(`-- identityId="${identityId}"`);
 
     if (identityId) {
       const identitiesProps = await this.#idmOptionsApi.getIdentitiesExtendedProps();
@@ -2134,7 +2637,7 @@ class OptionsUI {
       if (! props) {
         this.error(`-- CANNOT MOVE -- No Old Identity Props: id="${identityId}"`);
       } else if (lockInMenu) {
-        this.debugIdentityControl(`-- CANNOT MOVE - Identity is lockInMenu: id="${identityId}"`);
+        this.__debugIdentityControl(`-- CANNOT MOVE - Identity is lockInMenu: id="${identityId}"`);
 
       } else {
         const identitiesToMove = [identityId];
@@ -2154,10 +2657,10 @@ class OptionsUI {
   // NOTE: This listener was added to process in the "capturing" phase of event processing
   //       That ***STILL*** does not help us prevent events from getting to Sortable.js !!!
   async identityOptionCheckClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     var target = e.target;
 
-    this.debugIdentityControl("-- begin");
+    this.__debugIdentityControl("-- begin");
     if (this.#DEBUG_IDENTITY_CONTROL) this.debugAlways( "-- begin", // don't build all this just to be denied by this.#DEBUG in this.debug()
                                                         `\n- id="${target.getAttribute('id')}"`,
                                                         `\n- for="${target.getAttribute('for')}"`,
@@ -2181,7 +2684,7 @@ class OptionsUI {
 //    const labelForId = target.getAttribute('for');
 //    target = undefined;
 //    if (! labelForId) {
-//      this.debugIdentityControl("-- a LABEL was clicked but it has no 'for' attribute");
+//      this.__debugIdentityControl("-- a LABEL was clicked but it has no 'for' attribute");
 //    } else {
 //      const forElement = document.getElementById(labelForId);
 //      if (! forElement) {
@@ -2217,16 +2720,16 @@ class OptionsUI {
         const positionInMenu     = (!props || typeof props.positionInMenu !== 'number' ) ? nextPositionInMenu : props.positionInMenu;
 
         if (! props) {
-          this.debugIdentityControl("-- NO OLD PROPS - CREATING NEW PROPS --");
+          this.__debugIdentityControl("-- NO OLD PROPS - CREATING NEW PROPS --");
         } else {
-          this.debugIdentityControl(`-- OLD PROPS: showInMenu=${props.showInMenu} lockInMenu=${props.lockInMenu} positionInMenu=${props.positionInMenu}`);
+          this.__debugIdentityControl(`-- OLD PROPS: showInMenu=${props.showInMenu} lockInMenu=${props.lockInMenu} positionInMenu=${props.positionInMenu}`);
         }
 
         // is it a showInMenu checkbox?
         if (target.classList.contains("show-in-menu-check")) {          // identity-item > identity-item-controls-left > show-in-menu-check
           showInMenu = optionValue;
 
-          this.debugIdentityControl(`-- NEW PROPS: showInMenu=${showInMenu} lockInMenu=${lockInMenu} positionInMenu=${positionInMenu}`);
+          this.__debugIdentityControl(`-- NEW PROPS: showInMenu=${showInMenu} lockInMenu=${lockInMenu} positionInMenu=${positionInMenu}`);
 
           identitiesProps[identityId] = {
             'showInMenu':     showInMenu,
@@ -2240,28 +2743,28 @@ class OptionsUI {
           const identitySelector    = `tr.identity-item[identityId='${identityId}']`
           const domSelectedIdentity = document.querySelector(identitySelector);
           if (! domSelectedIdentity) {
-            this.debugIdentityControl(`-- DID NOT FIND OUR IDENTITY-ITEM: "${identitySelector}"`);
+            this.__debugIdentityControl(`-- DID NOT FIND OUR IDENTITY-ITEM: "${identitySelector}"`);
           } else {
-            this.debugIdentityControl(`-- Found our identity-item: "${identitySelector}"`);
-            this.debugIdentityControl(`-- Setting attribute "showInMenu" to: "${showInMenu? 'true' : 'false'}"`);
+            this.__debugIdentityControl(`-- Found our identity-item: "${identitySelector}"`);
+            this.__debugIdentityControl(`-- Setting attribute "showInMenu" to: "${showInMenu? 'true' : 'false'}"`);
             domSelectedIdentity.setAttribute("showInMenu", showInMenu ? 'true' : 'false' );
 
             if (showInMenu) {
-              this.debugIdentityControl("-- removing class 'not-show-in-menu'");
-              domSelectedIdentity.classList.remove("not-show-in-menu");
+              this.__debugIdentityControl("-- removing class 'not-show-in-menu'");
+              domSelectedIdentity.classList.remove("not-show-in-menu"); // Which is more expensive?  Removing a class that's not there, or checking for it first?
             } else {
-              this.debugIdentityControl("-- adding class 'not-show-in-menu'");
-              domSelectedIdentity.classList.add("not-show-in-menu");
+              this.__debugIdentityControl("-- adding class 'not-show-in-menu'"); // Which is more expensive?  Adding a class that's already there, or checking for it first?
+              domSelectedIdentity.classList.add("not-show-in-menu"); // Which is more expensive?  Adding a class that's already there, or checking for it first?
             }
           }
 
-          this.debugIdentityControl("-- new showInMenu checkbox status: ", identitiesProps);
+          this.__debugIdentityControl("-- new showInMenu checkbox status: ", identitiesProps);
 
         // is it a lockInMenu checkbox?
         } else if (target.classList.contains("lock-in-menu-check")) {   // identity-item > identity-item-controls-right > > lock-in-menu-check
           lockInMenu = optionValue;
 
-          this.debugIdentityControl(`-- NEW PROPS: showInMenu=${showInMenu} lockInMenu=${lockInMenu} positionInMenu=${positionInMenu}`);
+          this.__debugIdentityControl(`-- NEW PROPS: showInMenu=${showInMenu} lockInMenu=${lockInMenu} positionInMenu=${positionInMenu}`);
 
           identitiesProps[identityId] = {
             'showInMenu':     showInMenu,
@@ -2275,32 +2778,34 @@ class OptionsUI {
           const identitySelector    = `tr.identity-item[identityId='${identityId}']`
           const domSelectedIdentity = document.querySelector(identitySelector);
           if (! domSelectedIdentity) {
-            this.debugIdentityControl(`-- DID NOT FIND OUR IDENTITY-ITEM: "${identitySelector}"`);
+            this.__debugIdentityControl(`-- DID NOT FIND OUR IDENTITY-ITEM: "${identitySelector}"`);
           } else {
-            this.debugIdentityControl(`-- Found our identity-item: "${identitySelector}"`);
-            this.debugIdentityControl(`-- Setting attribute "lockInMenu" to: "${lockInMenu? 'true' : 'false'}"`);
+            this.__debugIdentityControl(`-- Found our identity-item: "${identitySelector}"`);
+            this.__debugIdentityControl(`-- Setting attribute "lockInMenu" to: "${lockInMenu? 'true' : 'false'}"`);
             domSelectedIdentity.setAttribute("lockInMenu", lockInMenu ? 'true' : 'false');
 
             if (lockInMenu) {
-              this.debugIdentityControl("-- adding class 'lock-in-menu'");
-              domSelectedIdentity.classList.add("lock-in-menu");    // need this for Sortable.js
+              this.__debugIdentityControl("-- adding class 'lock-in-menu'");
+              domSelectedIdentity.classList.add("lock-in-menu");    // need this for Sortable.js // Which is more expensive?  Adding a class that's already there, or checking for it first?
+              domSelectedIdentity.classList.remove("identity-item-draggable");
             } else {
-              this.debugIdentityControl("-- removing class 'lock-in-menu'");
-              domSelectedIdentity.classList.remove("lock-in-menu"); // need this for Sortable.js
+              this.__debugIdentityControl("-- removing class 'lock-in-menu'");
+              domSelectedIdentity.classList.remove("lock-in-menu"); // need this for Sortable.js // Which is more expensive?  Removing a class that's not there, or checking for it first?
+              domSelectedIdentity.classList.add("identity-item-draggable");
             }
           }
 
-          this.debugIdentityControl("-- new lockInMenu checkbox status: ", identitiesProps);
+          this.__debugIdentityControl("-- new lockInMenu checkbox status: ", identitiesProps);
 
         } else {
           // We don't know exactly which checkbox it is!!!  This outer "if" should have prevented this
         }
       }
     } else {
-      this.debugIdentityControl("-- NOT OUR ELEMENT --");
+      this.__debugIdentityControl("-- NOT OUR ELEMENT --");
     }
 
-    this.debugIdentityControl("-- end");
+    this.__debugIdentityControl("-- end");
   }
 
 
@@ -2309,13 +2814,13 @@ class OptionsUI {
   // Check if an Action Button was clicked - Sort, Refresh, Move to Top, Move to Bottom, Lock All, Unlock All, Show All, Hide All, Create, etc
   // NOTE: This listener is added to the DOCUMENT!  **ANY** Click Event will cause this function to get called!!!
   async actionClicked(e) {
-    this.debugActionClicked('--');
-    if (e == null) return;
+    this.__debugActionClicked('--');
+    if (e === null) return;
 
-    this.debugActionClicked(`-- tagName="${e.target.tagName}" id="${e.target.id}"`);
+    this.__debugActionClicked(`-- tagName="${e.target.tagName}" id="${e.target.id}"`);
 
     if (e.target.tagName === 'BUTTON' || e.target.tagName === 'LABEL') {
-      this.debugActionClicked(`-- BUTTON OR LABEL CLICKED tagName="${e.target.tagName}" id="${e.target.id}"`);
+      this.__debugActionClicked(`-- BUTTON OR LABEL CLICKED tagName="${e.target.tagName}" id="${e.target.id}"`);
       
       // I thought the browser was supposed to take care of this <label> with a 'for' attribute stuff...
       if (e.target.tagName === 'LABEL' && ! e.target.parentElement || e.target.parentElement.tagName !== 'BUTTON') {
@@ -2331,7 +2836,7 @@ class OptionsUI {
         }
 
         const buttonId = button.id;
-        this.debugActionClicked(`-- BUTTON CLICKED tagName="${button.tagName}" id="${buttonId}"`);
+        this.__debugActionClicked(`-- BUTTON CLICKED tagName="${button.tagName}" id="${buttonId}"`);
 
         if (buttonId) switch (buttonId) {
           case "idmAutoSortButton":
@@ -2402,10 +2907,10 @@ class OptionsUI {
           case "idmDisplayOrderFilterResetAllButton":
             // there are event listeners specific to these buttons - can stopPropagation() or something stop this function from getting called???
             // Does calling e.preventDefault() in the event listener prevent this?
-            this.debugActionClicked(`-- CLICK EVENT ON A BUTTON THAT HAS IT'S OWN LISTENER -- id="${buttonId}"`);
+            this.__debugActionClicked(`-- CLICK EVENT ON A BUTTON THAT HAS IT'S OWN LISTENER -- id="${buttonId}"`);
             break;
           default:
-            this.debugActionClicked(`-- CLICK EVENT ON A BUTTON WE DON'T KNOW ABOUT -- id="${buttonId}"`);
+            this.__debugActionClicked(`-- CLICK EVENT ON A BUTTON WE DON'T KNOW ABOUT -- id="${buttonId}"`);
         }
       }
 
@@ -2416,12 +2921,12 @@ class OptionsUI {
         this.#extensionOptionsTitleClickTimer = setTimeout(() => this.extensionOptionsTitleDIVSingleClicked(e), this.#EXTENSION_OPTIONS_TITLE_CLICK_DELAY);
       } else {
         // we don't care about this click
-        this.debugActionClicked(`-- CLICK EVENT ON A DIV WE DON'T CARE ABOUT -- id="${e.target.id}"`);
+        this.__debugActionClicked(`-- CLICK EVENT ON A DIV WE DON'T CARE ABOUT -- id="${e.target.id}"`);
       }
 
     } else {
       // we don't care about this click
-      this.debugActionClicked(`-- CLICK EVENT ON AN ELEMENT WE DON'T CARE ABOUT -- tagName="${e.target.tagName}" id="${e.target.id}"`);
+      this.__debugActionClicked(`-- CLICK EVENT ON AN ELEMENT WE DON'T CARE ABOUT -- tagName="${e.target.tagName}" id="${e.target.id}"`);
     }
   }
 
@@ -2700,13 +3205,69 @@ class OptionsUI {
 
 
 
-  // An identity-item was clicked
+  // An Identity List header-item was clicked
+  async identityHeaderClicked(e) {
+    if (! e) return;
+
+    this.debugAlways(`-- e.target.tagName="${e.target.tagName}" e.detail=${e.detail}`);
+    const headerTH = e.target.tagName === 'TH' ? e.target : e.target.closest('th');
+
+    if (! headerTH) {
+      this.debugAlways("-- HEADER TH NOT FOUND");
+
+    } else {
+      this.debugAlways("\n-- HEADER TH:", headerTH, "\n--classlist:", headerTH.classList);
+
+      if (! headerTH.classList.contains("header-item")) {
+        this.debugAlways('-- click target does NOT have class "header-item"');
+
+      } else {
+        this.debugAlways('-- click target DOES has class "header-item"');
+
+        const headerId = headerTH.getAttribute("id");
+        this.debugAlways(`-- headerId="${headerId}"`);
+
+        if (! headerId) {
+          this.debugAlways("-- NO headerId");
+        } else {
+          const headerSort = headerTH.querySelector(".header-sort");
+
+          if (! headerSort) {
+            this.debugAlways("\n-- headerSort: NOT FOUND!!!");
+          } else {
+            const sortButtons = headerSort.querySelectorAll('button.sort-button');
+
+            if (! sortButtons) {
+              this.debugAlways("\n-- sortButtons: NOT FOUND!!!");
+            } else {
+              this.debugAlways(`\n-- sortButtons: lenngth=${sortButtons.length}`);
+              for (const sortButton of sortButtons) {
+                this.debugAlways("\n-- sortButton:", sortButton, "\n--classlist:", sortButton.classList);
+
+                if (sortButton.classList.contains('sort-ascending')) {
+                  this.debugAlways("\n-- sortButton: sort-ascending");
+                } else if (sortButton.classList.contains('sort-descending')) {
+                  this.debugAlways("\n-- sortButton: sort-descending");
+                } else {
+                  this.debugAlways("\n-- sortButton: sort ???");
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+
+  // An Identity List identity-item was clicked
   async identityClicked(e) {
     if (! e) return;
 
     this.debug(`-- e.target.tagName="${e.target.tagName}" e.detail=${e.detail}`);
 
-    if (e.detail == 1 && (e.target.tagName === "TR" || e.target.tagName === "TD" || e.target.tagName === "SPAN") ) {
+    if (e.detail === 1 && (e.target.tagName === "TR" || e.target.tagName === "TD" || e.target.tagName === "SPAN") ) {
       this.debug("-- TR, TD, or SPAN Clicked");
 
       var trElement;
@@ -2783,7 +3344,7 @@ class OptionsUI {
     const moveSelectedToBottomButton = document.getElementById("idmMoveSelectedToBottomButton");
     const deselectAllButton          = document.getElementById("idmDeselectAllButton");
 
-    if (this.getSelectedIdentityCount() == 0) {
+    if (this.getSelectedIdentityCount() === 0) {
       showSelectedButton.disabled         = true;
       hideSelectedButton.disabled         = true;
       unlockSelectedButton.disabled       = true;
@@ -2822,7 +3383,7 @@ class OptionsUI {
 
     this.debug(`-- e.target.tagName="${e.target.tagName}" e.detail=${e.detail}`);
 
-    if (e.detail == 2 && (e.target.tagName === "TR" || e.target.tagName === "TD" || e.target.tagName === "SPAN" )) {
+    if (e.detail === 2 && (e.target.tagName === "TR" || e.target.tagName === "TD" || e.target.tagName === "SPAN" )) {
       this.debug("-- TR, TD, or SPAN Double-Clicked");
 
       var trElement;
@@ -2972,30 +3533,34 @@ class OptionsUI {
               // updating an Identity makes it no longer "collected" or "imported"
               if (domIdentityTR.classList.contains("collected-identity")) domIdentityTR.classList.remove("collected-identity");
               if (domIdentityTR.classList.contains("imported-identity"))  domIdentityTR.classList.remove("imported-identity");
-              const markersSPAN = domIdentityTR.querySelector('.identity-item-markers');
-              if (markersSPAN) {
-                const collectedMarkerSPAN = markersSPAN.querySelector('.identity-item-marker.marker-collected');
-                const importedMarkerSPAN  = markersSPAN.querySelector('.identity-item-marker.marker-imported');
-                if (collectedMarkerSPAN) collectedMarkerSPAN.remove();
-                if (importedMarkerSPAN)  importedMarkerSPAN.remove();
 
-                if (markersSPAN.childElementCount === 0) {
-                  markersSPAN.remove();
-                }
-              }
+// Markers are handled using CSS now
+//////////////const markersSPAN = domIdentityTR.querySelector('.identity-item-markers');
+//////////////if (markersSPAN) {
+//////////////  const collectedMarkerSPAN = markersSPAN.querySelector('.identity-item-marker.marker-collected');
+//////////////  const importedMarkerSPAN  = markersSPAN.querySelector('.identity-item-marker.marker-imported');
+//////////////  if (collectedMarkerSPAN) collectedMarkerSPAN.remove();
+//////////////  if (importedMarkerSPAN)  importedMarkerSPAN.remove();
+//////////////
+//////////////  if (markersSPAN.childElementCount === 0) {
+//////////////    markersSPAN.remove();
+//////////////  }
+//////////////}
 
               if (idmIdentity.showInMenu) {
-                domIdentityTR.classList.remove("not-show-in-menu");
+                if (domIdentityTR.classList.contains("not-show-in-menu")) domIdentityTR.classList.remove("not-show-in-menu");
                 domIdentityTR.setAttribute("showInMenu", 'true');
               } else {
-                domIdentityTR.classList.add("not-show-in-menu");
+                if (! domIdentityTR.classList.contains("not-show-in-menu")) domIdentityTR.classList.add("not-show-in-menu");
                 domIdentityTR.setAttribute("showInMenu", 'false');
               }
               if (idmIdentity.lockInMenu) {
-                domIdentityTR.classList.add("lock-in-menu");
+                if (! domIdentityTR.classList.contains("lock-in-menu")) domIdentityTR.classList.add("lock-in-menu");
+                domIdentityTR.classList.remove("identity-item-draggable");
                 domIdentityTR.setAttribute("lockInMenu", 'true');
               } else {
-                domIdentityTR.classList.remove("lock-in-menu");
+                if (domIdentityTR.classList.contains("lock-in-menu")) domIdentityTR.classList.remove("lock-in-menu");
+                domIdentityTR.classList.add("identity-item-draggable");
                 domIdentityTR.setAttribute("lockInMenu", 'false');
               }
 
@@ -3006,7 +3571,7 @@ class OptionsUI {
 
               showInMenuCheck.checked                 = idmIdentity.showInMenu;
 //////////////labelTD.firstChild.nodeValue            = this.#idmIdentitiesApi.toIdentityLabel(identity);
-              labelTD.firstChild.firstChild.nodeValue = idmIdentity.label; // label text is in a <span>, not directly in the <td>
+              labelTD.firstChild.firstChild.nodeValue = idmIdentity.label; // label text is now in a <span>, not directly in the <td> anymore
               emailTD.firstChild.nodeValue            = idmIdentity.email;
               lockInMenuCheck.checked                 = idmIdentity.lockInMenu;
             }
@@ -3023,7 +3588,7 @@ class OptionsUI {
         if (editorResponse.startsWith("CREATED:")) { // "CREATED:newIdentityId" // should not happen without "identityId=CREATE" // MABXXX Perhaps this should be an object instead???
           // new Identity was created with id=newIdentityId
           const splits = editorResponse.split(":");
-          if (splits.length == 2) {
+          if (splits.length === 2) {
             this.error(`-- UNEXPECTED IdentityEditorResponse: "${editorResponse}"`);
             break;
           } else {
@@ -3116,7 +3681,7 @@ class OptionsUI {
           // new Identity was created with id=newIdentityId
 
           const splits = editorResponse.split(":");
-          if (splits.length == 2) {
+          if (splits.length === 2) {
             const newIdentityId = splits[1];
             this.debug(` -- newIdentityId="${newIdentityId}"`);
 
@@ -3156,7 +3721,7 @@ class OptionsUI {
       var response = defaultResponse;
 
       function windowRemovedListener(windowId) {
-        if (windowId == identityEditorWindowId) {
+        if (windowId === identityEditorWindowId) {
 
           messenger.runtime.onMessage.removeListener(messageListener);
           messenger.windows.onRemoved.removeListener(windowRemovedListener);
@@ -3343,7 +3908,7 @@ class OptionsUI {
       var response = defaultResponse;
 
       function windowRemovedListener(windowId) {
-        if (windowId == identityImporterWindowId) {
+        if (windowId === identityImporterWindowId) {
 
           messenger.runtime.onMessage.removeListener(messageListener);
           messenger.windows.onRemoved.removeListener(windowRemovedListener);
@@ -3374,7 +3939,7 @@ class OptionsUI {
 
 
   async showBackupManager(e) {
-    this.debugAlways("-- begin");
+    this.debug("-- begin");
 
     var   popupLeft   = 100;
     var   popupTop    = 100;
@@ -3403,7 +3968,7 @@ class OptionsUI {
     if (! bounds) {
       this.debug("-- no previous window bounds");
     } else if (typeof bounds !== 'object') {
-      this.debugAlways(`-- PREVIOUS WINDOW BOUNDS IS NOT AN OBJECT: typeof='${typeof bounds}' #####`);
+      this.error(`-- PREVIOUS WINDOW BOUNDS IS NOT AN OBJECT: typeof='${typeof bounds}' #####`);
     } else {
       this.debug( "-- restoring previous window bounds:",
                   `\n- bounds.top=${bounds.top}`,
@@ -3488,7 +4053,7 @@ class OptionsUI {
             if (typeof fileName !== 'string') {
               this.error(`-- MALFORMED BackupManager Response - Invalid 'RESTORED' Property type - expected string, got: "${typeof fileName}"`);
 
-            } else if (fileName.length == 0) {
+            } else if (fileName.length === 0) {
               this.error(`-- MALFORMED BackupManager Response - Invalid 'RESTORED' Property fileName.length=${fileName.length}`);
 
             } else {
@@ -3515,7 +4080,7 @@ class OptionsUI {
       var response = defaultResponse;
 
       function windowRemovedListener(windowId) {
-        if (windowId == backupManagerWindowId) {
+        if (windowId === backupManagerWindowId) {
 
           messenger.runtime.onMessage.removeListener(messageListener);
           messenger.windows.onRemoved.removeListener(windowRemovedListener);
@@ -3560,13 +4125,13 @@ class OptionsUI {
               );
 
     if ( windowId
-         && windowId               != messenger.windows.WINDOW_ID_NONE
-         && windowId               != identityEditorWindowId
-         && windowId               == creatorWindowId
-/////////&& creatorWindowId        != lastFocusedWindowId
+         && windowId               !== messenger.windows.WINDOW_ID_NONE
+         && windowId               !== identityEditorWindowId
+         && windowId               === creatorWindowId
+/////////&& creatorWindowId        !== lastFocusedWindowId
          && identityEditorWindowId
-/////////&& identityEditorWindowId != lastFocusedWindowId
-         && identityEditorWindowId != this.#prevFocusedWindowId
+/////////&& identityEditorWindowId !== lastFocusedWindowId
+         && identityEditorWindowId !== this.#prevFocusedWindowId
        )
     {
       this.debug( "-- Creator Window got focus, bring Identity Editor Window into focus above it --",
@@ -3597,6 +4162,8 @@ class OptionsUI {
 
     } else {
       this.debug(`-- Identity Deleted identityId="${identityId}"`);
+      --this.#totalIdentityCount;
+      await this.updateMessageCountsUI();
 
       // NOW UPDATE THE UI!!!
       const selector   = `tr.identity-item[identityId='${identityId}']`;
@@ -3616,13 +4183,12 @@ class OptionsUI {
   async autoSortBySelectChanged(e) {
     this.debug(`-- e.target.value="${e.target.value}"`);
 
-    const autoSortButton = document.getElementById("idmAutoSortButton");
+    await this.updateAutoSortUI();
 
-    if (! e.target.value || e.target.value === this.#idmOptionsApi.IDENTITY_AUTO_SORT_BY_VALUE_NONE) {
-      if (autoSortButton) autoSortButton.disabled = true;
+    if (! e.target.value || e.target.value === IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_NONE) {
+      //
     } else {
-      await this.sortIdentityList(e);
-      if (autoSortButton) autoSortButton.disabled = false;
+      await this.autoSortIdentities(e);
     }
   }
 
@@ -3630,19 +4196,51 @@ class OptionsUI {
   async autoSortDirectionSelectChanged(e) {
     this.debug(`-- e.target.value="${e.target.value}"`);
 
-    if (! e.target.value || e.target.value === this.#idmOptionsApi.IDENTITY_AUTO_SORT_DIRECTION_VALUE_NONE) {
+    await this.updateAutoSortUI();
+
+    if (! e.target.value || e.target.value === IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_NONE) {
+      //
     } else {
-      await this.sortIdentityList(e);
+      await this.autoSortIdentities(e);
     }
   }
 
   async autoSortButtonClicked(e) { // MABXXX This button should be enabled only when a Sort By field is selected!!!!
-    await this.sortIdentityList(e);
+    await this.autoSortIdentities(e);
   }
 
 
 
-  async sortIdentityList(e) {
+  async updateAutoSortUI() {
+    const autoSortBySelect        = document.getElementById("idmAutoSortBySelect");
+    const autoSortDirectionSelect = document.getElementById("idmAutoSortDirectionSelect");
+    const autoSortButton          = document.getElementById("idmAutoSortButton");
+
+    if (! autoSortBySelect || ! autoSortDirectionSelect || ! autoSortButton) {
+      if (! autoSortBySelect)        this.error("-- failed to get Auto Sort By Select, id='idmAutoSortBySelect'");
+      if (! autoSortDirectionSelect) this.error("-- failed to get Auto Sort Direction Select, id='idmAutoSortDirectionSelect'");
+      if (! autoSortButton)          this.error("-- failed to get Auto Sort Button, id='idmAutoSortButton'");
+
+    } else {
+      const autoSortBy        = autoSortBySelect.value;         // this one MUST have a selected value
+      const autoSortDirection = autoSortDirectionSelect.value;  // this one defaults to the most-recent selection (stored in OPTIONS)
+
+      if (    ! autoSortBy        || autoSortBy        === IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_NONE
+           || ! autoSortDirection || autoSortDirection === IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_NONE
+         )
+      {
+        autoSortButton.disabled = true;
+        if (! autoSortBy       ) autoSortBySelect.value        === IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_NONE;
+        if (! autoSortDirection) autoSortDirectionSelect.value === IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_NONE;
+      } else {
+        autoSortButton.disabled = false;
+      }
+    }
+  }
+
+
+
+  async autoSortIdentities(e) {
     this.debug("-- begin");
 
     const autoSortBySelect        = document.getElementById("idmAutoSortBySelect");
@@ -3653,22 +4251,33 @@ class OptionsUI {
       if (! autoSortDirectionSelect) this.error("-- failed to get autoSortDirectionSelect, id='idmAutoSortDirectionSelect'");
 
     } else {
-      const autoSortBy        = autoSortBySelect.value;         // this one MUST have a selected value
-      const autoSortDirection = autoSortDirectionSelect.value;  // this one defaults to the most-recent selection (stored in OPTIONS)
-      this.debug(`-- begin -- autoSortBy="${autoSortBy}" autoSortDirection="${autoSortDirection}"`);
+      const autoSortBy        = autoSortBySelect.value;
+      const autoSortDirection = autoSortDirectionSelect.value;
 
-      if (autoSortBy === this.#idmOptionsApi.IDENTITY_AUTO_SORT_DIRECTION_VALUE_NONE) {
+      if (    ! autoSortBy        || autoSortBy        === IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_NONE
+           || ! autoSortDirection || autoSortDirection === IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_NONE
+         ) 
+      {
         // don't sort
       } else {
-        if (autoSortDirection === this.#idmOptionsApi.IDENTITY_AUTO_SORT_DIRECTION_VALUE_NONE) {
-          // if a sort direction is not set, then default to ASCENDING
-          autoSortDirectionSelect.value = this.#idmOptionsApi.IDENTITY_AUTO_SORT_DIRECTION_VALUE_ASCENDING;
-          await this.#idmOptionsApi.saveOption("idmAutoSortDirectionSelect", this.#idmOptionsApi.IDENTITY_AUTO_SORT_DIRECTION_VALUE_ASCENDING);
-        }
-
-        await this.#idmIdentitiesApi.sortIdentities(); // this gets Sort By and Sort Direction from OPTIONS!!!  optionChanged() keeps these up to date
-        await this.buildIdentitiesListUI(e);  // clears filters!!!
+        await this.sortIdentityList(e, autoSortBy, autoSortDirection);
       }
+    }
+  }
+
+
+
+  async sortIdentityList(e, sortBy, sortDirection) {
+    this.debug(`-- begin sortBy="${sortBy}" sortDirection="${sortDirection}"`);
+
+    if (    ! sortBy        || sortBy        === IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_NONE
+         || ! sortDirection || sortDirection === IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_NONE
+       ) 
+    {
+      // don't sort
+    } else {
+      await this.#idmIdentitiesApi.sortIdentities(sortBy, sortDirection);
+      await this.buildIdentitiesListUI(e);  // clears filters!!!
     }
 
     this.debug("-- end");
@@ -3682,7 +4291,7 @@ class OptionsUI {
 
     const selectedIdentityIds = this.getSelectedIdentityIds(e);
 
-    if (! selectedIdentityIds || selectedIdentityIds.length == 0) {
+    if (! selectedIdentityIds || selectedIdentityIds.length === 0) {
       this.debug("-- NO IDENTITIES SELECTED");
     } else {
       await this.#idmIdentitiesApi.moveIdentitiesToTop(selectedIdentityIds);
@@ -3700,7 +4309,7 @@ class OptionsUI {
 
     const selectedIdentityIds = this.getSelectedIdentityIds(e);
 
-    if (! selectedIdentityIds || selectedIdentityIds.length == 0) {
+    if (! selectedIdentityIds || selectedIdentityIds.length === 0) {
       this.debug("-- NO IDENTITIES SELECTED");
     } else {
       await this.#idmIdentitiesApi.moveIdentitiesToBottom(selectedIdentityIds);
@@ -3739,7 +4348,7 @@ class OptionsUI {
             this.debug(`-- identityId="${identityId}" setting check=true`);
             domShowInMenuCheck.checked = true;
             this.debug(`-- removing class "not-show-in-menu" and setting attribute showInMenu='true'`);
-            identityItemTR.classList.remove("not-show-in-menu");
+            identityItemTR.classList.remove("not-show-in-menu"); // Which is more expensive?  Removing a class that's not there, or checking for it first?
             identityItemTR.setAttribute("showInMenu", 'true');
           }
         }
@@ -3772,7 +4381,7 @@ class OptionsUI {
         this.debug(`-- identityId="${identityId}" setting check=true`);
         check.checked = true;
         this.debug('-- removing class "not-show-in-menu" and setting attribute showInMenu="true"');
-        identityItemTR.classList.remove("not-show-in-menu");
+        identityItemTR.classList.remove("not-show-in-menu"); // Which is more expensive?  Removing a class that's not there, or checking for it first?
         identityItemTR.setAttribute("showInMenu", 'true');
         showInMenuIdentityIds.push(identityId);
       }
@@ -3814,7 +4423,7 @@ class OptionsUI {
             this.debug(`-- identityId="${identityId}" setting check=false`);
             domShowInMenuCheck.checked = false;
             this.debug(`-- adding class "not-show-in-menu" and setting attribute showInMenu='false'`);
-            identityItemTR.classList.add("not-show-in-menu");
+            identityItemTR.classList.add("not-show-in-menu"); // Which is more expensive?  Adding a class that's already there, or checking for it first?
             identityItemTR.setAttribute("showInMenu", 'false');
           }
         }
@@ -3847,7 +4456,7 @@ class OptionsUI {
         this.debug(`-- identityId="${identityId}" setting check=false`);
         check.checked = false;
         this.debug(`-- adding class "not-show-in-menu" and setting attribute showInMenu='false'`);
-        identityItemTR.classList.add("not-show-in-menu");
+        identityItemTR.classList.add("not-show-in-menu"); // Which is more expensive?  Adding a class that's already there, or checking for it first?
         identityItemTR.setAttribute("showInMenu", 'false');
         unshowInMenuIdentityIds.push(identityId);
       }
@@ -3888,7 +4497,8 @@ class OptionsUI {
             this.debug(`-- identityId="${identityId}" setting check=true`);
             domLockInMenuCheck.checked = true;
             this.debug(`-- adding class "lock-in-menu" and setting attribute lockInMenu='true'`);
-            identityItemTR.classList.add("lock-in-menu");
+            identityItemTR.classList.add("lock-in-menu"); // Which is more expensive?  Adding a class that's already there, or checking for it first?
+            identityItemTR.classList.remove("identity-item-draggable");
             identityItemTR.setAttribute("lockInMenu", 'true');
           }
         }
@@ -3921,7 +4531,8 @@ class OptionsUI {
         this.debug(`-- identityId="${identityId}" setting check=true`);
         check.checked = true;
         this.debug(`-- adding class "lock-in-menu" and setting attribute lockInMenu='true'`);
-        identityItemTR.classList.add("lock-in-menu");
+        identityItemTR.classList.add("lock-in-menu"); // Which is more expensive?  Adding a class that's already there, or checking for it first?
+        identityItemTR.classList.remove("identity-item-draggable");
         identityItemTR.setAttribute("lockInMenu", 'true');
         lockInMenuIdentityIds.push(identityId);
       }
@@ -3962,7 +4573,8 @@ class OptionsUI {
             this.debug(`-- identityId="${identityId}" setting check=false`);
             domLockInMenuCheck.checked = false;
             this.debug(`-- removing class "lock-in-menu" and setting attribute lockInMenu='false'`);
-            identityItemTR.classList.remove("lock-in-menu");
+            identityItemTR.classList.remove("lock-in-menu"); // Which is more expensive?  Removing a class that's not there, or checking for it first?
+            identityItemTR.classList.add("identity-item-draggable");
             identityItemTR.setAttribute("lockInMenu", 'false');
           }
         }
@@ -3995,7 +4607,8 @@ class OptionsUI {
         this.debug(`-- identityId="${identityId}" setting check=false`);
         check.checked = false;
         this.debug(`-- removing class "lock-in-menu" and setting attribute lockInMenu='false'`);
-        identityItemTR.classList.remove("lock-in-menu");
+        identityItemTR.classList.remove("lock-in-menu"); // Which is more expensive?  Removing a class that's not there, or checking for it first?
+        identityItemTR.classList.add("identity-item-draggable");
         identityItemTR.setAttribute("lockInMenu", 'false');
         unlockInMenuIdentityIds.push(identityId);
       }
@@ -4054,7 +4667,7 @@ class OptionsUI {
 
 
 
-  getFilteredIdentityCount() {
+  async getFilteredIdentityCount() {
     this.debug("-- begin");
 
     const domIdentityTRs = document.querySelectorAll("tr.identity-item");
@@ -4072,29 +4685,29 @@ class OptionsUI {
     return filteredIdentityCount;
   }
 
-  getFilteredIdentityIds() {
+  async getFilteredIdentityIds() {
     this.debug("-- begin");
 
     const domIdentityTRs = document.querySelectorAll("tr.identity-item");
     this.debug(`-- domIdentityTRs.length=${domIdentityTRs.length}`);
 
-    const domFilteredIdentityIds = [];
+    const filteredIdentityIds = [];
     for (const domIdentityTR of domIdentityTRs) {
       if (! this.isFilteredDomIdentityTR(domIdentityTR)) {
         const identityId = domIdentityTR.getAttribute("identityId");
         this.debug(`-- Filtered Identity Id: "${identityId}"`);
         if (identityId) {
-          domFilteredIdentityIds.push(identityId);
+          filteredIdentityIds.push(identityId);
         }
       }
     }
 
-    this.debug(`-- end -- domFilteredIdentityIds.length=${domFilteredIdentityIds.length}`);
+    this.debug(`-- end -- filteredIdentityIds.length=${filteredIdentityIds.length}`);
 
     return domFilteredIdentityIds;
   }
 
-  getFilteredIdentityTRs() {
+  async getFilteredIdentityTRs() {
     this.debug("-- begin");
 
     const domIdentityTRs = document.querySelectorAll("tr.identity-item");
@@ -4182,16 +4795,16 @@ class OptionsUI {
   }
 
   showPopupOptions() {
-    const popupOptionsDiv = document.getElementById("idmPopupOptions");
-    if (popupOptionsDiv) {
-      popupOptionsDiv.style.setProperty("display", "BLOCK");
+    const popupOptionsDIV = document.getElementById("idmPopupOptions");
+    if (popupOptionsDIV) {
+      popupOptionsDIV.style.setProperty("display", "BLOCK");
     }
   }
 
   hidePopupOptions() {
-    const popupOptionsDiv = document.getElementById("idmPopupOptions");
-    if (popupOptionsDiv) {
-      popupOptionsDiv.style.setProperty("display", "NONE");
+    const popupOptionsDIV = document.getElementById("idmPopupOptions");
+    if (popupOptionsDIV) {
+      popupOptionsDIV.style.setProperty("display", "NONE");
     }
   }
 
@@ -4206,16 +4819,16 @@ class OptionsUI {
   }
 
   showDisplayOrderHints() {
-    const popupOptionsDiv = document.getElementById("idmDisplayOrderHints");
-    if (popupOptionsDiv) {
-      popupOptionsDiv.style.setProperty("display", "BLOCK");
+    const popupOptionsDIV = document.getElementById("idmDisplayOrderHints");
+    if (popupOptionsDIV) {
+      popupOptionsDIV.style.setProperty("display", "BLOCK");
     }
   }
 
   hideDisplayOrderHints() {
-    const popupOptionsDiv = document.getElementById("idmDisplayOrderHints");
-    if (popupOptionsDiv) {
-      popupOptionsDiv.style.setProperty("display", "NONE");
+    const popupOptionsDIV = document.getElementById("idmDisplayOrderHints");
+    if (popupOptionsDIV) {
+      popupOptionsDIV.style.setProperty("display", "NONE");
     }
   }
 
@@ -4250,7 +4863,7 @@ class OptionsUI {
 
 
   // filtering is a UI-Only concept
-  initAllIdentityFilters() {
+  async initAllIdentityFilters() {
     const filterIdentitiesByAccountSelect        = document.getElementById("idmDisplayOrderFilterByAccountSelect");
     const filterIdentitiesByImportedSelect       = document.getElementById("idmDisplayOrderFilterByImportedSelect");
     const filterIdentitiesByLockedSelect         = document.getElementById("idmDisplayOrderFilterByLockedSelect");
@@ -4268,6 +4881,15 @@ class OptionsUI {
     filterIdentitiesByShowInMenuSelect.value     = '';
     filterIdentitiesByLabelRegexText.value       = '';
     filterIdentitiesByEmailRegexText.value       = '';
+
+    this.#filterByAccountId                      = '';
+    this.#filterByImported                       = '';
+    this.#filterByLocked                         = '';
+    this.#filterByAccountDefault                 = '';
+    this.#filterByCollected                      = '';
+    this.#filterByShowInMenu                     = '';
+    this.#filterBylabelRegexText                 = '';
+    this.#filterByEmailRegexText                 = '';
   }
 
 
@@ -4275,14 +4897,16 @@ class OptionsUI {
   // filtering is a UI-Only concept - filtered out items are de-selected
   async filterIdentitiesByAccountSelectChanged(e) {
     const selectedAccountId = e.target.value;
+    this.#filterByAccountId = selectedAccountId;
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
 
     if (! selectedAccountId) {
-      this.filterIdentitiesByAccountReset();
+      await this.filterIdentitiesByAccountReset();
 
     } else {
-      const selectedAccountName = this.#accountsById[selectedAccountId].name;
+      const selectedAccountName = this.#getAccountName(selectedAccountId);
       const domIdentityTRs      = document.querySelectorAll("tr.identity-item");
 
       var deselected = 0;
@@ -4293,7 +4917,7 @@ class OptionsUI {
           if (identityAccountName === selectedAccountName) {
             domIdentityTR.classList.remove("filter-by-account");
           } else {
-            domIdentityTR.classList.add("filter-by-account");
+            domIdentityTR.classList.add("filter-by-account"); // Which is more expensive?  Adding a class that's already there, or checking for it first?
             if (domIdentityTR.getAttribute('selected') === 'true') {
               domIdentityTR.setAttribute('selected', 'false');
               ++deselected;
@@ -4303,34 +4927,34 @@ class OptionsUI {
       }
 
       if (deselected) this.enableDisableButtonsOnSelectionChanged();
-
-      this.checkForAllIdentitiesFilteredOut();
     }
   }
 
   // filtering is a UI-Only concept
   async filterIdentitiesByAccountResetButtonClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
 
-    this.filterIdentitiesByAccountReset();
-
-    this.checkForAllIdentitiesFilteredOut();
+    await this.filterIdentitiesByAccountReset();
   }
 
   // filtering is a UI-Only concept
-  filterIdentitiesByAccountReset() {
+  async filterIdentitiesByAccountReset() {
     const filterIdentitiesByAccountSelect = document.getElementById("idmDisplayOrderFilterByAccountSelect");
     const domIdentityTRs                  = document.querySelectorAll("tr.identity-item");
 
     filterIdentitiesByAccountSelect.value = '';
+    this.#filterByAccountId               = '';
 
     for (const domIdentityTR of domIdentityTRs) {
       domIdentityTR.classList.remove("filter-by-account");
     }
+
+    await this.updateMessageCountsUIAfterFilterChange();
   }
 
 
@@ -4338,8 +4962,10 @@ class OptionsUI {
   // filtering is a UI-Only concept - filtered out items are de-selected
   async filterIdentitiesByImportedSelectChanged(e) {
     const selectedId = e.target.value; // values are "", "IMPORTED", "NOT_IMPORTED"
+    this.#filterByImported = selectedId;
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
 
     if (! selectedId) {
       this.filterIdentitiesByImportedReset(true);
@@ -4368,7 +4994,7 @@ class OptionsUI {
         if (identityImported === importedTest) {
           domIdentityTR.classList.remove("filter-by-imported");
         } else {
-          domIdentityTR.classList.add("filter-by-imported");
+          domIdentityTR.classList.add("filter-by-imported"); // Which is more expensive?  Adding a class that's already there, or checking for it first?
           if (domIdentityTR.getAttribute('selected') === 'true') {
             domIdentityTR.setAttribute('selected', 'false');
             ++deselected;
@@ -4378,21 +5004,22 @@ class OptionsUI {
 
       if (deselected) this.enableDisableButtonsOnSelectionChanged();
 
-      this.checkForAllIdentitiesFilteredOut();
+      await this.updateMessageCountsUIAfterFilterChange();
     }
   }
 
   // filtering is a UI-Only concept
   async filterIdentitiesByImportedResetButtonClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
 
     this.filterIdentitiesByImportedReset(true);
 
-    this.checkForAllIdentitiesFilteredOut();
+    await this.updateMessageCountsUIAfterFilterChange();
   }
 
   // filtering is a UI-Only concept
@@ -4400,6 +5027,7 @@ class OptionsUI {
     if (resetSelection) {
       const filterIdentitiesByImportedSelect = document.getElementById("idmDisplayOrderFilterByImportedSelect");
       filterIdentitiesByImportedSelect.value = '';
+      this.#filterByImported                 = '';
     }
 
     const domIdentityTRs = document.querySelectorAll("tr.identity-item");
@@ -4413,8 +5041,10 @@ class OptionsUI {
   // filtering is a UI-Only concept - filtered out items are de-selected
   async filterIdentitiesByLockedSelectChanged(e) {
     const selectedId = e.target.value; // values are "", "LOCKED", "NOT_LOCKED"
+    this.#filterByLocked = selectedId;
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
 
     if (! selectedId) {
       this.filterIdentitiesByLockedReset(true);
@@ -4443,7 +5073,7 @@ class OptionsUI {
         if (identityLocked === lockedTest) {
           domIdentityTR.classList.remove("filter-by-locked");
         } else {
-          domIdentityTR.classList.add("filter-by-locked");
+          domIdentityTR.classList.add("filter-by-locked"); // Which is more expensive?  Adding a class that's already there, or checking for it first?
           if (domIdentityTR.getAttribute('selected') === 'true') {
             domIdentityTR.setAttribute('selected', 'false');
             ++deselected;
@@ -4453,21 +5083,22 @@ class OptionsUI {
 
       if (deselected) this.enableDisableButtonsOnSelectionChanged();
 
-      this.checkForAllIdentitiesFilteredOut();
+      await this.updateMessageCountsUIAfterFilterChange();
     }
   }
 
   // filtering is a UI-Only concept
   async filterIdentitiesByLockedResetButtonClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
 
     this.filterIdentitiesByLockedReset(true);
 
-    this.checkForAllIdentitiesFilteredOut();
+    await this.updateMessageCountsUIAfterFilterChange();
   }
 
   // filtering is a UI-Only concept
@@ -4475,6 +5106,7 @@ class OptionsUI {
     if (resetSelection) {
       const filterIdentitiesByLockedSelect = document.getElementById("idmDisplayOrderFilterByLockedSelect");
       filterIdentitiesByLockedSelect.value = '';
+      this.#filterByLocked                 = '';
     }
 
     const domIdentityTRs = document.querySelectorAll("tr.identity-item");
@@ -4488,8 +5120,10 @@ class OptionsUI {
   // filtering is a UI-Only concept - filtered out items are de-selected
   async filterIdentitiesByAccountDefaultSelectChanged(e) {
     const selectedId = e.target.value; // values are "", "DEFAULT_ACCOUNT", "NOT_DEFAULT_ACCOUNT"
+    this.#filterByAccountDefault = selectedId;
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
 
     if (! selectedId) {
       this.filterIdentitiesByAccountDefaultReset(true);
@@ -4518,7 +5152,7 @@ class OptionsUI {
         if (identityAccountDefault === accountDefaultTest) {
           domIdentityTR.classList.remove("filter-by-default");
         } else {
-          domIdentityTR.classList.add("filter-by-default");
+          domIdentityTR.classList.add("filter-by-default"); // Which is more expensive?  Adding a class that's already there, or checking for it first?
           if (domIdentityTR.getAttribute('selected') === 'true') {
             domIdentityTR.setAttribute('selected', 'false');
             ++deselected;
@@ -4528,21 +5162,22 @@ class OptionsUI {
 
       if (deselected) this.enableDisableButtonsOnSelectionChanged();
 
-      this.checkForAllIdentitiesFilteredOut();
+      await this.updateMessageCountsUIAfterFilterChange();
     }
   }
 
   // filtering is a UI-Only concept
   async filterIdentitiesByAccountDefaultResetButtonClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
 
     this.filterIdentitiesByAccountDefaultReset(true);
 
-    this.checkForAllIdentitiesFilteredOut();
+    await this.updateMessageCountsUIAfterFilterChange();
   }
 
   // filtering is a UI-Only concept
@@ -4550,6 +5185,7 @@ class OptionsUI {
     if (resetSelection) {
       const filterIdentitiesByAccountDefaultSelect = document.getElementById("idmDisplayOrderFilterByAccountDefaultSelect");
       filterIdentitiesByAccountDefaultSelect.value = '';
+      this.#filterByAccountDefault                 = '';
     }
 
     const domIdentityTRs = document.querySelectorAll("tr.identity-item");
@@ -4563,8 +5199,10 @@ class OptionsUI {
   // filtering is a UI-Only concept - filtered out items are de-selected
   async filterIdentitiesByCollectedSelectChanged(e) {
     const selectedId = e.target.value; // values are "", "COLLECTED", "NOT_COLLECTED"
+    this.#filterByCollected = selectedId;
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
 
     if (! selectedId) {
       this.filterIdentitiesByCollectedReset(true);
@@ -4593,7 +5231,7 @@ class OptionsUI {
         if (identityCollected === collectedTest) {
           domIdentityTR.classList.remove("filter-by-collected");
         } else {
-          domIdentityTR.classList.add("filter-by-collected");
+          domIdentityTR.classList.add("filter-by-collected"); // Which is more expensive?  Adding a class that's already there, or checking for it first?
           if (domIdentityTR.getAttribute('selected') === 'true') {
             domIdentityTR.setAttribute('selected', 'false');
             ++deselected;
@@ -4603,21 +5241,22 @@ class OptionsUI {
 
       if (deselected) this.enableDisableButtonsOnSelectionChanged();
 
-      this.checkForAllIdentitiesFilteredOut();
+      await this.updateMessageCountsUIAfterFilterChange();
     }
   }
 
   // filtering is a UI-Only concept
   async filterIdentitiesByCollectedResetButtonClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
 
     this.filterIdentitiesByCollectedReset(true);
 
-    this.checkForAllIdentitiesFilteredOut();
+    await this.updateMessageCountsUIAfterFilterChange();
   }
 
   // filtering is a UI-Only concept
@@ -4625,6 +5264,7 @@ class OptionsUI {
     if (resetSelection) {
       const filterIdentitiesByCollectedSelect = document.getElementById("idmDisplayOrderFilterByCollectedSelect");
       filterIdentitiesByCollectedSelect.value = '';
+      this.#filterByCollected                 = '';
     }
 
     const domIdentityTRs = document.querySelectorAll("tr.identity-item");
@@ -4638,8 +5278,10 @@ class OptionsUI {
   // filtering is a UI-Only concept - filtered out items are de-selected
   async filterIdentitiesByShowInMenuSelectChanged(e) {
     const selectedId = e.target.value; // values are "", "SHOW", "HIDE"
+    this.#filterByShowInMenu = selectedId;
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
 
     if (! selectedId) {
       this.filterIdentitiesByShowInMenuReset(true);
@@ -4668,7 +5310,7 @@ class OptionsUI {
         if (identityShowInMenu === showInMenuTest) {
           domIdentityTR.classList.remove("filter-by-showInMenu");
         } else {
-          domIdentityTR.classList.add("filter-by-showInMenu");
+          domIdentityTR.classList.add("filter-by-showInMenu"); // Which is more expensive?  Adding a class that's already there, or checking for it first?
           if (domIdentityTR.getAttribute('selected') === 'true') {
             domIdentityTR.setAttribute('selected', 'false');
             ++deselected;
@@ -4678,21 +5320,22 @@ class OptionsUI {
 
       if (deselected) this.enableDisableButtonsOnSelectionChanged();
 
-      this.checkForAllIdentitiesFilteredOut();
+      await this.updateMessageCountsUIAfterFilterChange();
     }
   }
 
   // filtering is a UI-Only concept
   async filterIdentitiesByShowInMenuResetButtonClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
 
     this.filterIdentitiesByShowInMenuReset(true);
 
-    this.checkForAllIdentitiesFilteredOut();
+    await this.updateMessageCountsUIAfterFilterChange();
   }
 
   // filtering is a UI-Only concept
@@ -4700,6 +5343,7 @@ class OptionsUI {
     if (resetSelection) {
       const filterIdentitiesByShowInMenuSelect = document.getElementById("idmDisplayOrderFilterByShowInMenuSelect");
       filterIdentitiesByShowInMenuSelect.value = '';
+      this.#filterByShowInMenu                 = '';
     }
 
     const domIdentityTRs = document.querySelectorAll("tr.identity-item");
@@ -4719,15 +5363,17 @@ class OptionsUI {
   // filtering is a UI-Only concept - filtered out items are de-selected
   async filterIdentitiesByLabelRegexTextChanged(e) {
     const regexText = e.target.value;
+    this.#filterBylabelRegexText = regexText;
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
 
     this.debug(`-- begin -- regexText="${regexText}"`);
     this.unmarkErrorTR(e.target);
     this.clearFilterPanelError("ERROR_FOR_IDM_LABEL_FILTER_REGEX");
 
     if (! regexText) {
-      this.filterIdentitiesByLabelReset();
+      await this.filterIdentitiesByLabelReset();
 
     } else {
       var regex;
@@ -4750,7 +5396,7 @@ class OptionsUI {
             if (regex.test(identityLabel)) {
               domIdentityTR.classList.remove("filter-by-label");
             } else {
-              domIdentityTR.classList.add("filter-by-label");
+              domIdentityTR.classList.add("filter-by-label"); // Which is more expensive?  Adding a class that's already there, or checking for it first?
               if (domIdentityTR.getAttribute('selected') === 'true') {
                 domIdentityTR.setAttribute('selected', 'false');
                 ++deselected;
@@ -4761,36 +5407,38 @@ class OptionsUI {
 
         if (deselected) this.enableDisableButtonsOnSelectionChanged();
 
-        this.checkForAllIdentitiesFilteredOut();
+        await this.updateMessageCountsUIAfterFilterChange();
       }
     }
   }
 
   // filtering is a UI-Only concept
   async filterIdentitiesByLabelResetButtonClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
     this.clearFilterPanelError("ERROR_FOR_IDM_LABEL_FILTER_REGEX");
     this.unmarkErrorTR(e.target);
 
-    this.filterIdentitiesByLabelReset();
-
-    this.checkForAllIdentitiesFilteredOut();
+    await this.filterIdentitiesByLabelReset();
   }
 
   // filtering is a UI-Only concept
-  filterIdentitiesByLabelReset() {
+  async filterIdentitiesByLabelReset() {
     const filterIdentitiesByLabelRegexText = document.getElementById("idmDisplayOrderFilterByLabelRegexText");
     const domIdentityTRs                   = document.querySelectorAll("tr.identity-item");
 
     filterIdentitiesByLabelRegexText.value = '';
+    this.#filterBylabelRegexText           = '';
 
     for (const domIdentityTR of domIdentityTRs) {
       domIdentityTR.classList.remove("filter-by-label");
     }
+
+    await this.updateMessageCountsUIAfterFilterChange();
   }
 
 
@@ -4804,13 +5452,15 @@ class OptionsUI {
   // filtering is a UI-Only concept - filtered out items are de-selected
   async filterIdentitiesByEmailRegexTextChanged(e) {
     const regexText = e.target.value;
+    this.#filterByEmailRegexText = regexText;
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
     this.unmarkErrorTR(e.target);
     this.clearFilterPanelError("ERROR_FOR_IDM_EMAIL_FILTER_REGEX");
 
     if (! regexText) {
-      this.filterIdentitiesByEmailReset();
+      await this.filterIdentitiesByEmailReset();
 
     } else {
       var regex;
@@ -4833,7 +5483,7 @@ class OptionsUI {
             if (regex.test(identityEmail)) {
               domIdentityTR.classList.remove("filter-by-email");
             } else {
-              domIdentityTR.classList.add("filter-by-email");
+              domIdentityTR.classList.add("filter-by-email"); // Which is more expensive?  Adding a class that's already there, or checking for it first?
               if (domIdentityTR.getAttribute('selected') === 'true') {
                 domIdentityTR.setAttribute('selected', 'false');
                 ++deselected;
@@ -4844,107 +5494,172 @@ class OptionsUI {
 
         if (deselected) this.enableDisableButtonsOnSelectionChanged();
 
-        this.checkForAllIdentitiesFilteredOut();
+        await this.updateMessageCountsUIAfterFilterChange();
       }
     }
   }
 
   // filtering is a UI-Only concept
   async filterIdentitiesByEmailResetButtonClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
     this.clearFilterPanelError("ERROR_FOR_IDM_EMAIL_FILTER_REGEX");
     this.unmarkErrorTR(e.target);
 
-    this.filterIdentitiesByEmailReset();
-
-    this.checkForAllIdentitiesFilteredOut();
+    await this.filterIdentitiesByEmailReset();
   }
 
   // filtering is a UI-Only concept
-  filterIdentitiesByEmailReset() {
+  async filterIdentitiesByEmailReset() {
     const filterIdentitiesByEmailRegexText = document.getElementById("idmDisplayOrderFilterByEmailRegexText");
     const domIdentityTRs                   = document.querySelectorAll("tr.identity-item");
 
     filterIdentitiesByEmailRegexText.value = '';
+    this.#filterByEmailRegexText           = '';
 
     for (const domIdentityTR of domIdentityTRs) {
       domIdentityTR.classList.remove("filter-by-email");
     }
+
+    await this.updateMessageCountsUIAfterFilterChange();
   }
 
 
 
   // filtering is a UI-Only concept
   async filterIdentitiesResetAllButtonClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 
-    this.clearFilterPanelMessages();
+    await this.clearFilterPanelMessages();
+    await this.clearDisplayOrderMessages();
     this.clearAllFilterPanelErrors();
     this.unmarkAllFilterErrors();
 
-    this.filterIdentitiesResetAll();
+    await this.filterIdentitiesResetAll();
   }
 
   // filtering is a UI-Only concept
-  filterIdentitiesResetAll() {
-    this.initAllIdentityFilters();
+  async filterIdentitiesResetAll() {
+    const CLASSES_TO_REMOVE = [
+      "filter-by-account",
+      "filter-by-label",
+      "filter-by-email",
+      "filter-by-imported",
+      "filter-by-locked",
+      "filter-by-default",
+      "filter-by-collected",
+      "filter-by-showInMenu",
+    ];
+
+    await this.initAllIdentityFilters();
 
     const domIdentityTRs = document.querySelectorAll("tr.identity-item");
     for (const domIdentityTR of domIdentityTRs) {
-      domIdentityTR.classList.remove("filter-by-account");
-      domIdentityTR.classList.remove("filter-by-label");
-      domIdentityTR.classList.remove("filter-by-email");
-      domIdentityTR.classList.remove("filter-by-imported");
-      domIdentityTR.classList.remove("filter-by-locked");
-      domIdentityTR.classList.remove("filter-by-default");
-      domIdentityTR.classList.remove("filter-by-collected");
-      domIdentityTR.classList.remove("filter-by-showInMenu");
+      domIdentityTR.classList.remove(...CLASSES_TO_REMOVE);
+    }
+
+    this.#filteredIdentityCount = -1;
+    await this.updateMessageCountsUI();
+  }
+
+
+
+  async updateMessageCountsUIAfterFilterChange() {
+    this.#filteredIdentityCount = await this.getFilteredIdentityCount();
+    await this.updateMessageCountsUI();
+  }
+
+  async updateMessageCountsUI() {
+    this.debug(`\n--- this.#totalIdentityCount=${this.#totalIdentityCount}  this.#filteredIdentityCount=${this.#filteredIdentityCount}`);
+
+    if (this.#filteredIdentityCount === 0) { // has everything been filtered out?
+      this.addFilterPanelMessageNoIdentitiesMatch(); // note that this message goes just under the filters
+    }
+    
+    if ( this.#filteredIdentityCount < 0 // this means no filter has been applied SINCE the list was last built or SINCE ALL filters were reset
+         || this.#filteredIdentityCount === this.#totalIdentityCount // OR if the values are the same, notnhig has been filtered
+       )
+    { // display just the total identity count
+      const subst = this.#totalIdentityCount;
+      const msg   = getI18nMsgSubst("options_idmDisplayOrderFilter_message_nnIdentities", subst);
+      this.addDisplayOrderMessage(msg);
+    } else { // display the filtered count AND the total identity count
+      const subst = [ this.#filteredIdentityCount, this.#totalIdentityCount ];
+      const msg   = getI18nMsgSubst( "options_idmDisplayOrderFilter_message_nnFilteredOfmmIdentities", subst);
+      this.addDisplayOrderMessage(msg);
     }
   }
 
 
 
-  checkForAllIdentitiesFilteredOut() {
-    if (this.getFilteredIdentityCount() < 1) {
-      this.addFilterPanelMessageNoIdentitiesMatch();
-    }
-  }
-
-
-
-  clearFilterPanelMessages() {
-    const domFilterPanelMessagesSPAN = document.getElementById("idmDisplayOrderFiltersPanelMessages");
-    if (! domFilterPanelMessagesSPAN) {
-      this.error("-- Failed to get Filter Panel Message <SPAN> with id=\"idmDisplayOrderFiltersPanelMessages\"");
+  async clearFilterPanelMessages() {
+    const domFilterPanelMessagesDIV = document.getElementById("idmDisplayOrderFiltersPanelMessages");
+    if (! domFilterPanelMessagesDIV) {
+      this.error("-- Failed to get Filter Panel Message <DIV> with id=\"idmDisplayOrderFiltersPanelMessages\"");
     } else {
-      domFilterPanelMessagesSPAN.style.setProperty("display", "NONE");
-//    domFilterPanelMessagesSPAN.textContent = '';
-      domFilterPanelMessagesSPAN.innerHTML = '';
+      domFilterPanelMessagesDIV.style.setProperty("display", "NONE");
+      domFilterPanelMessagesDIV.innerHTML = '';
     }
   }
 
   addFilterPanelMessageNoIdentitiesMatch() {
-    const msg = getI18nMsg("options_idmDisplayOrderFilteMessage_noMatch");
+    const msg = getI18nMsg("options_idmDisplayOrderFilter_message_noMatch");
     this.addFilterPanelMessage(msg);
   }
 
   addFilterPanelMessage(msg) {
+    this.debug(`\n--- msg="${msg}"`);
+
     if (msg) {
-      const domFilterPanelMessagesSPAN = document.getElementById("idmDisplayOrderFiltersPanelMessages");
-      if (! domFilterPanelMessagesSPAN) {
-        this.error("-- Failed to get Filter Panel Messages <SPAN> with id=\"idmDisplayOrderFiltersPanelMessages\"");
+      const domFilterPanelMessagesDIV = document.getElementById("idmDisplayOrderFiltersPanelMessages");
+      if (! domFilterPanelMessagesDIV) {
+        this.error("-- Failed to get Filter Panel Messages <DIV> with id=\"idmDisplayOrderFiltersPanelMessages\"");
       } else {
         const msgDIV = document.createElement('div');
           msgDIV.classList.add("filter-panel-message");
           msgDIV.textContent = msg;
-        domFilterPanelMessagesSPAN.appendChild(msgDIV);
-        domFilterPanelMessagesSPAN.style.setProperty("display", "INLINE");
+        domFilterPanelMessagesDIV.appendChild(msgDIV);
+        domFilterPanelMessagesDIV.style.setProperty("display", "BLOCK");
+      }
+    }
+  }
+
+
+
+  async clearDisplayOrderMessages() {
+    const domDisplayOrderMessagesDIV = document.getElementById("idmDisplayOrderMessagesPanel");
+    if (! domDisplayOrderMessagesDIV) {
+      this.error("-- Failed to get Filter Panel Message <DIV> with id=\"idmDisplayOrderMessagesPanel\"");
+    } else {
+      domDisplayOrderMessagesDIV.style.setProperty("display", "NONE");
+      domDisplayOrderMessagesDIV.innerHTML = '';
+    }
+  }
+
+  addDisplayOrderMessageNoIdentitiesMatch() {
+    const msg = getI18nMsg("options_idmDisplayOrderFilter_message_noMatch");
+    this.addDisplayOrderMessage(msg);
+  }
+
+  addDisplayOrderMessage(msg) {
+    this.debug(`\n--- msg="${msg}"`);
+
+    if (msg) {
+      const domDisplayOrderMessagesDIV = document.getElementById("idmDisplayOrderMessagesPanel");
+      if (! domDisplayOrderMessagesDIV) {
+        this.error("-- Failed to get Display Order Messages <DIV> with id=\"idmDisplayOrderMessagesPanel\"");
+      } else {
+        const msgDIV = document.createElement('div');
+          msgDIV.classList.add("display-order-message");
+          msgDIV.textContent = msg;
+        domDisplayOrderMessagesDIV.appendChild(msgDIV);
+        domDisplayOrderMessagesDIV.style.setProperty("display", "BLOCK");
       }
     }
   }
@@ -5077,6 +5792,8 @@ class OptionsUI {
         this.error(`-- FAILED TO GET COLLECTED IDENTITY: collectedIdentityInfo.id="${collectedIdentityInfo.id}"`);
       } else {
         await this.appendIdentityItemUI(idmIdentity); // Does NOT update positionInMenu
+        ++this.#totalIdentityCount;
+        await this.updateMessageCountsUI();
       }
     }
 
@@ -5209,7 +5926,7 @@ class OptionsUI {
 
 
   async testFilesystemBrokerMessagingButtonClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 
@@ -5224,7 +5941,7 @@ class OptionsUI {
 
 
   async testFilesystemBrokerApiButtonClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 
@@ -5239,7 +5956,7 @@ class OptionsUI {
 
 
   async testFilesystemApiButtonClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 
@@ -5254,7 +5971,7 @@ class OptionsUI {
 
 
   async testParseCSVFileButtonClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 
@@ -5321,7 +6038,7 @@ class OptionsUI {
 
 
   async testOptionsBackupButtonClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 
@@ -5403,7 +6120,7 @@ class OptionsUI {
 
 
   async displayOptionsAsPopupButtonClicked(e) {
-    if (e == null) return;
+    if (e === null) return;
     e.preventDefault();
     e.stopPropagation();
 

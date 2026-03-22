@@ -137,6 +137,9 @@
   "options_idmAutoSortBySelectOption_emailHost": {
     "message": "Email Address Host Name"
   },
+  "options_idmAutoSortBySelectOption_accountId": {
+    "message": "Email Account ID"
+  },
   "options_idmAutoSortDirectionSelect.labelBefore": {
     "message": "in"
   },
@@ -412,17 +415,41 @@
   "options_idmDisplayOrder_listHeader_tooltip_account": {
     "message": "The Account to which the Identity belongs"
   },
+  "options_idmDisplayOrder_listHeader_tooltip_sortBy_accountId_ascending": {
+    "message": "Sort by Account ID in Ascending order"
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_sortBy_accountId_descending": {
+    "message": "Sort by Account ID in Descending order"
+  },
   "options_idmDisplayOrder_listHeader_text_nameAndLabel": {
     "message": "Name+Label"
   },
+  "options_idmDisplayOrder_": {
+    "message": "Sort by  in Ascending order"
+  },
+  "options_idmDisplayOrder_": {
+    "message": "Sort by  in Descending order"
+  },
   "options_idmDisplayOrder_listHeader_tooltip_nameAndLabel": {
     "message": "The Name plus the (Label) for the Identity"
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_sortBy_nameAndLabel_ascending": {
+    "message": "Sort by Name+Label in Ascending order"
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_sortBy_nameAndLabel_descending": {
+    "message": "Sort by Name+Label in Descending order"
   },
   "options_idmDisplayOrder_listHeader_text_email": {
     "message": "Email"
   },
   "options_idmDisplayOrder_listHeader_tooltip_email": {
     "message": "The Email Adddress for the Identity"
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_sortBy_email_ascending": {
+    "message": "Sort by Email Address in Ascending order"
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_sortBy_email_descending": {
+    "message": "Sort by Email Address in Descending order"
   },
   "options_idmDisplayOrder_listHeader_text_pos": {
     "message": "pos"
@@ -435,6 +462,12 @@
   },
   "options_idmDisplayOrder_listHeader_tooltip_id": {
     "message": "The Identity ID"
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_sortBy_id_ascending": {
+    "message": "Sort by Identity ID in Ascending order"
+  },
+  "options_idmDisplayOrder_listHeader_tooltip_sortBy_id_descending": {
+    "message": "Sort by Identity ID in Descending order"
   },
   "options_idmDisplayOrder_listHeader_text_index": {
     "message": "idx"
@@ -450,13 +483,19 @@
   },
 
   "options_listItemMarker_accountDefault.tooltip": {
-    "message": "This is the Default Identity for the Account"
+    "message": "This is the Default Identity for its Account"
   },
   "options_listItemMarker_collected.tooltip": {
     "message": "This Identity has been \"Collected\""
   },
   "options_listItemMarker_imported.tooltip": {
     "message": "This Identity was Imported"
+  },
+  "options_listItemMarker_notShowInMenu.tooltip": {
+    "message": "This Identity will NOT be displayed in the Identity Chooser"
+  },
+  "options_listItemMarker_lockInMenu.tooltip": {
+    "message": "This Identity is locked into its current position in Identity Chooser List"
   },
 
   "options_idmDisplayOrderFilterError_labelRegexInvalid": {
@@ -465,8 +504,27 @@
   "options_idmDisplayOrderFilterError_emailRegexInvalid": {
     "message": "Invalid Regular Expression for Email"
   },
-  "options_idmDisplayOrderFilteMessage_noMatch": {
+  "options_idmDisplayOrderFilter_message_noMatch": {
     "message": "No Identities match the selected filters"
+  },
+  "options_idmDisplayOrderFilter_message_nnIdentities": {
+    "message": "$NN$ Identities total",
+    "placeholders": {
+      "nn": {
+        "content": "$1"
+      }
+    }
+  },
+  "options_idmDisplayOrderFilter_message_nnFilteredOfmmIdentities": {
+    "message": "$NN$ filtered of $MM$ Identities total",
+    "placeholders": {
+      "nn": {
+        "content": "$1"
+      },
+      "mm": {
+        "content": "$2"
+      }
+    }
   },
   "options_idmAutoSortListButton.tooltip": {
     "message": "Sort the Display Order List using the selected options (Locked Identities will not move)"
@@ -583,7 +641,7 @@
     "message": "Backup Options"
   },
   "options_idmp-dev-RunOptionsBackupTestsButton.tooltip": {
-    "message": "Run the Backup Options to a file tests"
+    "message": "Run the 'Backup Options to A File' tests"
   },
   "options_idmp-dev-displayOptionsAsPopupButton.label": {
     "message": "Show Options in Popup Window"

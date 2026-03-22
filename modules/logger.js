@@ -8,24 +8,25 @@ export class Logger {
 
 
 
-  constructor(useManifestId, extId) {
-    var extensionId = extId;
+  constructor(useManifestExtId, extId) {
+    var useManifestId = useManifestExtId;
+    var extensionId   = extId;
 
     if ((typeof useManifestId) === 'undefined') useManifestId = true;
-    if (useManifestId) extensionId = getExtensionId(extId);
+    if (useManifestId || ! extensionId) extensionId = getExtensionId('');
     
-    this.#EXTENSION_ID = extensionId ? extensionId : ''; // HUH???
+    this.#EXTENSION_ID = extensionId ? extensionId : ''; // make sure it's not null or undefined
   }
 
 
 
   logStackTrace(...info) {
     const context = info.shift();
-    var tag       = Logger.getTag(context);
+    var tag       = this.getTag(context);
     console.log(tag, ...info);
 
     const error      = new Error();
-    const stackLines = Logger.parseStackTrace(error);
+    const stackLines = this.parseStackTrace(error);
 
     for (const stackLine of stackLines) {
       if (stackLine.unparsed) {
@@ -35,7 +36,7 @@ export class Logger {
       }
     }
 
-    const callerInfo = Logger.getCallerInfo(error);
+    const callerInfo = this.getCallerInfo(error);
     if (! callerInfo) {
       console.log("=== NO CALLER INFO");
     } else {
@@ -47,74 +48,74 @@ export class Logger {
 
   info(...info) { /* eventually there should be an option for this */
     const context = info.shift();
-    const tag     = Logger.getTag(context);
+    const tag     = this.getTag(context);
     console.info(tag, ...info);
   }
 
   infoAlways(...info) {
     const context = info.shift();
-    const tag     = Logger.getTag(context);
+    const tag     = this.getTag(context);
     console.info(tag, ...info);
   }
 
   log(...info) { /* eventually there should be an option for this */
     const context = info.shift();
-    const tag     = Logger.getTag(context);
+    const tag     = this.getTag(context);
     console.log(tag, ...info);
   }
 
   logAlways(...info) {
     const context = info.shift();
-    const tag     = Logger.getTag(context);
+    const tag     = this.getTag(context);
     console.log(tag, ...info);
   }
 
   debug(...info) { /* eventually there should be an option for this */
     const context = info.shift();
-    const tag     = Logger.getTag(context);
+    const tag     = this.getTag(context);
     console.debug(tag, ...info);
   }
 
   debugAlways(...info) {
     const context = info.shift();
-    const tag     = Logger.getTag(context);
+    const tag     = this.getTag(context);
     console.debug(tag, ...info);
   }
 
   warn(...info) { /* eventually there should be an option for this */
     const context = info.shift();
-    const tag     = Logger.getTag(context);
+    const tag     = this.getTag(context);
     console.warn(tag, ...info);
   }
 
   warnAlways(...info) {
     const context = info.shift();
-    const tag     = Logger.getTag(context);
+    const tag     = this.getTag(context);
     console.warn(tag, ...info);
   }
 
   error(...info) { /* ALWAYS get logged */
     const context = info.shift();
-    const tag     = Logger.getTag(context);
+    const tag     = this.getTag(context);
     console.error(tag, ...info);
   }
 
 
 
 
-  static getTag(context) {
-    var tag = `${this.EXTENSION_ID} ${context}`;
-    const callerInfo = Logger.getCallerInfo();
+  getTag(context) {
+    var tag = `${this.#EXTENSION_ID} ${context}`;
+    const callerInfo = this.getCallerInfo();
     if (callerInfo) {
-      tag = `${this.EXTENSION_ID} ${context}#${callerInfo.func} ${callerInfo.file}:${callerInfo.line}:${callerInfo.col}`;
+      tag = `${this.#EXTENSION_ID} ${context}#${callerInfo.func} ${callerInfo.file}:${callerInfo.line}:${callerInfo.col}`;
     }
     return tag;
   }
 
 
 
-  static getCallerInfo() {
-    const stackLines = Logger.parseStackTrace(new Error(), 1);
+  getCallerInfo() {
+    const stackLines = this.parseStackTrace(new Error(), 1);
     if (! stackLines || stackLines.length < 1) {
       return null;
     }
@@ -124,7 +125,7 @@ export class Logger {
 
 
 
-  static parseStackTrace(error, limit) {
+  parseStackTrace(error, limit) {
     const STACKLINE_MATCH_PATTERN = /^([^@]+)@.+\/\/([^\/]*)\/([^:]+):(\d*):(\d*).*$/; 
     /* Extract function name, extension GUID, file path, line number, and column number
      *
@@ -162,12 +163,13 @@ export class Logger {
     const parsedLines = [];
     var   count       = 0;
     var   skipping    = true;
+
     for (const stackLine of stackLines) {
       const stackLineMatch = stackLine.match(STACKLINE_MATCH_PATTERN);
 
       if (! stackLineMatch) {
 ////////console.log(`*** NO STACKLINE MATCH: ${stackLine}`);
-          parsedLines.push( { 'unparsed': stackLine } );
+        parsedLines.push( { 'unparsed': stackLine } );
 
       } else {
         const func = stackLineMatch[1] === 'eval' ? 'anonymous' : stackLineMatch[1];
@@ -176,7 +178,7 @@ export class Logger {
         const line = stackLineMatch[4] || '*';
         const col  = stackLineMatch[5] || '*';
 
-        if (skipping && file !== 'modules/logger.js') { // don't include our own functions
+        if (skipping && file !== 'modules/logger.js' && ! func.startsWith("__") ) { // don't include our own functions or functions that begin with "__"
           switch (func) {
             case 'logStackTrace': // calling classes might/should be calling from these functions to be skipped - maybe use a "__" marker instead?
             case 'info':
@@ -197,11 +199,7 @@ export class Logger {
 
         if (! skipping) {
           parsedLines.push( { 'func': func, 'file': file, 'line': line, 'col': col } );
-
-          if (limit) {
-            count++;
-            if (count >= limit) break;
-          }
+          if (limit && ++count >= limit) break;
         }
       }
     }

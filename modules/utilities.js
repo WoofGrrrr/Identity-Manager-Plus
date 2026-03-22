@@ -104,11 +104,25 @@ export function getExtensionName(defaultExtName) {
 export function getI18nMsg(id, defaultMsg) {
   let i18nMessage = messenger.i18n.getMessage(id);
 
-  if (i18nMessage == "") {
-    if (defaultMsg === undefined) {
-      i18nMessage = id;
-    } else {
+  if (! i18nMessage) {
+    if (defaultMsg) {
       i18nMessage = defaultMsg;
+    } else {
+      i18nMessage = id;
+    }
+  }
+
+  return i18nMessage;
+}
+
+export function getI18nMsgSubst(id, subst, defaultMsg) {
+  let i18nMessage = messenger.i18n.getMessage(id, subst);
+
+  if (! i18nMessage) {
+    if (defaultMsg) {
+      i18nMessage = defaultMsg;
+    } else {
+      i18nMessage = id;
     }
   }
 
@@ -470,3 +484,8 @@ export function isValidEmail(email) {
 //const EMAIL_REGEX = /\A(?=[a-z0-9@.!#$%&'*+/=?^_`{|}~-]{6,254}\z)(?=[a-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@)[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:(?=[a-z0-9-]{1,63}\.)[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?=[a-z0-9-]{1,63}\z)[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\z/i;
   return EMAIL_REGEX.test(email);
 }
+
+export function acctNumFromId(accountId) {
+  return ((typeof accountId) === 'string') && accountId.startsWith("account") ? Number(accountId.slice(7)) : NaN;
+}
+

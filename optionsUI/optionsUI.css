@@ -71,8 +71,8 @@ body, html {
 
 .options-panel {
   background-color: var(--panel-background-color);
-/*border:           1px solid var(--panel-bborder-color); */
-  border-radius:    5px;
+/*border:           1px solid var(--panel-border-color); */
+  border-radius:    var(--panel-border-radius);
   padding:          0.5em;
 }
 
@@ -112,7 +112,7 @@ input[type="checkbox"].open-close-check:not(checked) + label {
 .options-open-close-panel {
 /*background-color:  var(--panel-background-color);*/
 /*border:            1px solid var(--panel-border-color);*/
-/*border-radius:     5px;*/
+/*border-radius:     var(--panel-border-radius);*/
   margin-left:       12px;
 /*padding:           4px;*/
 }
@@ -229,24 +229,24 @@ span.can-mark-error[error="true"]
 /*margin-top: 2em; */
 
   /* grid layout */
-  display:               grid;
+/*display:               grid;*/
 
-  grid-template-areas:   "chooser-options spacer";
-  grid-template-columns: max-content auto;
+/*grid-template-areas:   "chooser-options spacer";*/
+/*grid-template-columns: max-content auto;*/
 
-  #idmIdentityChooserOptions {
-    grid-area: chooser-options;
-  }
-  #idmChooserOptionsWrapperSpacer {
-    grid-area: spacer;
-  }
+/*#idmIdentityChooserOptions {*/
+/*  grid-area: chooser-options;*/
+/*}*/
+/*#idmChooserOptionsWrapperSpacer {*/
+/*  grid-area: spacer;*/
+/*}*/
 }
 
 
 
 #idmIdentityChooserOptions {
   border:        1px solid var(--panel-border-color);
-  border-radius: 5px;
+  border-radius: var(--panel-border-radius);
   padding:       0 1em 1em 1em;
 
   /* grid layout */
@@ -364,6 +364,7 @@ span.can-mark-error[error="true"]
 
   grid-template-areas:   "filters   spacer"
                          "auto-sort spacer"
+                         "messages  spacer"
                          "list      spacer";
 /*grid-template-columns: max-content auto;*/
   grid-template-columns: auto min-content;
@@ -374,6 +375,9 @@ span.can-mark-error[error="true"]
   }
   #idmAutoSortControlsPanel {
     grid-area: auto-sort;
+  }
+  #idmDisplayOrderMessagesPanel   {
+    grid-area: messages;
   }
   #idmIdentityDisplayOrderList   {
     grid-area: list;
@@ -391,7 +395,7 @@ span.can-mark-error[error="true"]
   margin-bottom: 0.25em;
 /*margin-top:    1.0em;*/
   border:        1px solid var(--panel-border-color);
-  border-radius: 5px;
+  border-radius: var(--panel-border-radius);
   padding:       0.05em 0.25em;
 
   & > span { /* #idmAutoSortByPanel and #idmAutoSortDirectionPanel */
@@ -410,7 +414,7 @@ span.can-mark-error[error="true"]
   margin-bottom: 0.25em;
 /*margin-top:    1.0em;*/
   border:        1px solid var(--panel-border-color);
-  border-radius: 5px;
+  border-radius: var(--panel-border-radius);
   padding:       0.05em 0.25em;
 }
 
@@ -435,7 +439,7 @@ span.can-mark-error[error="true"]
   width:            fit-content;
 }
 
-#idmDisplayOrderFilterPanelMessages { /* <SPAN> */
+#idmDisplayOrderFilterPanelMessages { /* <DIV> */
   margin-top:       0.20em;
 }
 
@@ -446,7 +450,24 @@ span.can-mark-error[error="true"]
   font:             var(--message-text-font);
   font-size:        var(--message-text-font-size);
   font-weight:      var(--message-text-font-weight);
-  margin-left:      2.0em;
+/*margin-left:      2.0em;*/
+  margin-top:       0.20em;
+  padding:          0em 0.25em;
+  width:            fit-content;
+}
+
+#idmDisplayOrderMessagesPanel { /* <DIV> */
+  margin-top:       0.20em;
+}
+
+.display-order-message { /* <DIV> */
+  background-color: var(--message-text-background-color);
+  border:           var(--message-text-border);
+  color:            var(--message-text-color);
+  font:             var(--message-text-font);
+  font-size:        var(--message-text-font-size);
+  font-weight:      var(--message-text-font-weight);
+/*margin-left:      2.0em;*/
   margin-top:       0.20em;
   padding:          0em 0.25em;
   width:            fit-content;
@@ -465,66 +486,145 @@ span.can-mark-error[error="true"]
   overflow-y: auto;
 }
 
+.loading-data-text {
+  background-color: var(--list-header-item-background-color);
+  border:           var(--list-header-item-border);
+  border-radius:    var(--list-header-item-border-radius);
+  color:            var(--title-color);
+  font-size:        var(--title-font-size);
+  font-weight:      var(--title-font-weight);
+  text-shadow:      var(--title-text-shadow);
+}
+
 
 .identity-list-header { /* <TR>  Identity list header row */
-}
 
-tr.identity-list-header > :nth-child(2) { /* this is a <TH> */
-  border-bottom-left-radius: 5px;
-  border-left:               1px solid var(--list-header-item-border-color);
-  border-top-left-radius:    5px;
-}
+  & > :nth-child(2) { /* this is a <TH> */
+    border-bottom-left-radius: var(--list-header-item-border-radius);
+    border-left:               var(--list-header-item-border);
+    border-top-left-radius:    var(--list-header-item-border-radius);
+  }
 
-tr.identity-list-header > :last-child(2) { /* this is a <TH> */
-  border-bottom-right-radius: 5px;
-  border-right:               1px solid var(--list-header-item-border-color);
-  border-top-right-radius:    5px;
-}
+   & > :last-child(2) { /* this is a <TH> */
+    border-bottom-right-radius: var(--list-header-item-border-radius);
+    border-right:               var(--list-header-item-border);
+    border-top-right-radius:    var(--list-header-item-border-radius);
+  }
 
-.header-text {
-  background-color: var(--list-header-item-background-color);
-  border-bottom:    1px solid var(--list-header-item-border-color);
-  border-top:       1px solid var(--list-header-item-border-color);
-  color:            var(--list-header-item-color);
-  font-weight       var(--list-header-item-font-weight);
-  text-shadow:      1px 1px var(--list-header-item-shadow-color);
-}
- 
+  & > .header-controls-left { /* <TH> */
+  }
 
-.header-controls-left { /* <TH> */
-}
+  & > .header-border-color { /* <TH> */
+    & > .header-border-color-dot { /* <SPAN> */
+      background-color: TRANSPARENT;
+      border:           1px SOLID #808080; /* MABXXX use a variable */
+      border-radius:    50%;
+      display:          inline-block; 
+      height:           1em;
+      width:            1em;
+    }
+  }
 
-.header-border-color { /* <TH> */
-}
+  & > .header-item { /* <TH> */
+    background-color: var(--list-header-item-background-color);
+    border-bottom:    var(--list-header-item-border);
+    border-top:       var(--list-header-item-border);
+    color:            var(--list-header-item-color);
+    font-size:        var(--list-header-item-font-size);
+    font-weight       var(--list-header-item-font-weight);
+    text-shadow:      var(--list-header-item-shadow);
+    vertical-align:   center;
 
-.header-border-color-dot { /* <SPAN> */
-  background-color: TRANSPARENT;
-  border:           1px SOLID #808080; /* MABXXX use a variable */
-  border-radius:    50%;
-  display:          inline-block; 
-  height:           1em;
-  width:            1em;
-}
+    &.header-account {
+    }
 
-.header-account { /* <TH> */
-}
+    &.header-label {
+      width: 50%;
+    }
 
-.header-label { /* <TH> */
-}
+    &.header-email {
+      width: 50%;
+    }
 
-.header-email { /* <TH> */
-}
+    &.header-pos {
+    }
 
-.header-pos { /* <TH> */
-}
+    &.header-index {
+    }
 
-.header-index { /* <TH> */
-}
+    &.header-id {
+    }
 
-.header-id { /* <TH> */
-}
+    & > .header-data { /* <DIV> */
+      display:        flex;
+      width:          100%;
 
-.header-controls-right { /* <TH> */
+      &:not(:hover) {
+        & > .header-sort { /* <DIV> */
+          background-color: var(--list-header-sort-background-color);
+          border-color:     var(--list-header-sort-border-color);
+        }
+      }
+      &:hover {
+        & > .header-sort { /* <DIV> */
+          background-color: var(--list-header-sort-hover-background-color);
+          border-color:     var(--list-header-sort-hover-border-color);
+        }
+      }
+
+      & > .header-sort { /* <DIV> */
+        border:     1px solid transparent;
+        height:     24px;
+        min-width:  9px;
+        max-width:  9px;
+
+        & > .sort-ascending { /* <BUTTON> */
+          &:not([disabled],.dummy-icon,:hover) {
+            background-image: url("../images/icons/triangle/triangle_acute_up_med_gray_outline_dark_9x10.png");
+          }
+          &:not([disabled],.dummy-icon):hover {
+            background-image: url("../images/icons/triangle/triangle_acute_up_light_gray_outline_white_9x10.png");
+          }
+          &:not(.dummy-icon)[disabled] {
+            background-image: url("../images/icons/triangle/triangle_acute_up_med_gray_outline_med_9x10.png");
+          }
+          &.dummy-icon {
+            background-image: url("../images/icons/triangle/triangle_acute_up_med_gray_outline_med_9x10.png");
+          }
+        }
+
+        & > .sort-descending { /* <BUTTON> */
+          &:not([disabled],.dummy-icon,:hover) {
+            background-image: url("../images/icons/triangle/triangle_acute_down_med_gray_outline_dark_9x10.png");
+          }
+          &:not([disabled],.dummy-icon):hover {
+            background-image: url("../images/icons/triangle/triangle_acute_down_light_gray_outline_white_9x10.png");
+          }
+          &:not(.dummy-icon)[disabled] {
+            background-image: url("../images/icons/triangle/triangle_acute_down_med_gray_outline_med_9x10.png");
+          }
+          &.dummy-icon {
+            background-image: url("../images/icons/triangle/triangle_acute_down_med_gray_outline_med_9x10.png");
+          }
+        }
+      }
+
+      & > .header-text { /* <SPAN> */
+        flex-grow:  1;
+        margin-top: 0.25em;
+      }
+
+      & > .header-space { /* <SPAN> */
+        height:    24px;
+        min-width: 9px;
+        max-width: 9px;
+        width:     9px;
+      }
+    }
+  }
+
+  & .header-controls-right { /* <TH> */
+  }
 }
 
 
@@ -558,12 +658,12 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
 }
 
 /* show ns-resize cursor for *NOT* lock-in-menu Identity Items */
-.identity-item:not(.lock-in-menu).identity-item-draggable {
+.identity-item:not(.lock-in-menu).identity-item-draggable > .identity-item-data {
   cursor:           ns-resize;
 }
 
 /* show pointer cursor for lock-in-menu Identity Items */
-.identity-item.lock-in-menu {
+.identity-item.lock-in-menu > .identity-item-data {
   cursor:           pointer;
 }
 
@@ -587,8 +687,12 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
   padding-right: 0.25em;
 }
 
-.identity-item-check, /* any checkbox */
-.identity-item-button /* any button */
+.identity-item-check,           /* any checkbox in identity list */
+.identity-item-check + label,   /* any checkbox label in identity list */
+.identity-item-button,          /* any button in identity list */
+.header-check,                  /* any checkbox in identity header */
+.header-check + label,          /* any checkbox label in identity header */
+.header-button                  /* any button in identity list header */
 {
   &:not(.dummy-icon,[disabled]) { /* not disabled */
     cursor: pointer !important;
@@ -606,11 +710,8 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
 /* those items that show actual Identity data: label, email, id, etc */
 .identity-item-data {
   background-color: var(--identity-background-color);
-
-  border-bottom:    1px solid;
-  border-top:       1px solid;
-  border-color:     var(--identity-border-color); /* MUST BE AFTER border-bottom and border-top as they revert color */
-
+  border-bottom:    var(--identity-border);
+  border-top:       var(--identity-border);
   color:            var(--identity-color);
   padding:          0.1em 0.5em;
   white-space:      nowrap;
@@ -619,18 +720,16 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
 
 .identity-item > :nth-child(2) { /* .identity-item:nth-child(2) hopefully the first identity-item-data */
   /* hopefully the first identity-item-data: rounded left corners */
-  border-bottom-left-radius: 5px;
-  border-left-style:         solid;
-  border-left-width:         1px;
-  border-top-left-radius:    5px;
+  border-bottom-left-radius: var(--list-item-border-radius);
+  border-left:               var(--identity-border);  
+  border-top-left-radius:    var(--list-item-border-radius);
 }
 
 .identity-item > :nth-last-child(2) { /* .identity-item:nth-last-child(1) hopefully the last identity-item-data */
   /* hopefully the last identity-item-data: rounded right corners */
-  border-bottom-right-radius: 5px;
-  border-right-style:         solid;
-  border-right-width:         1px;
-  border-top-right-radius:    5px;
+  border-bottom-right-radius: var(--list-item-border-radius);
+  border-right:               var(--identity-border);  
+  border-top-right-radius:    var(--list-item-border-radius);
 }
 
 /* colors for lock-in-menu identities */
@@ -690,7 +789,7 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
 
 .identity-item-label { /* .identity-item > .identity-item-label */
   height:              100%;
-  width:               auto;
+  width:               50%;
 }
 
 .identity-item-label-text { /* tr.identity-item > td.identity-item-label > span.identity-item-label-text */
@@ -713,30 +812,45 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
   background-repeat:   no-repeat;
   background-size:     cover;
   cursor:              default;
-  display:             inline-block;
+  display:             none;
   height:              16px;
   min-height:          16px;
   min-width:           16px;
   width:               16px;
 }
 
-/* tr.identity-item > td.identity-item-label > span.identity-item-markers > .identity-item-marker.marker-default */
-.identity-item-marker.marker-default {
-  background-image:    url("../images/icons/marker/crown_gold_16x16.png");
+/* tr.identity-item > td.identity-item-label > span.identity-item-markers > .identity-item-marker.marker-account-default */
+.identity-item.account-default .identity-item-marker.marker-account-default {
+  background-image:    url("../images/icons/marker/crown_gold_outline_dark_16x16.png");
+  display:             inline-block;
 }
 
 /* tr.identity-item > td.identity-item-label > span.identity-item-markers > .identity-item-marker.marker-collected */
 .identity-item.collected-identity .identity-item-marker.marker-collected {
-  background-image:    url("../images/icons/marker/sun_yellow_16x16.png");
+  background-image:    url("../images/icons/marker/sun_yellow_outline_dark_16x16.png");
+  display:             inline-block;
 }
 
 /* tr.identity-item > td.identity-item-label > span.identity-item-markers > .identity-item-marker.marker-imported */
 .identity-item.imported-identity .identity-item-marker.marker-imported {
   background-image:    url("../images/icons/marker/into_right-left_dark-blue_16x16.png");
+  display:             inline-block;
+}
+
+/* tr.identity-item > td.identity-item-label > span.identity-item-markers > .identity-item-marker.marker-not-show-in-menu */
+.identity-item.not-show-in-menu .identity-item-marker.marker-not-show-in-menu {
+  background-image:    url("../images/icons/marker/circle_red_line_red_outline_dark_thin16x16.png");
+  display:             inline-block;
+}
+
+/* tr.identity-item > td.identity-item-label > span.identity-item-markers > .identity-item-marker.marker-lock-in-menu */
+.identity-item.lock-in-menu .identity-item-marker.marker-lock-in-menu {
+  background-image:    url("../images/icons/marker/padlock-yellow_16x16.png");
+  display:             inline-block;
 }
 
 .identity-item-email { /* .identity-item > .identity-item-email */
-  width:               auto;
+  width:               50%;
 }
 
 .identity-item-pos { /* .identity-item > .identity-item-pos */
@@ -835,24 +949,28 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
 /*vertical-align:    middle;*/
 }
 
-.lock-in-menu-check:not(:checked,:hover,[disabled]) + label {
+.lock-in-menu-check:not(:checked,:hover,[disabled],.dummy-icon) + label {
   background-image: url("../images/icons/padlock/padlock-green-open-more_24x24.png") !important;
 }
 
-.lock-in-menu-check:not(:checked,[disabled]):hover + label {
+.lock-in-menu-check:not(:checked,[disabled],.dummy-icon):hover + label {
   background-image: url("../images/icons/padlock/padlock-light-green-open_24x24.png") !important;
 }
 
-.lock-in-menu-check:checked:not(:hover,[disabled]) + label {
+.lock-in-menu-check:checked:not(:hover,[disabled],.dummy-icon) + label {
   background-image: url("../images/icons/padlock/padlock-yellow_24x24.png") !important;
 }
 
-.lock-in-menu-check:checked:hover:not([disabled]):hover + label {
+.lock-in-menu-check:checked:not([disabled],.dummy-icon):hover + label {
   background-image: url("../images/icons/padlock/padlock-light-yellow-open-more_24x24.png") !important;
 }
 
-.lock-in-menu-check[disabled] + label {
+.lock-in-menu-check[disabled]:not(.dummy-icon) + label {
   background-image: url("../images/icons/padlock/padlock-gray_24x24.png") !important;
+}
+
+.lock-in-menu-check.dummy-icon + label {
+  background-image: url("../images/icons/padlock/padlock-outline_24x24.png") !important;
 }
 
 .identity-controls-panel {
@@ -866,10 +984,12 @@ tr.identity-list-header > :last-child(2) { /* this is a <TH> */
  * display:none      removes the element from the document. It does not take up any space. 
  */
 tr:not(.lock-in-menu) div:is(.move-up-down-controls, .move-to-controls) {
+  cursor:     default !important;
   visibility: visible;
 }
 
 tr.lock-in-menu div:is(.move-up-down-controls, .move-to-controls) {
+  cursor:     default !important;
   visibility: hidden; /* not visible but still takes up space */
 }
 
@@ -939,7 +1059,7 @@ tr.lock-in-menu div:is(.move-up-down-controls, .move-to-controls) {
 
 /* BUTTONS IN GENERAL */
 
-#idmOptionsWrapper button.identity-item-button {
+#idmOptionsWrapper button:is(.identity-item-button,.header-button) {
   background-color:    transparent !important;
   background-position: center;
   background-repeat:   no-repeat;
@@ -955,7 +1075,7 @@ tr.lock-in-menu div:is(.move-up-down-controls, .move-to-controls) {
   -moz-appearance:     none;
 }
 
-#idmOptionsWrapper button.identity-item-button:first-child {
+#idmOptionsWrapper button:is(.identity-item-button,.header-button):first-child {
   margin-top:          2px; /* MABXXX NOT NEEDED */
 }
 
@@ -969,15 +1089,19 @@ tr.lock-in-menu div:is(.move-up-down-controls, .move-to-controls) {
       background-repeat:   no-repeat;
       background-size:     cover;
 
-      &:not(.stacked-icon) {
+      &:not(.stacked-icon,.sort-button) {
         height:     24px;
         min-height: 24px;
         min-width:  24px;
         width:      24px;
       }
-      &.stacked-icon {
+      &.stacked-icon:not(.sort-button) {
         height:     10px;
         width:      15px;
+      }
+      &.sort-button) {
+        height:     10px;
+        width:      9;
       }
     }
   }
@@ -1010,15 +1134,31 @@ tr.lock-in-menu div:is(.move-up-down-controls, .move-to-controls) {
 /* Move Icons aren't displayed at all when disabled */
 #idmOptionsWrapper button.edit-identity:not(.dummy-icon)[disabled] {
   background-image:    url("../images/icons/edit/edit_medium_gray.png") !important;
+  cursor:              default;
 }
 #idmOptionsWrapper button.create-identity:not(.dummy-icon)[disabled] {
   background-image:    url("../images/icons/edit/create_medium_gray_32x32.png") !important;
+  cursor:              default;
 }
 #idmOptionsWrapper button.delete-identity:not(.dummy-icon)[disabled] {
   background-image:    url("../images/icons/trashcan/trashcan-gray-24x24.png") !important;
+  cursor:              default;
+}
+#idmOptionsWrapper button.move-identity-up:not(.dummy-icon)[disabled] {
+  cursor:              default;
+}
+#idmOptionsWrapper button.move-identity-down:not(.dummy-icon)[disabled] {
+  cursor:              default;
+}
+#idmOptionsWrapper button.move-identity-to-top:not(.dummy-icon)[disabled] {
+  cursor:              default;
+}
+#idmOptionsWrapper button.move-identity-to-bottom:not(.dummy-icon)[disabled] {
+  cursor:              default;
 }
 tr.account-default button.delete-identity { /* MABXXX  <-----------DEFAULT ACCOUNT SHOULD ALWAYS BE DISABLED-------------------<<<<< */
   background-image:    url("../images/icons/trashcan/trashcan-gray-24x24.png") !important;
+  cursor:              default;
 }
 
 /* ICON BUTTONS WHEN NOT DISABLED or .dummy-icon */
@@ -1046,22 +1186,22 @@ tr.account-default button.delete-identity { /* MABXXX  <-----------DEFAULT ACCOU
 
 /* ICON BUTTONS WHEN HOVERING */
 /*
-#idmOptionsWrapper button.identity-item-button:not([disabled]):hover {
+#idmOptionsWrapper button:is(.identity-item-button,.header-button):not([disabled]):hover {
   border-color:        var(--button-hover-border-color);
 }
 */
 
 #idmOptionsWrapper button.move-identity-up:not([disabled],.dummy-icon):hover { /* ICON ONLY IF IT IS *NOT* DISABLED, otherwise nothing */
-  background-image:    url("../images/icons/triangle/triangle-up-llight-blue-white-outline_15x10.png") !important;
+  background-image:    url("../images/icons/triangle/triangle-up-light-blue-white-outline_15x10.png") !important;
 }
 #idmOptionsWrapper button.move-identity-down:not([disabled],.dummy-icon):hover { /* ICON ONLY IF IT IS *NOT* DISABLED, otherwise nothing */
-  background-image:    url("../images/icons/triangle/triangle-down-llight-blue-white-outline_15x10.png") !important;
+  background-image:    url("../images/icons/triangle/triangle-down-light-blue-white-outline_15x10.png") !important;
 }
 #idmOptionsWrapper button.move-identity-to-top:not([disabled],.dummy-icon):hover { /* ICON ONLY IF IT IS *NOT* DISABLED, otherwise nothing */
-  background-image:    url("../images/icons/triangle/triangle-up-line-llight-blue-white-outline_15x10.png") !important;
+  background-image:    url("../images/icons/triangle/triangle-up-line-light-blue-white-outline_15x10.png") !important;
 }
 #idmOptionsWrapper button.move-identity-to-bottom:not([disabled],.dummy-icon):hover { /* ICON ONLY IF IT IS *NOT* DISABLED, otherwise nothing */
-  background-image:    url("../images/icons/triangle/triangle-down-line-llight-blue-white-outline_15x10.png") !important;
+  background-image:    url("../images/icons/triangle/triangle-down-line-light-blue-white-outline_15x10.png") !important;
 }
 #idmOptionsWrapper button.edit-identity:not(.dummy-icon,[disabled]):hover {
   background-image:    url("../images/icons/edit/edit_white_32x32.png") !important;
@@ -1073,9 +1213,9 @@ tr.account-default button.delete-identity { /* MABXXX  <-----------DEFAULT ACCOU
   background-image:    url("../images/icons/trashcan/trashcan-red-lighter-24x24.png") !important;
 }
 
-/* edit, create & delete have their own diabled icons - AND Move Icons aren't displayed at all when disabled */
-#idmOptionsWrapper button.identity-item-button[disabled]:not(.edit-identity, .create-identity, .delete-identity) {
-  opacity: 0.7; /* MABXXX SHOULD USE A DIFFERENT backgrond-image INSTEAD */
+/* edit, create, delete, and sort buttons have their own diabled icons - AND Move Icons aren't displayed at all when disabled */
+#idmOptionsWrapper button.identity-item-button[disabled]:not(.edit-identity, .create-identity, .delete-identity, .sort-button) {
+  opacity: 0.9; /* MABXXX SHOULD USE A DIFFERENT backgrond-image INSTEAD */
 }
 
 
@@ -1086,7 +1226,7 @@ tr.account-default button.delete-identity { /* MABXXX  <-----------DEFAULT ACCOU
 
 /* BACICALLY ALMOST NONE OF THIS BUTTON CRAP EVEN WORKS - THANKS FOR WASING MY TIME, THUNDERBIRD */
 /* I could not get ANY variables to work, not from themes.css, AND not locally */
-#idmOptionsWrapper button:not(.identity-item-button, .identity-item-marker) {
+#idmOptionsWrapper button:not(.identity-item-button, .identity-item-marker, .header-button) {
   background-image: NONE !important;
   border:           1px solid transparent;
   border-radius:    0.5em;
@@ -1102,21 +1242,21 @@ tr.account-default button.delete-identity { /* MABXXX  <-----------DEFAULT ACCOU
   appearance:       none;
 }
 
-#idmOptionsWrapper button:not(.identity-item-button, .identity-item-marker, [disabled]) {
+#idmOptionsWrapper button:not(.identity-item-button, .identity-item-marker, .header-button, [disabled]) {
   background-color: rgb(110, 110, 114);
   border-color:     rgb(200, 200, 200);
   color:            rgb(250, 250, 250);
   color:            BLACK; /* yeah, this does NOT work */
 }
 
-#idmOptionsWrapper button:not(.identity-item-button, .identity-item-marker)[disabled] {
+#idmOptionsWrapper button:not(.identity-item-button, .identity-item-marker, .header-button)[disabled] {
 /*background-color: rgb(75, 75, 75);*/
 /*border-color:     rgb(90, 90, 90);*/
 /*color:            rgb(120, 120, 120); /* does even THIS work? NO. */
   opacity:          var(--window-inactive-opacity);
 }
 
-#idmOptionsWrapper button:not(.identity-item-button, .identity-item-marker, [disabled]):hover { /* HOVER ESPECIALLY DOES NOT WORK */
+#idmOptionsWrapper button:not(.identity-item-button, .identity-item-marker, .header-button, [disabled]):hover { /* HOVER ESPECIALLY DOES NOT WORK */
   background-color: rgb(60, 160, 165);
   background-image: NONE !important;
   border-color:     rgb(240, 240, 240);
@@ -1136,6 +1276,6 @@ tr.account-default button.delete-identity { /* MABXXX  <-----------DEFAULT ACCOU
   cursor:           inherit;
 }
 
-#idmOptionsWrapper button:not(.identity-item-button, .identity-item-marker):-moz-window-inactive {
+#idmOptionsWrapper button:not(.identity-item-button, .identity-item-marker, .header-button):-moz-window-inactive {
   opacity: var(--window-inactive-opacity);
 }

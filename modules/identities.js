@@ -1,4 +1,7 @@
+import { IdmOptions                   } from '../modules/options.js';
 import { parseDomain, ParseResultType } from "./parse-domain/build/main.js";
+import { acctNumFromId } from '../modules/utilities.js';
+
 
 export class IdmIdentities {
   #CLASS_NAME = this.constructor.name;
@@ -95,7 +98,7 @@ export class IdmIdentities {
   async getMailIdentities() {
     this.debug("getMailIdentities -- begin");
 
-    var mailAccounts   = await browser.accounts.list(false); // includeSubFolders=false: do not get sub-folders
+    var mailAccounts   = await messenger.accounts.list(false); // includeSubFolders=false: do not get sub-folders
     var mailIdentities = [];
 
     for (const mailAccount of mailAccounts) {
@@ -104,13 +107,13 @@ export class IdmIdentities {
       for (const mailIdentity of mailAccount.identities) {
         mailIdentities.push(mailIdentity);
 
-        if (this.#DEBUG) this.debugAlways( "getMailIdentities --" // don't build all this just to be denied by this.#DEBUG in this.debug()
-                                           + `\n- id="${mailIdentity.id}"`
-                                           + `\n- accountId="${mailIdentity.accountId}"`
-                                           + `\n- email="${mailIdentity.email}"`
-                                           + `\n- name="${mailIdentity.name}"`
-                                           + `\n- label="${mailIdentity.label}"`
-                                           + '\n--'
+        if (this.#DEBUG) this.debugAlways( "\n---getMailIdentities --", // don't build all this just to be denied by this.#DEBUG in this.debug()
+                                           `\n- id="${mailIdentity.id}"`,
+                                           `\n- accountId="${mailIdentity.accountId}"`,
+                                           `\n- email="${mailIdentity.email}"`,
+                                           `\n- name="${mailIdentity.name}"`,
+                                           `\n- label="${mailIdentity.label}"`,
+                                           '\n--',
                                          );
       }
     }
@@ -143,18 +146,22 @@ export class IdmIdentities {
    *      "imported":              boolean imported,
    *      "accountDefault":        boolean (defaultIdentityIds[MailAccount.id] === MailIdentity.id),
    *      "accountId":             string  MailIdentity.accountId
+   *      "accountNumber":         number from account.id,
    *      "accountName":           string  MailAccount.name,
    *      "identity":              messenger.identities.MailIdentity, // MABXXX is this reference to the messenger.identities.MailIdentity useful???  MABXXX STORAGE EXPENSIVE!!!
    */
   async getIdmIdentities() {
     this.debug("getIdmIdentities -- begin");
+
     var identitiesProps    = await this.getUpdatedExtendedIdentitiesProps(); // sometimes a cleanup is necessary, like after a DELETE, etc
-    var accounts           = await browser.accounts.list(false);             // includeSubFolders=false: do not get sub-folders
+    var accounts           = await messenger.accounts.list(false);           // includeSubFolders=false: do not get sub-folders
     var nextPositionInMenu = Object.entries(identitiesProps).length;         // for placing stray identities at the BOTTOM (it happens) - should not happen, but does
     var defaultIdentityIds = await this.getAccountDefaultIdentityIds();      // need to keep getting these as they can change over time
     var idmIdentities      = [];
 
     for (const account of accounts) { // MABXXX ABILITY TO SEPARATE BY ACCOUNT???
+      const accountNumber = acctNumFromId(account.id);
+
       for (const identity of account.identities) {
         var props          = identitiesProps[identity.id];
         var showInMenu     = (!props || typeof props.showInMenu     !== 'boolean') ? true                 : props.showInMenu;     // MABXXX Doesn't update ExtendedProps!!!
@@ -183,6 +190,7 @@ export class IdmIdentities {
           "imported":             imported,
           "accountDefault":       (defaultIdentityIds[account.id] === identity.id),
           "accountId":            account.id,
+          "accountNumber":        accountNumber,
           "accountName":          account.name,
           "identity":             identity, // MABXXX is this reference to the messenger.identities.MailIdentity useful???  MABXXX STORAGE MAY BE EXPENSIVE!!!
         };
@@ -192,22 +200,22 @@ export class IdmIdentities {
         // after this for loop.
         idmIdentities[positionInMenu] = idmIdentity;
 
-        if (this.#DEBUG) this.debugAlways( "getIdmIdentities --" // don't build all this just to be denied by this.#DEBUG in this.debug()
-                                           + `\n- id ............... "${idmIdentity.id}"`
-                                           + `\n- accountId ........ "${idmIdentity.accountId}"`
-                                           + `\n- accountName ...... "${idmIdentity.accountName}"`
-                                           + `\n- accountDefault ... ${idmIdentity.accountDefault}`
-                                           + `\n- label ............ "${idmIdentity.label}"`
-                                           + `\n- name ............. "${idmIdentity.name}"`
-                                           + `\n- email ............ "${idmIdentity.email}"`
-                                           + `\n- domain ........... "${idmIdentity.emailDomain}"`
-                                           + `\n- host ............. "${idmIdentity.emailHost}"`
-                                           + `\n- showInMenu ....... ${idmIdentity.showInMenu}`
-                                           + `\n- lockInMenu ....... ${idmIdentity.lockInMenu}`
-                                           + `\n- collected ........ ${idmIdentity.collected}`
-                                           + `\n- imported ......... ${idmIdentity.imported}`
-                                           + `\n- positionInMenu ... ${idmIdentity.positionInMenu}`
-                                           + '\n--'
+        if (this.#DEBUG) this.debugAlways( "\n---getIdmIdentities --", // don't build all this just to be denied by this.#DEBUG in this.debug()
+                                           `\n- id ............... "${idmIdentity.id}"`,
+                                           `\n- accountId ........ "${idmIdentity.accountId}"`,
+                                           `\n- accountName ...... "${idmIdentity.accountName}"`,
+                                           `\n- accountDefault ... ${idmIdentity.accountDefault}`,
+                                           `\n- label ............ "${idmIdentity.label}"`,
+                                           `\n- name ............. "${idmIdentity.name}"`,
+                                           `\n- email ............ "${idmIdentity.email}"`,
+                                           `\n- domain ........... "${idmIdentity.emailDomain}"`,
+                                           `\n- host ............. "${idmIdentity.emailHost}"`,
+                                           `\n- showInMenu ....... ${idmIdentity.showInMenu}`,
+                                           `\n- lockInMenu ....... ${idmIdentity.lockInMenu}`,
+                                           `\n- collected ........ ${idmIdentity.collected}`,
+                                           `\n- imported ......... ${idmIdentity.imported}`,
+                                           `\n- positionInMenu ... ${idmIdentity.positionInMenu}`,
+                                           '\n--',
                                          );
       }
     }
@@ -224,25 +232,25 @@ export class IdmIdentities {
 
 
   async getAccountDefaultIdentityId(accountId) {
-    let account = await browser.accounts.get(accountId, false); // includeSubFolders=false: do not get sub-folders
+    let account = await messenger.accounts.get(accountId, false); // includeSubFolders=false: do not get sub-folders
 
     if (! account) {
       this.error("getAccountDefaultIdentityId -- ACCOUNT NOT FOUND:" + ` - accountId="${accountId}"`);
     } else {
       let defaultIdentity = await messenger.identities.getDefault(account.id);
       if (! defaultIdentity) {
-        this.error( "getAccountDefaultIdentityId -- NO DEFAULT IDENTITY FOR ACCOUNT:"
-                    + `\n- id="${account.id}"`
-                    + `\n- name="${account.name}"`
-                    + `\n- type="${account.type}"`
+        this.error( "\n---getAccountDefaultIdentityId -- NO DEFAULT IDENTITY FOR ACCOUNT:",
+                    `\n- id="${account.id}"`,
+                    `\n- name="${account.name}"`,
+                    `\n- type="${account.type}"`,
                   );
       } else {
-        if (this.#DEBUG) this.debugAlways( "getAccountDefaultIdentityId -- DEFAULT IDENTITY FOR ACCOUNT:"
-                                           + `\n- account.id="${account.id}"`
-                                           + `\n- account.name="${account.name}"`
-                                           + `\n- defaultIdentity.id="${defaultIdentity.id}"`
-                                           + `\n- defaultIdentity.name="${defaultIdentity.name}"`
-                                           + `\n- defaultIdentity.email="${defaultIdentity.email}"`
+        if (this.#DEBUG) this.debugAlways( "\n---getAccountDefaultIdentityId -- DEFAULT IDENTITY FOR ACCOUNT:",
+                                           `\n- account.id="${account.id}"`,
+                                           `\n- account.name="${account.name}"`,
+                                           `\n- defaultIdentity.id="${defaultIdentity.id}"`,
+                                           `\n- defaultIdentity.name="${defaultIdentity.name}"`,
+                                           `\n- defaultIdentity.email="${defaultIdentity.email}"`,
                                          );
         return defaultIdentity.id;
       }
@@ -252,7 +260,7 @@ export class IdmIdentities {
 
 
   async getAccountDefaultIdentityIds() {
-    let accounts = await browser.accounts.list(false); // includeSubFolders=false: do not get sub-folders
+    let accounts = await messenger.accounts.list(false); // includeSubFolders=false: do not get sub-folders
 
     let defaultIdentityIds = [];
 
@@ -264,18 +272,18 @@ export class IdmIdentities {
         let defaultIdentity = await messenger.identities.getDefault(account.id);
 
         if (! defaultIdentity) {
-          this.error( "getAccountDefaultIdentityIds -- NO DEFAULT IDENTITY FOR ACCOUNT:"
-                      + `\n- id="${account.id}"`
-                      + `\n- name="${account.name}"`
-                      + `\n- type="${account.type}"`
+          this.error( "\\n---getAccountDefaultIdentityIds -- NO DEFAULT IDENTITY FOR ACCOUNT:",
+                      `\n- id="${account.id}"`,
+                      `\n- name="${account.name}"`,
+                      `\n- type="${account.type}"`,
                     );
         } else {
-          if (this.#DEBUG) this.debugAlways( "getAccountDefaultIdentityIds -- DEFAULT IDENTITY FOR ACCOUNT:"
-                                             + `\n- account.id="${account.id}"`
-                                             + `\n- account.name="${account.name}"`
-                                             + `\n- defaultIdentity.id="${defaultIdentity.id}"`
-                                             + `\n- defaultIdentity.name="${defaultIdentity.name}"`
-                                             + `\n- defaultIdentity.email="${defaultIdentity.email}"`
+          if (this.#DEBUG) this.debugAlways( "\n---getAccountDefaultIdentityIds -- DEFAULT IDENTITY FOR ACCOUNT:",
+                                             `\n- account.id="${account.id}"`,
+                                             `\n- account.name="${account.name}"`,
+                                             `\n- defaultIdentity.id="${defaultIdentity.id}"`,
+                                             `\n- defaultIdentity.name="${defaultIdentity.name}"`,
+                                             `\n- defaultIdentity.email="${defaultIdentity.email}"`,
                                            );
           defaultIdentityIds[account.id] = defaultIdentity.id;
           this.debug(`getAccountDefaultIdentityIds -- DEFAULT IDENTITY: defaultIdentityIds["${account.id}"]="${defaultIdentityIds[account.id]}" `);
@@ -288,7 +296,7 @@ export class IdmIdentities {
 
 
 
-  /* Get the messenger.identities.MailIdentity iwht the given identityID, create an IdIdentity from it, and return it.
+  /* Get the messenger.identities.MailIdentity with the given identityID, create an IdIdentity from it, and return it.
    *
    *      "id":                    string identity.id,
    *      "label":                 string this.toIdentityLabel(identity),  // <----------------------------------- NOTE: different from MailIdentity -------------<<<<<
@@ -309,6 +317,7 @@ export class IdmIdentities {
    *      "imported":              boolean imported,
    *      "accountDefault":        boolean (defaultIdentityIds[account.id] === identity.id),
    *      "accountId":             string account.id,
+   *      "accountNumber":         number from account.id,
    *      "accountName":           string account.name,
    *      "identity":              messenger.identities.MailIdentity, // MABXXX is this reference to the messenger.identities.MailIdentity useful???  MABXXX STORAGE EXPENSIVE!!!
    */
@@ -319,21 +328,23 @@ export class IdmIdentities {
       this.error(`getIdmIdentity -- FAILED TO GET IDENTITY: identityId="${identityId}"`);
 
     } else {
-//////let identitiesProps = await this.getUpdatedExtendedIdentitiesProps(); // sometimes a cleanup is necessary, like after a DELETE, etc
-      let identitiesProps    = await this.#idmOptionsApi.getIdentitiesExtendedProps();
-      let nextPositionInMenu = Object.entries(identitiesProps).length; // for placing stray (or new) identities at the BOTTOM (it happens)
-      let props              = identitiesProps[identity.id];
-      let defaultIdentityId  = await this.getAccountDefaultIdentityId(identity.accountId); // need to keep getting this as it can change over time
-      let showInMenu         = (!props || typeof props.showInMenu     !== 'boolean') ? true               : props.showInMenu;     // MABXXX Doesn't update ExtendedProps!!!
-      let lockInMenu         = (!props || typeof props.lockInMenu     !== 'boolean') ? false              : props.lockInMenu;     // MABXXX Doesn't update ExtendedProps!!!
-      let collected          = (!props || typeof props.collected      !== 'boolean') ? false              : props.collected;      // MABXXX Doesn't update ExtendedProps!!!
-      let imported           = (!props || typeof props.imported       !== 'boolean') ? false              : props.imported;       // MABXXX Doesn't update ExtendedProps!!!
-      let positionInMenu     = (!props || typeof props.positionInMenu !== 'number' ) ? nextPositionInMenu : props.positionInMenu; // MABXXX Doesn't update ExtendedProps!!!
+//////const identitiesProps = await this.getUpdatedExtendedIdentitiesProps(); // sometimes a cleanup is necessary, like after a DELETE, etc
+      const identitiesProps    = await this.#idmOptionsApi.getIdentitiesExtendedProps();
+      const nextPositionInMenu = Object.entries(identitiesProps).length; // for placing stray (or new) identities at the BOTTOM (it happens)
+      const props              = identitiesProps[identity.id];
+      const defaultIdentityId  = await this.getAccountDefaultIdentityId(identity.accountId); // need to keep getting this as it can change over time
+      const showInMenu         = (!props || typeof props.showInMenu     !== 'boolean') ? true               : props.showInMenu;     // MABXXX Doesn't update ExtendedProps!!!
+      const lockInMenu         = (!props || typeof props.lockInMenu     !== 'boolean') ? false              : props.lockInMenu;     // MABXXX Doesn't update ExtendedProps!!!
+      const collected          = (!props || typeof props.collected      !== 'boolean') ? false              : props.collected;      // MABXXX Doesn't update ExtendedProps!!!
+      const imported           = (!props || typeof props.imported       !== 'boolean') ? false              : props.imported;       // MABXXX Doesn't update ExtendedProps!!!
+      const positionInMenu     = (!props || typeof props.positionInMenu !== 'number' ) ? nextPositionInMenu : props.positionInMenu; // MABXXX Doesn't update ExtendedProps!!!
 
       this.debug(`getIdmIdentity - identityId="${identityId}" defaultIdentityId="${defaultIdentityId}"`);
 
-      let account     = await messenger.accounts.get(identity.accountId);
-      let accountName = account ? account.name : '';
+      const accountId     = identity.accountId;
+      const account       = await messenger.accounts.get(accountId);
+      const accountName   = account ? account.name : '';
+      const accountNumber = acctNumFromId(accountId);
 
       let idmIdentity = {
         "id":                   identity.id,
@@ -355,6 +366,7 @@ export class IdmIdentities {
         "imported":             imported,
         "accountDefault":       (defaultIdentityId === identity.id),
         "accountId":            identity.accountId,
+        "accountNumber":        accountNumber,
         "accountName":          accountName,                 
         "identity":             identity,                     // MABXXX is this reference to the messenger.identities.MailIdentity useful???  MABXXX STORAGE MAY BE EXPENSIVE!!!
       };
@@ -366,11 +378,11 @@ export class IdmIdentities {
 
 
   toIdentityLabel(mailIdentity) {
-    let name    = mailIdentity.name;
-    let email   = mailIdentity.email;
-    let idlabel = mailIdentity.label;
+    const name    = mailIdentity.name;
+    const email   = mailIdentity.email;
+    const idlabel = mailIdentity.label;
 
-    let label;
+    var label;
     if (name != '') {
 //    label = `${name} <${email}>`;
       label = name;
@@ -444,15 +456,15 @@ export class IdmIdentities {
    * - if object, ONLY showInMenu, lockInMenu, collected, and imported are used.
    */
   async createIdmIdentity(accountId, identityDetails, identityExtendedProps) { // identityDetails must NOT have accountId or id
-    this.debug( "createIdmIdentity --"
-                + `\n- accountId="${accountId}"`
-                + `\n- identityDetails.email="${identityDetails.email}"`
-                + `\n- identityDetails.name="${identityDetails.name}"`
-                + `\n- identityExtendedProps=${identityExtendedProps}`
+    this.debug( "\\n---createIdmIdentity --",
+                `\n- accountId="${accountId}"`,
+                `\n- identityDetails.email="${identityDetails.email}"`,
+                `\n- identityDetails.name="${identityDetails.name}"`,
+                `\n- identityExtendedProps=${identityExtendedProps}`,
               );
 
-    let isCollected = false;
-    let isImported  = false;
+    var isCollected = false;
+    var isImported  = false;
     if (typeof identityExtendedProps === 'boolean') {
       isCollected = identityExtendedProps;
       identityExtendedProps = {
@@ -461,7 +473,7 @@ export class IdmIdentities {
         "collected":  isCollected,
         "imported":   false
       }
-    } else if (identityExtendedProps == null || typeof identityExtendedProps === 'undefined') { // typeof null == 'object'
+    } else if (identityExtendedProps === null || typeof identityExtendedProps === 'undefined') { // typeof null == 'object'
       identityExtendedProps = {
         "showInMenu": true,
         "lockInMenu": false,
@@ -486,18 +498,18 @@ export class IdmIdentities {
       // MABXXX Should we make sure it does NOT already exist???
       newIdentity = await messenger.identities.create(accountId, identityDetails); // identityDetails must NOT have accountId or id
     } catch (error) {
-      this.error( "createIdmIdentity -- CREATE IDENTITY FAILED:"
-                  + `\n- identityDetails.accountId="${identityDetails.accountId}"`
-                  + `\n- identityDetails.composeHtml=${identityDetails.composeHtml}`
-                  + `\n- identityDetails.email="${identityDetails.email}"`
-                  + `\n- identityDetails.id="${identityDetails.id}"`
-                  + `\n- identityDetails.label="${identityDetails.label}"`
-                  + `\n- identityDetails.name="${identityDetails.name}"`
-                  + `\n- identityDetails.organization="${identityDetails.organization}"`
-                  + `\n- identityDetails.replyTo="${identityDetails.replyTo}"`
-                  + `\n- identityDetails.signature="${identityDetails.signature}"`
-                  + `\n- identityDetails.signatureisPlainText=${identityDetails.signatureisPlainText}`
-                  + "\n",
+      this.error( "\n---createIdmIdentity -- CREATE IDENTITY FAILED:",
+                  `\n- identityDetails.accountId="${identityDetails.accountId}"`,
+                  `\n- identityDetails.composeHtml=${identityDetails.composeHtml}`,
+                  `\n- identityDetails.email="${identityDetails.email}"`,
+                  `\n- identityDetails.id="${identityDetails.id}"`,
+                  `\n- identityDetails.label="${identityDetails.label}"`,
+                  `\n- identityDetails.name="${identityDetails.name}"`,
+                  `\n- identityDetails.organization="${identityDetails.organization}"`,
+                  `\n- identityDetails.replyTo="${identityDetails.replyTo}"`,
+                  `\n- identityDetails.signature="${identityDetails.signature}"`,
+                  `\n- identityDetails.signatureisPlainText=${identityDetails.signatureisPlainText}`,
+                  "\n",
                   error.name,
                   error.message,
                   error.stack
@@ -511,12 +523,12 @@ export class IdmIdentities {
     }
 
     if (newIdentity) {
-      this.debug( "createIdmIdentity -- Identity Created:"
-                  + `\n- newIdentity.id="${newIdentity.id}"`
-                  + `\n- newIdentity.email="${newIdentity.email}"`
-                  + `\n- newIdentity.name="${newIdentity.name}"`
-                  + `\n- isCollected=${isCollected}`
-                  + `\n- isImported=${isImported}`
+      this.debug( "\n---createIdmIdentity -- Identity Created:",
+                  `\n- newIdentity.id="${newIdentity.id}"`,
+                  `\n- newIdentity.email="${newIdentity.email}"`,
+                  `\n- newIdentity.name="${newIdentity.name}"`,
+                  `\n- isCollected=${isCollected}`,
+                  `\n- isImported=${isImported}`,
                 );
 
       const identitiesProps    = await this.#idmOptionsApi.getIdentitiesExtendedProps();
@@ -531,7 +543,7 @@ export class IdmIdentities {
       identitiesProps[newIdentity.id] = newProps;
       this.#idmOptionsApi.storeIdentitiesExtendedProps(identitiesProps);
 
-      let newIdmIdentity = await this.getIdmIdentity(newIdentity.id); // this may alter the identity's Extended Props, e.g. positionInMenu
+      const newIdmIdentity = await this.getIdmIdentity(newIdentity.id); // this may alter the identity's Extended Props, e.g. positionInMenu
 
       if (isCollected) {
         await this.#idmOptionsApi.recordCollectedIdentityId(newIdentity.id);
@@ -540,9 +552,9 @@ export class IdmIdentities {
       return newIdmIdentity;
     }
 
-    this.error( "createIdmIdentity -- No New Identity Returned:"
-                + `\n- identityDetails.email="${identityDetails.email}"`
-                + `\n- identityDetails.name="${identityDetails.name}"`
+    this.error( "\n---createIdmIdentity -- No New Identity Created:",
+                `\n- identityDetails.email="${identityDetails.email}"`,
+                `\n- identityDetails.name="${identityDetails.name}"`,
               );
   }
 
@@ -557,14 +569,14 @@ export class IdmIdentities {
    */
   // MABXXX Would it be easier to just pass in an IdmIdentity and then create the identityDetails and updateIdentityExtendedProps from that?
   async updateIdmIdentity(identityId, identityDetails, updateIdentityExtendedProps) { // identityDetails must NOT have id (or accountId ???)
-    if (this.#DEBUG) this.debugAlways( "updateIdmIdentity --"
-                                       + `\n- identityId="${identityId}"`
-                                       + `\n- identityDetails.email="${identityDetails.email}"`
-                                       + `\n- identityDetails.name="${identityDetails.name}"`
-                                       + `\n- updateIdentityExtendedProps.showInMenu=${updateIdentityExtendedProps.showInMenu}`
-                                       + `\n- updateIdentityExtendedProps.lockInMenu=${updateIdentityExtendedProps.lockInMenu}`
-                                       + `\n- updateIdentityExtendedProps.collected=${updateIdentityExtendedProps.collected}`
-                                       + `\n- updateIdentityExtendedProps.imported=${updateIdentityExtendedProps.imported}`
+    if (this.#DEBUG) this.debugAlways( "\n---updateIdmIdentity --",
+                                       `\n- identityId="${identityId}"`,
+                                       `\n- identityDetails.email="${identityDetails.email}"`,
+                                       `\n- identityDetails.name="${identityDetails.name}"`,
+                                       `\n- updateIdentityExtendedProps.showInMenu=${updateIdentityExtendedProps.showInMenu}`,
+                                       `\n- updateIdentityExtendedProps.lockInMenu=${updateIdentityExtendedProps.lockInMenu}`,
+                                       `\n- updateIdentityExtendedProps.collected=${updateIdentityExtendedProps.collected}`,
+                                       `\n- updateIdentityExtendedProps.imported=${updateIdentityExtendedProps.imported}`,
                                      );
 
     let updatedIdentity;
@@ -572,8 +584,8 @@ export class IdmIdentities {
       // MABXXX Should we make sure it DOES already exist???
       updatedIdentity = await messenger.identities.update(identityId, identityDetails); // identityDetails must NOT have id (or accountId ???)
     } catch (error) {
-      this.error( "updateIdmIdentity -- UPDATE IDENTITY FAILED:"
-                  + `\n- identityDetails.email="${identityDetails.email}"\n`,
+      this.error( "\n---updateIdmIdentity -- UPDATE IDENTITY FAILED:",
+                  `\n- identityDetails.email="${identityDetails.email}"\n`,
                   error.name,
                   error.message,
                   error.stack
@@ -582,14 +594,14 @@ export class IdmIdentities {
     }
 
     if (updatedIdentity) {
-      this.debug( "updateIdmIdentity -- Identity Updated:"
-                  + `\n- updatedIdentity.id="${updatedIdentity.id}"`
-                  + `\n- updatedIdentity.email="${updatedIdentity.email}"`
-                  + `\n- updatedIdentity.name="${updatedIdentity.name}"`
+      this.debug( "\n---updateIdmIdentity -- Identity Updated:",
+                  `\n- updatedIdentity.id="${updatedIdentity.id}"`,
+                  `\n- updatedIdentity.email="${updatedIdentity.email}"`,
+                  `\n- updatedIdentity.name="${updatedIdentity.name}"`,
                 );
 
-      let identitiesProps = await this.#idmOptionsApi.getIdentitiesExtendedProps();
-      let oldProps = identitiesProps[identityId];
+      const identitiesProps = await this.#idmOptionsApi.getIdentitiesExtendedProps();
+      let   oldProps = identitiesProps[identityId];
       if (! oldProps) oldProps = {};
       oldProps.showInMenu = updateIdentityExtendedProps.showInMenu;
       oldProps.lockInMenu = updateIdentityExtendedProps.lockInMenu;
@@ -599,15 +611,15 @@ export class IdmIdentities {
       await this.#idmOptionsApi.storeIdentitiesExtendedProps(identitiesProps);
       await this.#idmOptionsApi.removeCollectedIdentityId(updatedIdentity.id);
 
-      let updatedIdmIdentity = await this.getIdmIdentity(identityId); // this may alter the identity's Extended Props
+      const updatedIdmIdentity = await this.getIdmIdentity(identityId); // this may alter the identity's Extended Props
 
       return updatedIdmIdentity;
     }
 
-    this.error( "updateIdmIdentity -- No Updated Identity Returned:"
-                + `\n- identityId="${identityId}"`
-                + `\n- identityDetails.email="${identityDetails.email}"`
-                + `\n- identityDetails.name="${identityDetails.name}"`
+    this.error( "\n---updateIdmIdentity -- No Updated Identity Returned:",
+                `\n- identityId="${identityId}"`,
+                `\n- identityDetails.email="${identityDetails.email}"`,
+                `\n- identityDetails.name="${identityDetails.name}"`,
               );
   }
 
@@ -623,7 +635,7 @@ export class IdmIdentities {
     this.debug(`deleteIdentity -- identityId="${identityId}"`);
 
     try {
-      let identity = await messenger.identities.get(identityId);
+      const identity = await messenger.identities.get(identityId);
 
       if (! identity) {
         this.debug(`deleteIdentity -- IDENTITY NOT FOUND: identityId="${identityId}"`);
@@ -633,7 +645,7 @@ export class IdmIdentities {
         messenger.identities.delete(identityId);
         this.debug(`deleteIdentity -- Identity deleted: identityId="${identityId}" identity.name="${identity.name}" identity.email="${identity.email}"`);
 
-        let identitiesProps = await this.#idmOptionsApi.getIdentitiesExtendedProps();
+        const identitiesProps = await this.#idmOptionsApi.getIdentitiesExtendedProps();
         delete identitiesProps[identityId];
         await this.#idmOptionsApi.storeIdentitiesExtendedProps(identitiesProps);
 
@@ -641,8 +653,8 @@ export class IdmIdentities {
         return true;
       }
     } catch (error) {
-      this.error( "deleteIdentity -- DELETE IDENTITY FAILED:"
-                  + `\n- identityId="${identityId}"\n`,
+      this.error( "\n---deleteIdentity -- DELETE IDENTITY FAILED:",
+                  `\n- identityId="${identityId}"\n`,
                   error.name,
                   error.message,
                   error.stack
@@ -669,67 +681,73 @@ export class IdmIdentities {
    *
    * Perhaps createIdmIdentity() should work this way as well.
    */
-  async sortIdentities() {
-    this.debug("sortIdentities -- begin");
+  async sortIdentities(sortBy, sortDirection) {
+    this.debug(`\n########## sortIdentities -- begin sortBy="${sortBy}" sortDirection="${sortDirection}"`);
 
-    var sortByName     = await this.#idmOptionsApi.isAutoSortByName();
-    var sortByEmail    = await this.#idmOptionsApi.isAutoSortByEmail();
-    var sortByDomain   = await this.#idmOptionsApi.isAutoSortByDomain();
-    var sortByHost     = await this.#idmOptionsApi.isAutoSortByHost();
-    var sortAscending  = await this.#idmOptionsApi.isAutoSortDirectionAscending();
-    var sortDescending = await this.#idmOptionsApi.isAutoSortDirectionDescending();
+    const sortByAccount  = sortBy        === IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_ACCOUNT;
+    const sortByName     = sortBy        === IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_NAME; // actually NAME+LABEL
+    const sortByEmail    = sortBy        === IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_EMAIL;
+    const sortByDomain   = sortBy        === IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_DOMAIN;
+    const sortByHost     = sortBy        === IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_HOST;
+    const sortById       = sortBy        === IdmOptions.IDENTITY_AUTO_SORT_BY_VALUE_ID;
+    const sortAscending  = sortDirection === IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_ASCENDING;
+    const sortDescending = sortDirection === IdmOptions.IDENTITY_AUTO_SORT_DIRECTION_VALUE_DESCENDING;
 
-    // precedence sanity check: sortByName > sortByEmail > sortByDomain > sortByHost
-    sortByHost   = sortByHost   && !sortByDomain && !sortByEmail && !sortByName;   // sortByHost only if nothing else is enabled
-    sortByDomain = sortByDomain && !sortByEmail  && ! sortByName;
-    sortByEmail  = sortByEmail  && ! sortByName;
-    sortByName   = sortByName || (!sortByDomain && !sortByEmail && !sortByName); // sortByName if nothing else is enabled
+    if (! (sortAscending || sortDescending)) sortAscending = true;
 
-    // precedence sanity check: sortAscending > sortDescending
-    sortDescending = sortDescending && !sortAscending; // sortDescending only if sortAscending is not enabled
-    sortAscending  = sortAscending || !sortDescending; // default to sortAscending if sortDescending not enabled
+    const compareMultiplier = sortDescending ? -1 : +1;
+    const sortDirText       = sortDescending ? "Descending" : "Ascending";
 
-    var compareMultiplier = sortDescending ? -1 : +1;
-    var sortDirText       = sortDescending ? "Descending" : "Ascending";
-
-    if (sortByHost) {
+    if (sortByAccount) {
+      this.debug("sortIdentities -- Sort By Account ", sortDirText);
+    } else if (sortById) {
+      this.debug("sortIdentities -- Sort By ID ", sortDirText);
+    } else if (sortByHost) {
       this.debug("sortIdentities -- Sort By Host ", sortDirText);
     } else if (sortByDomain) {
       this.debug("sortIdentities -- Sort By Domain ", sortDirText);
     } else if (sortByEmail) {
       this.debug("sortIdentities -- Sort By Email ", sortDirText);
-//  } else if (sortByName) { // default to byName
-    } else {
-        this.debug("sortIdentities -- Sort By Name ", sortDirText);
+    } else if (sortByName) {
+      this.debug("sortIdentities -- Sort By Name ", sortDirText);
+    } else { // default to byEmail
+      this.debug("sortIdentities -- Default to Sort By Email ", sortDirText);
+      sortByEmail = true;
     }
 
-    var idmIdentities = [];
-    var accounts      = await browser.accounts.list(false); // includeSubFolders=false: do not get sub-folders
-    for (const account of accounts) { // MABXXX ABILITY TO SEPARATE BY ACCOUNT???
+    const idmIdentities = [];
+    const accounts      = await messenger.accounts.list(false); // includeSubFolders=false: do not get sub-folders
+    for (const account of accounts) {
+      const accountNumber = ((typeof account.id) === 'string') && account.id.startsWith("account") ? Number(account.id.slice(7)) : NaN;
+
       for (const identity of account.identities) {
+        const identityNumber = ((typeof identity.id) === 'string') && identity.id.startsWith("id") ? Number(identity.id.slice(2)) : NaN;
+
         // we need only the fields on which we can sort
         idmIdentities.push({
-          "id":          identity.id,                                                                  // <------------------ just for the debug below
-//        "label":       this.toIdentityLabel(identity),
-          "name":        identity.name,
-          "email":       identity.email,
-//        "idLabel":     identity.label,
-          "emailDomain": this.toEmailDomain(identity),
-          "emailHost":   this.toEmailHost(identity)
+          "id":             identity.id,                           // <------------------ for looking up idmIdentity below
+          "identityNumber": identityNumber,                        // <------------------ for sort by ID
+          "accountNumber":  accountNumber,                         // <------------------ for sort by account
+          "label":          this.toIdentityLabel(identity),
+          "name":           identity.name,
+          "email":          identity.email,
+//        "idLabel":        identity.label,
+          "emailDomain":    this.toEmailDomain(identity),
+          "emailHost":      this.toEmailHost(identity)
         });
       }
     }
 
-    idmIdentities.sort((a, b) => compare(a, b));
+    idmIdentities.sort((a, b) => compareIdentities(a, b));
 
-    var identitiesProps = await this.#idmOptionsApi.getIdentitiesExtendedProps();
+    const identitiesProps = await this.#idmOptionsApi.getIdentitiesExtendedProps();
 
     // get lockInMenu positions for lookup below
-    var positionsLockedByIdentityId = [];
-    for (var [identityId, props] of Object.entries(identitiesProps)) {
-      var lockInMenu = (typeof props.lockInMenu !== 'boolean') ? false : props.lockInMenu;
+    const positionsLockedByIdentityId = [];
+    for (const [identityId, props] of Object.entries(identitiesProps)) {
+      const lockInMenu = (typeof props.lockInMenu !== 'boolean') ? false : props.lockInMenu;
       if (lockInMenu) {
-        var positionInMenu = (typeof props.positionInMenu !== 'number' ) ? -1 : props.positionInMenu;
+        const positionInMenu = (typeof props.positionInMenu !== 'number' ) ? -1 : props.positionInMenu;
 
         if (positionInMenu == -1) {
           this.debug(`sortIdentities -- INVALID PROPS POSITION IN MENU identityId="${identityId}" positionInMenu=${props.positionInMenu}`);
@@ -742,23 +760,23 @@ export class IdmIdentities {
 
     var nextPositionInMenu = 0;
     for (const idmIdentity of idmIdentities) {
-      var identityId        = idmIdentity.id;
-      var props             = identitiesProps[identityId];
-      var showInMenu        = (!props || typeof props.showInMenu     !== 'boolean') ? true  : props.showInMenu;
-      var lockInMenu        = (!props || typeof props.lockInMenu     !== 'boolean') ? false : props.lockInMenu;
-      var collected         = (!props || typeof props.collected      !== 'boolean') ? false : props.collected;
-      var imported          = (!props || typeof props.imported       !== 'boolean') ? false : props.imported;
-      var oldPositionInMenu = (!props || typeof props.positionInMenu !== 'number' ) ? -1    : props.positionInMenu;
+      const identityId        = idmIdentity.id;
+      const props             = identitiesProps[identityId];                                             // <------------------ the IdmIdentity lookup I mentioned above
+      const showInMenu        = (!props || typeof props.showInMenu     !== 'boolean') ? true  : props.showInMenu;
+      const lockInMenu        = (!props || typeof props.lockInMenu     !== 'boolean') ? false : props.lockInMenu;
+      const collected         = (!props || typeof props.collected      !== 'boolean') ? false : props.collected;
+      const imported          = (!props || typeof props.imported       !== 'boolean') ? false : props.imported;
+      const oldPositionInMenu = (!props || typeof props.positionInMenu !== 'number' ) ? -1    : props.positionInMenu;
 
-      if (this.#DEBUG) this.debugAlways( "sortIdentities --"
-                                         + `\n- identityId="${identityId}"`                             // <------------------ the debug I mentioned above
-                                         + `\n- showInMenu=${showInMenu}`
-                                         + `\n- lockInMenu=${lockInMenu}`
-                                         + `\n- collected=${collected}`
-                                         + `\n- imported=${imported}`
-                                         + `\n- oldPositionInMenu=${oldPositionInMenu}`
-                                         + `\n- nextPositionInMenu=${nextPositionInMenu}`
-                                         + `\n- lockInMenuPosition=${positionsLockedByIdentityId[nextPositionInMenu]}`
+      if (this.#DEBUG) this.debugAlways( "sortIdentities --",
+                                         `\n- identityId="${identityId}"`,
+                                         `\n- showInMenu=${showInMenu}`,
+                                         `\n- lockInMenu=${lockInMenu}`,
+                                         `\n- collected=${collected}`,
+                                         `\n- imported=${imported}`,
+                                         `\n- oldPositionInMenu=${oldPositionInMenu}`,
+                                         `\n- nextPositionInMenu=${nextPositionInMenu}`,
+                                         `\n- lockInMenuPosition=${positionsLockedByIdentityId[nextPositionInMenu]}`,
                                        );
 
       var newPositionInMenu;
@@ -790,16 +808,16 @@ export class IdmIdentities {
         };
       }
 
-      if (this.#DEBUG) this.debugAlways( 'sortIdentities --' // don't build all this just to be denied by this.#DEBUG inside this.debug()
-                                         + `\n- id="${identityId}"`
-                                         + `\n- name="${idmIdentity.name}"`
-                                         + `\n- email="${idmIdentity.email}"`
-                                         + `\n- positionInMenu=${newPositionInMenu}`
-                                         + `\n- props.showInMenu=${identitiesProps[identityId].showInMenu}`
-                                         + `\n- props.lockInMenu=${identitiesProps[identityId].lockInMenu}`
-                                         + `\n- props.collected=${identitiesProps[identityId].collected}`
-                                         + `\n- props.imported=${identitiesProps[identityId].imported}`
-                                         + `\n- props.positionInMenu=${identitiesProps[identityId].positionInMenu}`
+      if (this.#DEBUG) this.debugAlways( '\n---sortIdentities --', // don't build all this just to be denied by this.#DEBUG inside this.debug()
+                                         `\n- id="${identityId}"`,
+                                         `\n- name="${idmIdentity.name}"`,
+                                         `\n- email="${idmIdentity.email}"`,
+                                         `\n- positionInMenu=${newPositionInMenu}`,
+                                         `\n- props.showInMenu=${identitiesProps[identityId].showInMenu}`,
+                                         `\n- props.lockInMenu=${identitiesProps[identityId].lockInMenu}`,
+                                         `\n- props.collected=${identitiesProps[identityId].collected}`,
+                                         `\n- props.imported=${identitiesProps[identityId].imported}`,
+                                         `\n- props.positionInMenu=${identitiesProps[identityId].positionInMenu}`,
                                        );
     }
 
@@ -809,7 +827,8 @@ export class IdmIdentities {
 
 
 
-    function compare(a, b) { // return negative if a before b, positive if a after b, 0 if equal
+    // return negative if a before b, positive if a after b, 0 if equal
+    function compareIdentities(a, b) {
       if (!a && !b) {
         return 0;
       } else if (!a) {
@@ -819,7 +838,79 @@ export class IdmIdentities {
       }
 
 
-      if (sortByEmail) {
+      if (sortByHost) {
+        const hostA = a.host ? a.host.toLowerCase() : '';
+        const hostB = b.host ? b.host.toLowerCase() : '';
+
+        if (hostA || hostB) {
+          if (!hostA) return sortAscending? -1 : +1;
+          if (!hostB) return sortAscending? +1 : -1;
+
+          const r = hostA.localeCompare(hostB);
+          if (r !== 0) return r * compareMultiplier;
+        }
+        // otherwise they are equal, so fall through to email comparison
+
+      } else if (sortByDomain) {
+
+        const domainA = a.domain ? a.domain.toLowerCase() : '';
+        const domainB = b.domain ? b.domain.toLowerCase() : '';
+
+        if (domainA || domainB) {
+          if (!domainA) return sortAscending? -1 : +1;
+          if (!domainB) return sortAscending? +1 : -1;
+
+          const r = domainA.localeCompare(domainB);
+          if (r !== 0) return r * compareMultiplier;
+        }
+        // otherwise they are equal, so fall through to email comparison
+
+      } else if (sortById) {
+
+        const idNumA = a.identityNumber;
+        const idNumB = b.identityNumber;
+
+        if (! isNaN(idNumA) || ! isNaN(idNumB)) {
+          if (isNaN(idNumA)) return sortAscending? -1 : +1;
+          if (isNaN(idNumB)) return sortAscending? +1 : -1;
+
+          if (idNumA < idNumB) return sortAscending? -1 : +1;
+          if (idNumA > idNumB) return sortAscending? +1 : -1;
+        }
+
+        return 0;
+        // Identity ID's cannot actually be equal, so do NOT fall through to email comparison
+
+      } else if (sortByAccount) {
+
+        const acctNumA = a.accountNumber;
+        const acctNumB = b.accountNumber;
+
+        if (! isNaN(acctNumA) || ! isNaN(acctNumB)) {
+          if (isNaN(acctNumA)) return sortAscending? -1 : +1;
+          if (isNaN(acctNumB)) return sortAscending? +1 : -1;
+
+          if (acctNumA < acctNumB) return sortAscending? -1 : +1;
+          if (acctNumA > acctNumB) return sortAscending? +1 : -1;
+        }
+        // otherwise they are equal, so fall through to email comparison
+
+      } else if (sortByName) { // default to byName (actually NAME+LABEL)
+
+        const labelA = a.label ? a.label.toLowerCase() : '';
+        const labelB = b.label ? b.label.toLowerCase() : '';
+
+        if (labelA || labelB) {
+          if (!labelA) return sortAscending? -1 : +1;
+          if (!labelB) return sortAscending? +1 : -1;
+
+          const r = labelA.localeCompare(labelB);
+          if (r !== 0) return r * compareMultiplier;
+        }
+        // otherwise they are equal, so fall through to email comparison
+      }
+
+//////if (sortByEmail) {
         const emailA = a.email ? a.email.toLowerCase() : '';
         const emailB = b.email ? b.email.toLowerCase() : '';
 
@@ -828,38 +919,7 @@ export class IdmIdentities {
         if (!emailB) return sortAscending? +1 : -1;
 
         return emailA.localeCompare(emailB) * compareMultiplier;
-      }
-      if (sortByHost) {
-        const hostA = a.host ? a.host.toLowerCase() : '';
-        const hostB = b.host ? b.host.toLowerCase() : '';
-
-        if (!hostA && !hostB) return 0;
-        if (!hostA) return sortAscending? -1 : +1;
-        if (!hostB) return sortAscending? +1 : -1;
-
-        return hostA.localeCompare(hostB) * compareMultiplier;
-      } 
-      if (sortByDomain) {
-        const domainA = a.domain ? a.domain.toLowerCase() : '';
-        const domainB = b.domain ? b.domain.toLowerCase() : '';
-
-        if (!domainA && !domainB) return 0;
-        if (!domainA) return sortAscending? -1 : +1;
-        if (!domainB) return sortAscending? +1 : -1;
-
-        return domainA.localeCompare(domainB) * compareMultiplier;
-      } 
-//    if (sortByName) { // default to byName
-        const nameA = a.name ? a.name.toLowerCase() : '';
-        const nameB = b.name ? b.name.toLowerCase() : '';
-
-        if (!nameA && !nameB) return 0;
-        if (!nameA) return sortAscending? -1 : +1;
-        if (!nameB) return sortAscending? +1 : -1;
-
-        return nameA.localeCompare(nameB) * compareMultiplier;
-//    }
-
+//////}
     }
   }
 
@@ -879,12 +939,12 @@ export class IdmIdentities {
   async getUpdatedExtendedIdentitiesProps(identityIdsToMove, identityMover) {
     this.debug(`getUpdatedExtendedIdentitiesProps -- begin -- (typeof identityIdsToMove)="${typeof identityIdsToMove}" (typeof identityMover)="${typeof identityMover}" `);
 
-    var identitiesProps = await this.#idmOptionsApi.getIdentitiesExtendedProps();
+    const identitiesProps = await this.#idmOptionsApi.getIdentitiesExtendedProps();
 
     // Build an array of the props with lockInMenu indexed by positionInMenu
-    var positionsLockedByIdentityId = [];
+    const positionsLockedByIdentityId = [];
     for (var [identityId, props] of Object.entries(identitiesProps)) {
-      var lockInMenu = (typeof props.lockInMenu !== 'boolean') ? false : props.lockInMenu;
+      const lockInMenu = (typeof props.lockInMenu !== 'boolean') ? false : props.lockInMenu;
       if (lockInMenu) {
         var positionInMenu = (typeof props.positionInMenu !== 'number' ) ? -1 : props.positionInMenu;
 
@@ -902,7 +962,7 @@ export class IdmIdentities {
     var nextPositionInMenu = Object.entries(identitiesProps).length; // for placing stray identities at the BOTTOM (it happens)
     for (var [identityId, props] of Object.entries(identitiesProps)) {
       this.debug(`getUpdatedExtendedIdentitiesProps -- BY POSITION  "${identityId}" ${props.positionInMenu} showInMenu=${props.showInMenu} lockInMenu=${props.lockInMenu}`);
-      var positionInMenu = (typeof props.positionInMenu !== 'number' ) ? nextPositionInMenu++ : props.positionInMenu;
+      const positionInMenu = (typeof props.positionInMenu !== 'number' ) ? nextPositionInMenu++ : props.positionInMenu;
 
       props.identityId = identityId; // <================================ add this extra bit for the work below, no need to obtain it again
       identityPropsByPosition[positionInMenu] = props;
@@ -974,14 +1034,14 @@ export class IdmIdentities {
         };
       }
 
-      if (this.#DEBUG) this.debugAlways( "getUpdatedExtendedIdentitiesProps --" // don't build all this just to be denied by this.#DEBUG inside this.debug()
-                                         + `\n- id="${identityId}"`
-                                         + `\n- ${oldPositionInMenu}---->${newPositionInMenu}`
-                                         + `\n- props.showInMenu=${identitiesProps[identityId].showInMenu}`
-                                         + `\n- props.lockInMenu=${identitiesProps[identityId].lockInMenu}`
-                                         + `\n- props.collected=${identitiesProps[identityId].collected}`
-                                         + `\n- props.imported=${identitiesProps[identityId].imported}`
-                                         + `\n- identitiesProps[${identityId}].positionInMenu=${identitiesProps[identityId].positionInMenu}`
+      if (this.#DEBUG) this.debugAlways( "\n---getUpdatedExtendedIdentitiesProps --", // don't build all this just to be denied by this.#DEBUG inside this.debug()
+                                         `\n- id="${identityId}"`,
+                                         `\n- ${oldPositionInMenu}---->${newPositionInMenu}`,
+                                         `\n- props.showInMenu=${identitiesProps[identityId].showInMenu}`,
+                                         `\n- props.lockInMenu=${identitiesProps[identityId].lockInMenu}`,
+                                         `\n- props.collected=${identitiesProps[identityId].collected}`,
+                                         `\n- props.imported=${identitiesProps[identityId].imported}`,
+                                         `\n- identitiesProps[${identityId}].positionInMenu=${identitiesProps[identityId].positionInMenu}`,
                                        );
     }
 
@@ -999,11 +1059,11 @@ export class IdmIdentities {
   moveToTop(identitiesProps, identityPropsByPosition, identityIdsToMove) {
     this.debug(`moveToTop -- identityPropsByPosition.length=${identityPropsByPosition.length} identityIdsToMove.length=${identityIdsToMove.length}`);
 
-    var propsToUnshift = [];
+    const propsToUnshift = [];
 
     for (var i = identityIdsToMove.length - 1; i >= 0; i--) {
-      var identityId = identityIdsToMove[i];
-      var props      = identitiesProps[identityId]
+      const identityId = identityIdsToMove[i];
+      var   props      = identitiesProps[identityId]
 
       if (! props) {
         this.debug(`moveToTop -- NO PROPS - CREATING NEW -- identityId="${identityId}"`);
@@ -1016,7 +1076,7 @@ export class IdmIdentities {
         propsToUnshift.push(props);
 
       } else {
-        var oldPositionInMenu = (typeof props.positionInMenu !== 'number' ) ? -1 : props.positionInMenu;
+        const oldPositionInMenu = (typeof props.positionInMenu !== 'number' ) ? -1 : props.positionInMenu;
 
         if (oldPositionInMenu == -1) {
           this.debug(`moveToTop -- NO OLD POSITION -- identityD="${identityId}"`);
@@ -1029,12 +1089,12 @@ export class IdmIdentities {
 
         props.positionInMenu = i; // this will change if there are lockInMenu items in the way
         propsToUnshift.push(props);
-      }
 
-      this.debug(`moveToTop -- MOVED TO TOP "${identityId}" i=${i} ${oldPositionInMenu}-->${props.positionInMenu}`);
+        this.debug(`moveToTop -- MOVED TO TOP "${identityId}" i=${i} ${oldPositionInMenu}-->${props.positionInMenu}`);
+      }
     }
 
-    for (var props of propsToUnshift) {
+    for (const props of propsToUnshift) {
       // unshift earlier would screw up the index for "delete" above
       this.debug(`moveToTop -- UNSHIFTING ONTO identityPropsByPosition: "${props.identityId}"`);
       identityPropsByPosition.unshift(props);
@@ -1209,14 +1269,14 @@ export class IdmIdentities {
           };
         }
 
-        if (this.#DEBUG) this.debugAlways( "moveIdentitiesToTop --" // don't build all this just to be denied by this.#DEBUG inside this.debug()
-                                           + `\n- id="${identityId}"`
-                                           + `\n- ${oldPositionInMenu}---->${newPositionInMenu}`
-////////////////////////////////           + `\n- props.showInMenu=${identitiesProps[identityId].showInMenu}`
-////////////////////////////////           + `\n- props.lockInMenu=${identitiesProps[identityId].lockInMenu}`
-////////////////////////////////           + `\n- props.collected=${identitiesProps[identityId].collected}`
-////////////////////////////////           + `\n- props.imported=${identitiesProps[identityId].imported}`
-                                           + `\n- identitiesProps[${identityId}].positionInMenu=${identitiesProps[identityId].positionInMenu}`
+        if (this.#DEBUG) this.debugAlways( "\n---moveIdentitiesToTop --",// don't build all this just to be denied by this.#DEBUG inside this.debug()
+                                           `\n- id="${identityId}"`,
+                                           `\n- ${oldPositionInMenu}---->${newPositionInMenu}`
+////////////////////////////////           `\n- props.showInMenu=${identitiesProps[identityId].showInMenu}`,
+////////////////////////////////           `\n- props.lockInMenu=${identitiesProps[identityId].lockInMenu}`,
+////////////////////////////////           `\n- props.collected=${identitiesProps[identityId].collected}`,
+////////////////////////////////           `\n- props.imported=${identitiesProps[identityId].imported}`,
+                                           `\n- identitiesProps[${identityId}].positionInMenu=${identitiesProps[identityId].positionInMenu}`,
                                          );
       }
 
@@ -1256,9 +1316,10 @@ export class IdmIdentities {
           this.debug(`moveToBottom -- NO OLD POSITION -- identityD="${identityId}"`);
         } else {
           delete identityPropsByPosition[oldPositionInMenu]; // it will now be 'undefined'
-          this.debug( "moveToBottom -- DELETED FROM OLD POSITION (is it undefined now?)"
-                      + `\n- identityId="${identityId}":`
-                      + `\n- identityPropsByPosition[${oldPositionInMenu}]=${identityPropsByPosition[oldPositionInMenu]}`);
+          this.debug( "\n---moveToBottom -- DELETED FROM OLD POSITION (is it undefined now?)",
+                      `\n- identityId="${identityId}":`,
+                      `\n- identityPropsByPosition[${oldPositionInMenu}]=${identityPropsByPosition[oldPositionInMenu]}`,
+                    );
         }
 
         props.positionInMenu = i; // this will change if there are lockInMenu items in the way
@@ -1269,7 +1330,7 @@ export class IdmIdentities {
     }
 
     for (var props of propsToPush) {
-      // push earlier could screw up the index for "delete" above???? Probably not, but after dealing with unshift in moveToTop(),,,
+      // push earlier could screw up the index for "delete" above???? Probably not, but after dealing with unshift in moveToTop()...
       this.debug(`moveToBottom -- PUSHING ONTO identityPropsByPosition: "${props.identityId}"`);
       identityPropsByPosition.push(props);
     }
@@ -1381,9 +1442,10 @@ export class IdmIdentities {
             this.debug(`moveIdentitiesToBottom -- NO OLD POSITION -- identityD="${identityId}"`);
           } else {
             delete identityPropsByPosition[oldPositionInMenu]; // it will now be 'undefined'
-            this.debug( "moveIdentitiesToBottom -- DELETED FROM OLD POSITION (is it undefined now?)"
-                        + `\n- identityId="${identityId}":`
-                        + `\n- identityPropsByPosition[${oldPositionInMenu}]=${identityPropsByPosition[oldPositionInMenu]}`);
+            this.debug( "\n---moveIdentitiesToBottom -- DELETED FROM OLD POSITION (is it undefined now?)",
+                        `\n- identityId="${identityId}":`,
+                        `\n- identityPropsByPosition[${oldPositionInMenu}]=${identityPropsByPosition[oldPositionInMenu]}`,
+                      );
           }
 
           props.positionInMenu = i; // this will change if there are lockInMenu items in the way
@@ -1393,7 +1455,7 @@ export class IdmIdentities {
         this.debug(`moveIdentitiesToBottom -- MOVED TO TOP "${identityId}" i=${i} ${oldPositionInMenu}-->${props.positionInMenu}`);
       }
       for (var props of propsToPush) {
-        // push earlier could screw up the index for "delete" above???? Probably not, put after dealing with unshift in moveIdentitiesToTop(),,,
+        // push earlier could screw up the index for "delete" above???? Probably not, put after dealing with unshift in moveIdentitiesToTop()...
         this.debug(`moveIdentitiesToBottom -- PUSHING ONTO identityPropsByPosition: "${props.identityId}"`);
         identityPropsByPosition.push(props);
       }
@@ -1443,14 +1505,14 @@ export class IdmIdentities {
           };
         }
 
-        if (this.#DEBUG) this.debugAlways( "moveIdentitiesToBottom --" // don't build all this just to be denied by this.#DEBUG inside this.debug()
-                                           + `\n- id="${identityId}"`
-                                           + `\n- ${oldPositionInMenu}---->${newPositionInMenu}`
-/////////////////////////////////          + `\n- props.showInMenu=${identitiesProps[identityId].showInMenu}`
-/////////////////////////////////          + `\n- props.lockInMenu=${identitiesProps[identityId].lockInMenu}`
-/////////////////////////////////          + `\n- props.collected=${identitiesProps[identityId].collected}`
-/////////////////////////////////          + `\n- props.imported=${identitiesProps[identityId].imported}`
-                                           + `\n- identitiesProps[${identityId}].positionInMenu=${identitiesProps[identityId].positionInMenu}`
+        if (this.#DEBUG) this.debugAlways( "\n---moveIdentitiesToBottom --", // don't build all this just to be denied by this.#DEBUG inside this.debug()
+                                           `\n- id="${identityId}"`,
+                                           `\n- ${oldPositionInMenu}---->${newPositionInMenu}`,
+/////////////////////////////////          `\n- props.showInMenu=${identitiesProps[identityId].showInMenu}`,
+/////////////////////////////////          `\n- props.lockInMenu=${identitiesProps[identityId].lockInMenu}`,
+/////////////////////////////////          `\n- props.collected=${identitiesProps[identityId].collected}`,
+/////////////////////////////////          `\n- props.imported=${identitiesProps[identityId].imported}`,
+                                           `\n- identitiesProps[${identityId}].positionInMenu=${identitiesProps[identityId].positionInMenu}`,
                                          );
       }
 
@@ -1667,7 +1729,7 @@ export class IdmIdentities {
 
 
   async findByEmail(email) {
-    let accounts = await browser.accounts.list(false); // includeSubFolders=false: do not get sub-folders
+    let accounts = await messenger.accounts.list(false); // includeSubFolders=false: do not get sub-folders
     let identities = [];
     for (const account of accounts) {
       for (const identity of account.identities) {
@@ -1679,7 +1741,7 @@ export class IdmIdentities {
   }
 
   async findByName(name) {
-    let accounts = await browser.accounts.list(false); // includeSubFolders=false: do not get sub-folders
+    let accounts = await messenger.accounts.list(false); // includeSubFolders=false: do not get sub-folders
     let identities = [];
     for (const account of accounts) {
       for (const identity of account.identities) {

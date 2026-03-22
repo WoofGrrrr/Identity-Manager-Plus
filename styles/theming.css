@@ -18,6 +18,7 @@
   --title-font-weight:                           bold;
   --title-line-height:                           1.3em;
   --title-shadow-color:                          rgb(   0,  80,  80 );
+  --title-text-shadow:                           1px 1px var(--title-shadow-color);
 
   --subtitle-background-color:                   transparent;
   --subtitle-border-color:                       transparent;
@@ -27,6 +28,7 @@
   --subtitle-font-weight:                        bold;
   --subtitle-line-height:                        1.0em;
   --subtitle-shadow-color:                       rgb(   0,  80,  80 );
+  --subtitle-text-shadow:                        1px 1px var(--subtitle-shadow-color);
 
   --heading-color:                               rgb( 175, 228, 228 );
   --heading-font-size:                           1.0em;
@@ -48,6 +50,7 @@
 
   --panel-background-color:                      rgb(  63,  63,  70 );
   --panel-border-color:                          rgb(  35,  35,  39 );
+  --panel-border-radius:                         5px;
 
   --error-list-background-color:                 transparent; /* <TABLE> */
   --error-list-border:                           NONE;
@@ -123,12 +126,27 @@
 
   --list-header-item-background-color:           rgb(  80,  80,  84 );
   --list-header-item-border-color:               rgb(  30,  30,  32 );
+  --list-header-item-border-style:               solid;
+  --list-header-item-border-thickness:           1px;
+  --list-header-item-border:                     var(--list-header-item-border-thickness) var(--list-header-item-border-style) var(--list-header-item-border-color);
+  --list-header-item-border-radius:              5px;
   --list-header-item-color:                      rgb( 180, 180, 180 );
+  --list-header-item-font-size:                  110%;
   --list-header-item-font-weight:                BOLD;
   --list-header-item-shadow-color:               rgb(   0,   0,   0 );
+  --list-header-item-shadow:                     2px 2px var(--list-header-item-shadow-color);
+
+  --list-header-sort-background-color:           transparent;
+  --list-header-sort-border-color:               transparent;
+  --list-header-sort-hover-background-color:     rgb( 130, 130, 130 );
+  --list-header-sort-hover-border-color:         rgb(  90, 100, 100 );
 
   --list-item-background-color:                  rgb( 110, 110, 114 );
   --list-item-border-color:                      rgb(  20,  50,  50 );
+  --list-item-border-style:                      solid;
+  --list-item-border-thickness:                  1px;
+  --list-item-border:                            var(--list-item-border-thickness) var(--list-item-border-style) var(--list-item-border-color);
+  --list-item-border-radius:                     5px;
   --list-item-color:                             rgb( 250, 250, 250 );
   --list-item-font:                              message-box;
   --list-item-font-size:                         1rem;
@@ -158,6 +176,7 @@
 
   --identity-background-color:                   var(--list-item-background-color);
   --identity-border-color:                       var(--list-item-border-color);
+  --identity-border:                             var(--list-item-border);
   --identity-color:                              var(--list-item-color);
   --identity-font:                               var(--list-item-font);
   --identity-font-size:                          var(--list-item-font-size);
@@ -177,13 +196,15 @@
 
 
 
-  --identity-not-show-in-menu-background-color:          rgb( 130,  90,  90 );
-  --identity-not-show-in-menu-border-color:              rgb( 101,  16,  16 );
+/*--identity-not-show-in-menu-background-color:          rgb( 130,  90,  90 );*/
+  --identity-not-show-in-menu-background-color:          transparent;
+/*--identity-not-show-in-menu-border-color:              rgb( 101,  16,  16 );*/
+  --identity-not-show-in-menu-border-color:              rgb(  40,  40,  40 );
   --identity-not-show-in-menu-color:                     rgb( 230,   0,   9 ); /* rgb( 120,   0,   0 ); */
   --identity-not-show-in-menu-text-decoration-color:     rgb(   0,   0,   0 );
   --identity-not-show-in-menu-text-decoration-line:      line-through;
-  --identity-not-show-in-menu-text-decoration-style:     dotted;
-  --identity-not-show-in-menu-text-decoration-thickness: 2px;
+  --identity-not-show-in-menu-text-decoration-style:     double;
+  --identity-not-show-in-menu-text-decoration-thickness: 1px;
   --identity-not-show-in-menu-text-decoration:           var(--identity-not-show-in-menu-text-decoration-thickness)
                                                          var(--identity-not-show-in-menu-text-decoration-line)
                                                          var(--identity-not-show-in-menu-text-decoration-style)
