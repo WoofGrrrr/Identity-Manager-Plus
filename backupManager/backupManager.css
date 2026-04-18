@@ -145,7 +145,7 @@ body {
 }
 
 .backup-error-text {
-  color:       RED !important;
+  color:       #E00000 !important;
   margin-left: 0.25em;
 }
 

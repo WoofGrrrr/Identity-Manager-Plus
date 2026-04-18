@@ -31,6 +31,9 @@ class OptionsUI {
   #popupWindowMode           = false;
   #optionsPopupWindow        = null;
 
+  #fileSystemBrokerAccessGranted  = false;
+  #fileSystemBrokerAccessReadOnly = false;
+
   #prevFocusedWindowId       = -1;
 
   #accounts                  = null;
@@ -430,31 +433,29 @@ class OptionsUI {
     for (const [optionName, optionValue] of Object.entries(options)) {
       this.debug("-- option: ", optionName, "value: ", optionValue);
 
-      if (this.#idmOptionsApi.isDefaultOption(optionName)) { // MABXXX WHY WHY WHY???
-        const optionElement = document.getElementById(optionName);
+      const optionElement = document.getElementById(optionName);
 
-        if (optionElement && optionElement.classList.contains("idmGeneralOption")) {
-          if (optionElement.tagName === 'INPUT') {
-            if (optionElement.type === 'checkbox') {
-              this.debug("-- CHECKBOX option: ", optionName, "value: ", optionValue);
-              optionElement.checked = optionValue;
-            } else if (optionElement.type === 'radio') {
-              this.debug("-- RADIO option: ", optionName, "value: ", optionValue);
-              optionElement.checked = optionValue;
-            } else if (optionElement.type === 'text') {
-              this.debug("-- TEXT option: ", optionName, "value: ", optionValue);
-              optionElement.value = optionValue;
-            }
-          } else if (optionElement.tagName === 'SELECT') {
-            this.debug("-- SELECT option: ", optionName, "value: ", optionValue);
+      if (optionElement && optionElement.classList.contains("idmGeneralOption")) {
+        if (optionElement.tagName === 'INPUT') {
+          if (optionElement.type === 'checkbox') {
+            this.debug("-- CHECKBOX option: ", optionName, "value: ", optionValue);
+            optionElement.checked = optionValue;
+          } else if (optionElement.type === 'radio') { // MABXXX what about other radio buttons in the same group???
+            this.debug("-- RADIO option: ", optionName, "value: ", optionValue);
+            optionElement.checked = optionValue;
+          } else if (optionElement.type === 'text') {
+            this.debug("-- TEXT option: ", optionName, "value: ", optionValue);
             optionElement.value = optionValue;
-            
-            switch (optionName) {
-              case 'idmAutoSortBySelect':
-              case 'idmAutoSortDirectionSelect':
-                await this.updateAutoSortUI();
-                break;
-            }
+          }
+        } else if (optionElement.tagName === 'SELECT') {
+          this.debug("-- SELECT option: ", optionName, "value: ", optionValue);
+          optionElement.value = optionValue;
+          
+          switch (optionName) {
+            case 'idmAutoSortBySelect':
+            case 'idmAutoSortDirectionSelect':
+              await this.updateAutoSortUI();
+              break;
           }
         }
       }
@@ -692,41 +693,62 @@ class OptionsUI {
 
 
 
-  async isAccessGrantedToFileSystemBroker() {
-    var   isAccessGranted = false;
-    const fsBrokerApi     = new FileSystemBrokerAPI();
-    const response        = await fsBrokerApi.access();
+  async checkAccessGrantedToFileSystemBroker() {
+    var   isAccessGranted  = false;
+    var   isAccessReadOnly = false;
+    const fsBrokerApi      = new FileSystemBrokerAPI();
+    const response         = await fsBrokerApi.access();
 
     if (! response) {
-      this.error("-- NO RESPONSE FROM FileSystemBroker");
+      this.error("-- NO RESPONSE FROM FileSystemBroker.access");
+    } else if ((typeof response) !== 'object') {
+      this.error(`-- RESPONSE FROM FileSystemBroker.access is not an Object: "${typeof response}"`);
     } else if (response.error) {
-      this.error(`-- ERROR RESPONSE FROM FileSystemBroker: "${response.error}"`);
+      this.error(`-- ERROR RESPONSE FROM FileSystemBroker.access: "${response.error}"`);
     } else {
-      this.debugAlways(`-- response.access=${response.access}`);
-      if (! 'access' in response) {
-        this.error("-- INVALID RESPONSE FROM FileSystemBroker -- no 'access' key");
-      } else if (! typeof response.access === 'string') {
-        this.error("-- INVALID RESPONSE FROM FileSystemBroker -- 'access' is not 'string'");
+
+      this.debug(`-- response.access=${response.access} response.readOnly=${response.readOnly}`);
+
+//    if (! response.hasOwnProperty('access')) {
+      if (! Object.hasOwn(response, 'access')) {
+        this.error("-- INVALID RESPONSE FROM FileSystemBroker.access -- no 'access' key");
+      } else if ((typeof response.access) !== 'string') {
+        this.error("-- INVALID RESPONSE FROM FileSystemBroker.access -- 'access' is not 'string'");
       } else if (response.access === 'granted') {
-        this.debug("-- RESPONSE FROM FileSystemBroker -- 'access' is 'granted'");
+        this.debug("-- RESPONSE FROM FileSystemBroker.access -- 'access' is 'granted'");
         isAccessGranted = true;
       } else if (response.access === 'denied') {
-        this.debug("-- RESPONSE FROM FileSystemBroker -- 'access' is 'denied'");
+        this.debug("-- RESPONSE FROM FileSystemBroker.access -- 'access' is 'denied'");
       } else {
-        this.error("-- INVALID RESPONSE FROM FileSystemBroker -- 'access' is not 'granted' or 'denied'");
+        this.error("-- INVALID RESPONSE FROM FileSystemBroker.access -- 'access' is not 'granted' or 'denied'");
+      }
+
+//    if (! response.hasOwnProperty('readOnly')) {
+      if (! Object.hasOwn(response, 'readOnly')) {
+        this.error("-- INVALID RESPONSE FROM FileSystemBroker.access -- no 'readOnly' key");
+      } else if ((typeof response.readOnly) !== 'boolean') {
+        this.error("-- INVALID RESPONSE FROM FileSystemBroker.access -- 'readOnly' is not 'boolean'");
+      } else {
+        isAccessReadOnly = isAccessGranted && response.readOnly;
       }
     }
 
-    this.debug("-- ACCESS TO FileSystemBroker is " + (isAccessGranted ? "GRANTED" : "DENIED"));
-    return isAccessGranted;
+    this.#fileSystemBrokerAccessGranted  = isAccessGranted
+    this.#fileSystemBrokerAccessReadOnly = isAccessReadOnly;
+
+    this.debug(`-- ACCESS TO FileSystemBroker: ${isAccessGranted ? "GRANTED": "DENIED"}${isAccessReadOnly ? " READ-ONLY" : ""}`);
+    return { 'granted': isAccessGranted, 'readOnly': isAccessReadOnly };
   }
 
   async updateUIForFileSystemBrokerAccess() {
-    if (await this.isAccessGrantedToFileSystemBroker()) {
+    // also stores to this.#fileSystemBrokerAccessGranted and this.#fileSystemBrokerAccessReadOnly;
+    const response = await this.checkAccessGrantedToFileSystemBroker();
+
+    if (response.granted) {
       // nothing to do
       this.debug("-- ACCESS TO FileSystemBroker is GRANTED -- nothing to do");
     } else {
-      // disable buttons for things that require FileSystemBroker
+      // disable buttons for things that require FileSystemBroker - or hide them???
       const showBackupManagerBtn         = document.getElementById("idmShowBackupManagerButton");
       const importIdentitiesBtn          = document.getElementById("idmImportIdentitiesButton");
       const tooltip_showBackupManagerBtn = getI18nMsg( "options_idmExtensionOptionsButtonBackupManager_noAccess.tooltip", "" );
@@ -1928,6 +1950,9 @@ class OptionsUI {
     this.__debugOptionChanged(`-- tagName="${e.target.tagName}" type="${e.target.type}" id="${e.target.id}" idmGeneralOption? ${e.target.classList.contains("idmGeneralOption")}`);
 
     if (e.target.classList.contains("idmGeneralOption")) {
+
+      // MABXXX THIS CODE NEED TO BE RE-WRITTEN
+      //
       if (e.target.tagName === 'INPUT') {
         if (e.target.type === 'checkbox' || e.target.type === 'radio') {
           const optionName  = e.target.id;
@@ -6204,7 +6229,7 @@ if (false && storeIdentitiesProps) {
         showPopupWindowButton.style.setProperty("display", "none");
       }
 
-      this.debug(`-- OptionsUI Popup Window Created -- windowId="${optionsPopupWindow.id}" URL="${optionsUrl}"`);
+      this.debug(`-- OptionsUI Popup Window Created -- windowId="${this.#optionsPopupWindow.id}" URL="${optionsUrl}"`);
     }
   }
 

@@ -15,8 +15,11 @@ class BackupManager {
 
   #logger        = new Logger();
   #idmOptionsApi = new IdmOptions(this.#logger);
+  #fsBrokerApi   = new FileSystemBrokerAPI();
 
-  #canceled      = false;
+  #fileSystemBrokerAccessGranted  = false;
+  #fileSystemBrokerAccessReadOnly = false;
+  #canceled                       = false;
 
   #fileListHdr_text_fileName          = getI18nMsg("idmBackupManager_fileListHdr_text_fileName");
   #fileListHdr_text_creationTime      = getI18nMsg("idmBackupManager_fileListHdr_text_creationTime");
@@ -82,7 +85,7 @@ class BackupManager {
 
     await this.#updateBackupFilesDirectoryUI();
     await this.#localizePage();
-    await this.#buildFileNameListUI();
+    await this.#buildUI();
     this.#setupEventListeners();
 
     this.debug("-- end");
@@ -134,8 +137,7 @@ class BackupManager {
 
   async #updateBackupFilesDirectoryUI() {
     const backupFilesDirectoryPathNameLabel = document.getElementById("idmBackupFilesDirectoryPathName");
-    const fsBrokerApi                       = new FileSystemBrokerAPI();
-    const response                          = await fsBrokerApi.getFullPathName(); // MABXXX perhaps this should come from idmOptionsApi???
+    const response                          = await this.#fsBrokerApi.getFullPathName(); // MABXXX perhaps this should come from idmOptionsApi???
 
     if (response && response.fullPathName) {
       backupFilesDirectoryPathNameLabel.textContent = response.fullPathName;
@@ -180,7 +182,38 @@ class BackupManager {
 
 
 
+  async #buildUI() {
+    await this.#updateUIForFileSystemBrokerAccess();
+    await this.#buildFileNameListUI();
+  }
+
+
+
+  async #updateUIForFileSystemBrokerAccess() {
+    const backupBtn = document.getElementById("idmBackupManagerBackupButton");
+    const deleteBtn = document.getElementById("idmBackupManagerDeleteButton");
+
+    // stores to this.#fileSystemBrokerAccessGranted and this.#fileSystemBrokerAccessReadOnly;
+    const response = this.#checkAccessToFileSystemBroker();
+
+    if (! backupBtn) {
+      this.error("Failed to find Button 'idmBackupManagerBackupButton'");
+    } else {
+      backupBtn.disabled = ! this.#fileSystemBrokerAccessGranted || this.#fileSystemBrokerAccessReadOnly;
+    }
+
+    if (! deleteBtn) {
+      this.error("Failed to find Button 'idmBackupManagerDeleteButton'");
+    } else {
+      deleteBtn.disabled = ! this.#fileSystemBrokerAccessGranted || this.#fileSystemBrokerAccessReadOnly;
+    }
+  }
+
+
+
   async #buildFileNameListUI() {
+    this.#resetErrors();
+
     const domFileNameList = document.getElementById("idmBackupManagerFileNameList");
     if (! domFileNameList) {
       this.debug("-- failed to get domFileNameList");
@@ -304,6 +337,54 @@ class BackupManager {
 
 
 
+  async #checkAccessToFileSystemBroker() {
+    var   isAccessGranted  = false;
+    var   isAccessReadOnly = false;
+    const response         = await this.#fsBrokerApi.access();
+
+    if (! response) {
+      this.error("-- NO RESPONSE FROM FileSystemBroker.access");
+    } else if ((typeof response) !== 'object') {
+      this.error(`-- RESPONSE FROM FileSystemBroker.access is not an Object: "${typeof response}"`);
+    } else if (response.error) {
+      this.error(`-- ERROR RESPONSE FROM FileSystemBroker.access: "${response.error}"`);
+    } else {
+
+      this.debug(`-- response.access=${response.access} response.readOnly=${response.readOnly}`);
+
+//    if (! response.hasOwnProperty('access')) {
+      if (! Object.hasOwn(response, 'access')) {
+        this.error("-- INVALID RESPONSE FROM FileSystemBroker.access -- no 'access' key");
+      } else if ((typeof response.access) !== 'string') {
+        this.error("-- INVALID RESPONSE FROM FileSystemBroker.access -- 'access' is not 'string'");
+      } else if (response.access === 'granted') {
+        this.debug("-- RESPONSE FROM FileSystemBroker.access -- 'access' is 'granted'");
+        isAccessGranted = true;
+      } else if (response.access === 'denied') {
+        this.debug("-- RESPONSE FROM FileSystemBroker.access -- 'access' is 'denied'");
+      } else {
+        this.error("-- INVALID RESPONSE FROM FileSystemBroker.access -- 'access' is not 'granted' or 'denied'");
+      }
+
+//    if (! response.hasOwnProperty('readOnly')) {
+      if (! Object.hasOwn(response, 'readOnly')) {
+        this.error("-- INVALID RESPONSE FROM FileSystemBroker.access -- no 'readOnly' key");
+      } else if ((typeof response.readOnly) !== 'boolean') {
+        this.error("-- INVALID RESPONSE FROM FileSystemBroker.access -- 'readOnly' is not 'boolean'");
+      } else {
+        isAccessReadOnly = isAccessGranted && response.readOnly;
+      }
+    }
+
+    this.#fileSystemBrokerAccessGranted  = isAccessGranted
+    this.#fileSystemBrokerAccessReadOnly = isAccessReadOnly;
+
+    this.debug(`-- ACCESS TO FileSystemBroker: ${isAccessGranted ? "GRANTED": "DENIED"}${isAccessReadOnly ? " READ-ONLY" : ""}`);
+    return { 'granted': isAccessGranted, 'readOnly': isAccessReadOnly };
+  }
+
+
+
   async #getBackupFileInfo() {
     let listBackupFileInfoResponse;
     try {
@@ -339,10 +420,10 @@ class BackupManager {
       deleteBtn.disabled  = true;
     } else if (selectedCount == 1) {
       restoreBtn.disabled = false;
-      deleteBtn.disabled  = false;
+      deleteBtn.disabled  = ! this.#fileSystemBrokerAccessGranted || this.#fileSystemBrokerAccessReadOnly;
     } else {
       restoreBtn.disabled = true;
-      deleteBtn.disabled  = false;
+      deleteBtn.disabled  = ! this.#fileSystemBrokerAccessGranted || this.#fileSystemBrokerAccessReadOnly;
     }
   }
 
@@ -460,28 +541,48 @@ class BackupManager {
 
     e.preventDefault();
 
+    this.#resetErrors();
+
+    if (! this.#fileSystemBrokerAccessGranted || this.#fileSystemBrokerAccessReadOnly) {
+      this.error("BACKUP Button Clicked when WRITE ACCESS to FileSystemBroker is NOT GRANTED");
+      return;
+    }
+
     const backupBtn = document.getElementById("idmBackupManagerBackupButton");
     backupBtn.disabled = true;
 
     let   errors   = 0;
     const response = await this.#idmOptionsApi.backupToFile();
     if (! response) {
-      this.error("-- FAILED TO RESTORE OPTIONS -- NO RESPONSE RETURNED");
+      this.error("-- FAILED TO BACKUP OPTIONS -- NO RESPONSE RETURNED");
       ++errors;
     } else if (response.invalid) {
-      this.error("-- FAILED TO RESTORE OPTIONS -- INVALID RETURNED IN RESPONSE");
+      this.error("-- FAILED TO BACKUP OPTIONS -- INVALID RETURNED IN RESPONSE");
       ++errors;
     } else if (response.error) {
-      this.error("-- FAILED TO RESTORE OPTIONS -- ERROR RETURNED IN RESPONSE");
+      var msg = "-- FAILED TO BACKUP OPTIONS -- ERROR RETURNED IN RESPONSE";
+
+      if (response.code === "403") {
+        msg += " - ACCESS DENIED";
+        if (response.subCode) {
+          if (response.subCode === "read-only") {
+            msg += " - READ-ONLY ACCESS";
+          } else if (response.subCode === "over-quota") {
+            msg += " - OVER QUOTA";
+          }
+        }
+      }
+
+      this.error(msg);
       ++errors;
     } else if (! response.fileName) {
-      this.error("-- FAILED TO RESTORE OPTIONS -- NO FILENAME RETURNED IN RESPONSE");
+      this.error("-- BACKUP OPTIONS -- NO FILENAME RETURNED IN RESPONSE");
       ++errors;
     } else if ((typeof response.bytesWritten) !== 'number') {
-      this.error(`-- FAILED TO RESTORE OPTIONS -- INVALID BYTES_WRITTEN RETURNED IN RESPONSE -- backupFileName="${response.fileName}"`);
+      this.error(`-- BACKUP OPTIONS -- INVALID BYTES_WRITTEN RETURNED IN RESPONSE -- backupFileName="${response.fileName}"`);
       ++errors;
     } else if (response.bytesWritten < 1) {
-      this.error(`-- FAILED TO RESTORE OPTIONS -- NO BYTES WRITTEN -- backupFileName="${response.fileName}"`);
+      this.error(`-- BACKUP OPTIONS -- NO BYTES WRITTEN -- backupFileName="${response.fileName}"`);
       ++errors;
     } else {
       this.debug(`-- backupFileName="${response.fileName}" bytesWritten=${response.bytesWritten}`);
@@ -489,12 +590,11 @@ class BackupManager {
     }
 
     if (errors) {
-      // MABXXX ERROR MESSAGE
-      this.setErrorFor("idmBackupManagerInstructions", "idmBackupManager_message_error_backupFailed"); /*I18N*/
+      this.#setErrorFor("idmBackupManagerInstructions", "idmBackupManager_message_error_backupFailed"); /*I18N*/
     } else {
     }
 
-    backupBtn.disabled = false;
+    backupBtn.disabled = deleteBtn.disabled = ! this.#fileSystemBrokerAccessGranted || this.#fileSystemBrokerAccessReadOnly;
   }
 
 
@@ -503,6 +603,8 @@ class BackupManager {
     this.debug(`-- e.target.tagName="${e.target.tagName}"`);
 
     e.preventDefault();
+
+    this.#resetErrors();
 
     const restoreBtn = document.getElementById("idmBackupManagerRestoreButton");
     restoreBtn.disabled = true;
@@ -546,7 +648,7 @@ class BackupManager {
       }
 
       if (errors) {
-        this.setErrorFor("idmBackupManagerInstructions", "idmBackupManager_message_error_restoreFailed");
+        this.#setErrorFor("idmBackupManagerInstructions", "idmBackupManager_message_error_restoreFailed");
       } else {
         const responseMessage = { 'RESTORED': backupFileName };
 
@@ -562,7 +664,7 @@ class BackupManager {
                        + `\n- responseMessage="${responseMessage}"`
                      );
           ++errors;
-          this.setErrorFor("idmBackupManagerInstructions", "idmBackupManager_message_error_responseMessageFailed");
+          this.#setErrorFor("idmBackupManagerInstructions", "idmBackupManager_message_error_responseMessageFailed");
         }
       }
 
@@ -583,6 +685,13 @@ class BackupManager {
     this.debug(`-- e.target.tagName="${e.target.tagName}"`);
 
     e.preventDefault();
+
+    this.#resetErrors();
+
+    if (! this.#fileSystemBrokerAccessGranted || this.#fileSystemBrokerAccessReadOnly) {
+      this.error("DELETE Button Clicked when WRITE ACCESS to FileSystemBroker is NOT GRANTED");
+      return;
+    }
 
     const deleteBtn = document.getElementById("idmBackupManagerDeleteButton");
     deleteBtn.disabled = true;
@@ -623,7 +732,7 @@ class BackupManager {
       }
 
       if (errors) {
-        this.setErrorFor("idmBackupManagerInstructions", "idmBackupManager_message_error_deleteFailed"); /* I18N */
+        this.#setErrorFor("idmBackupManagerInstructions", "idmBackupManager_message_error_deleteFailed"); /* I18N */
       } else {
         // MABXXX NO RESPONSE MESSAGE REQUIRED FOR BACKUP FILE DELETE
 //      const responseMessage = { 'RESTORED': backupFileName };
@@ -640,7 +749,7 @@ class BackupManager {
 //                     + `\n- responseMessage="${responseMessage}"`
 //                   );
 //        ++errors;
-//        this.setErrorFor("idmBackupManagerInstructions", "idmBackupManager_message_error_responseMessageFailed"); /* I18N */
+//        this.#setErrorFor("idmBackupManagerInstructions", "idmBackupManager_message_error_responseMessageFailed"); /* I18N */
 //      }
       }
     }
@@ -652,7 +761,7 @@ class BackupManager {
 
     this.#updateUIOnSelectionChanged();
 
-    deleteBtn.disabled = false;
+    deleteBtn.disabled = ! this.#fileSystemBrokerAccessGranted || this.#fileSystemBrokerAccessReadOnly;
   }
 
 
@@ -676,14 +785,14 @@ class BackupManager {
 
   #setErrorFor(elementId, msgId) {
     if (elementId && msgId) {
-      let errorDiv = document.querySelector("div.backup-error[error-for='" + elementId + "']");
+      const errorDiv = document.querySelector("div.backup-error[error-for='" + elementId + "']");
       if (errorDiv) {
         errorDiv.setAttribute("error", "true");
       }
 
-      let errorLabel = document.querySelector("label.backup-error-text[error-for='" + elementId + "']");
+      const errorLabel = document.querySelector("label.backup-error-text[error-for='" + elementId + "']");
       if (errorLabel) {
-        let i18nMessage = getI18nMsg(msgId);
+        const i18nMessage = getI18nMsg(msgId);
         errorLabel.innerText = i18nMessage;
       }
     }
@@ -695,6 +804,8 @@ class BackupManager {
     this.debug(`-- e.target.tagName="${e.target.tagName}"`);
 
     e.preventDefault();
+
+    this.#resetErrors();
 
     this.#canceled = true;
 

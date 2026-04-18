@@ -1255,6 +1255,9 @@
   "idmBackupManager_message_error_restoreFailed": {
     "message": "Failed to restore options from backup file"
   },
+  "idmBackupManager_message_error_deleteFailed": {
+    "message": "Failed to delete backup file"
+  },
   "idmBackupManager_message_error_responseMessageFailed": {
     "message": "Failed to send response message to Options UI - Close the UI and Re-Open it"
   },

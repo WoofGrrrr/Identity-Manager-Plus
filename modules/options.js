@@ -478,7 +478,7 @@ export class IdmOptions {
         logProps("", "allOptions", allOptions);
       }
       const response = await this.#fsBrokerApi.writeObjectToJSONFile(fileName, allOptions);
-      this.debugAlways(`--response: "${response}"`);
+      this.debug(`--response: "${response}"`);
 
       return response;
 
@@ -493,9 +493,9 @@ export class IdmOptions {
    */
   async listBackupFiles() {
     try {
-      this.debugAlways(`-- Getting list of options backup files with matchGlob "${this.#BACKUP_FILENAME_MATCH_GLOB}"`);
+      this.debug(`-- Getting list of options backup files with matchGlob "${this.#BACKUP_FILENAME_MATCH_GLOB}"`);
       const response = await this.#fsBrokerApi.listFiles(this.#BACKUP_FILENAME_MATCH_GLOB);
-      this.debugAlways(`--response: "${response}"`);
+      this.debug(`--response: "${response}"`);
 
       return response;
 
@@ -510,9 +510,9 @@ export class IdmOptions {
    */
   async listBackupFileInfo() {
     try {
-      this.debugAlways(`-- Getting list of options backup files with matchGlob "${IdmOptions.#BACKUP_FILENAME_MATCH_GLOB}"`);
+      this.debug(`-- Getting list of options backup files with matchGlob "${IdmOptions.#BACKUP_FILENAME_MATCH_GLOB}"`);
       const response = await this.#fsBrokerApi.listFileInfo(IdmOptions.#BACKUP_FILENAME_MATCH_GLOB);
-      this.debugAlways(`--response: "${response}"`);
+      this.debug(`--response: "${response}"`);
 
       return response;
 
@@ -545,7 +545,7 @@ export class IdmOptions {
    *         { "error":    string                   } If there was some error reading the file or restoring options. The returned string gives the reason.
    */
   async readOptionsFromBackupAndRestore(fileName) {
-    this.debugAlways(`-- Reading options backup file "${fileName}"`);
+    this.debug(`-- Reading options backup file "${fileName}"`);
 
     const response = await this.readBackupFile(fileName);
 
@@ -574,7 +574,7 @@ export class IdmOptions {
    * or if unable to restore the options into local storage
    */
   async getOptionsFromBackupAndRestore(fileName) {
-    this.debugAlways(`-- Reading options backup file "${fileName}"`);
+    this.debug(`-- Reading options backup file "${fileName}"`);
 
     const response = await this.readBackupFile(fileName);
 
@@ -582,10 +582,10 @@ export class IdmOptions {
       this.error(`-- readBackupFile "${fileName}" -- READ FILE ERROR: NO RESPONSE FROM FileSystemBroker`);
       throw new Error(`readBackupFile "${fileName}" -- READ FILE ERROR: NO RESPONSE FROM FileSystemBroker`);
     } else if (response.invalid) {
-      this.debugAlways(`-- readBackupFile "${fileName}" -- READ FILE ERROR: ${response.invalid}`);
+      this.error(`-- readBackupFile "${fileName}" -- READ FILE ERROR: ${response.invalid}`);
       throw new Error(`readBackupFile "${fileName}" -- READ FILE ERROR: ${response.invalid}`);
     } else if (response.error) {
-      this.debugAlways(`-- readBackupFile "${fileName}" -- READ FILE ERROR: ${response.error}`);
+      this.error(`-- readBackupFile "${fileName}" -- READ FILE ERROR: ${response.error}`);
       throw new Error(`readBackupFile "${fileName}" -- READ FILE ERROR: ${response.error}`);
     } else if (! response.fileName) {
       this.error(`-- readBackupFile "${fileName}" -- NO FILENAME RETURNED`);
